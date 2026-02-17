@@ -18,11 +18,14 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%# Vite client for HMR in development %>
+    <%= vite_client_tag %>
+    <%# Vite entrypoint for React app with Tailwind CSS %>
+    <%= vite_typescript_tag 'application' %>
+
   </head>
 
   <body>
-    <%= yield %>
+    <div id="root"></div>
   </body>
 </html>

@@ -9,6 +9,18 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # API routes
+  namespace :api do
+    namespace :v1 do
+      resources :users, only: [:index, :show]
+    end
+  end
+
+  # Root path for React SPA
+  root "pages#index"
+
+  # Catch-all route for client-side routing (must be last)
+  get '*path', to: 'pages#index', constraints: ->(request) do
+    !request.xhr? && request.format.html?
+  end
 end
