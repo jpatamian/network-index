@@ -1,9 +1,9 @@
 # db/seeds/seeds.rb
-# Main seed file for The Network Index
+# Main seed file for Mutual Aid Club
 # Run with: rails db:seed
 # Reset and reseed: rails db:reset
 
-puts "Seeding The Network Index database..."
+puts "Seeding Mutual Aid Club database..."
 puts "=" * 50
 
 # Clear existing data (be careful in production!)

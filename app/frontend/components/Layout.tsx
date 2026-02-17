@@ -12,7 +12,7 @@ export default function Layout() {
             <div className="flex">
               <Link to="/" className="flex items-center">
                 <span className="text-2xl font-bold text-indigo-600">
-                  The Network Index
+                  Mutual Aid Club
                 </span>
               </Link>
             </div>
@@ -75,7 +75,7 @@ export default function Layout() {
       <footer className="bg-white border-t">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <p className="text-center text-gray-500 text-sm">
-            © 2026 The Network Index. Built by the community, for the community. All rights reserved.
+            © 2026 Mutual Aid Club. Built by the community, for the community. All rights reserved.
           </p>
         </div>
       </footer>

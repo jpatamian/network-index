@@ -26,7 +26,7 @@ moderator = User.create!(
   password: 'password123',
   password_confirmation: 'password123',
   display_name: 'Network Moderator',
-  bio: 'Official moderator account for The Network Index. Here to help keep our community safe and supportive.',
+  bio: 'Official moderator account for Mutual Aid Club. Here to help keep our community safe and supportive.',
   is_moderator: true,
   anonymous: false,
   zipcode: ARLINGTON_ZIPCODES.sample
