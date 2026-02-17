@@ -7,7 +7,6 @@
     <meta name="application-name" content="Network Index">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
 
     <%= yield :head %>
 
@@ -21,7 +20,7 @@
     <%# Vite client for HMR in development %>
     <%= vite_client_tag %>
     <%# Vite entrypoint for React app with Tailwind CSS %>
-    <%= vite_typescript_tag 'application' %>
+    <%= vite_javascript_tag 'application.tsx' %>
 
   </head>
 

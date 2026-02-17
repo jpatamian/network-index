@@ -14,7 +14,7 @@ export default function Home() {
           <p className="mt-5 max-w-xl mx-auto text-xl text-gray-500">
             {isAuthenticated
               ? 'Your community networking platform'
-              : 'A community networking platform built with React, Vite, TypeScript, and Rails 7.1'}
+              : 'A community networking platform for mutual aid and resource sharing in your neighborhood.'}
           </p>
 
           {!isAuthenticated && (
@@ -33,37 +33,6 @@ export default function Home() {
               </Link>
             </div>
           )}
-        </div>
-
-        <div className="mt-16">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg font-medium text-gray-900">React + TypeScript</h3>
-                <p className="mt-2 text-sm text-gray-500">
-                  Modern frontend with type safety and excellent developer experience
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg font-medium text-gray-900">Vite ⚡</h3>
-                <p className="mt-2 text-sm text-gray-500">
-                  Lightning-fast hot module replacement and optimized builds
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg font-medium text-gray-900">JWT Authentication</h3>
-                <p className="mt-2 text-sm text-gray-500">
-                  Secure token-based authentication with Rails API backend
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {isAuthenticated && user && (
