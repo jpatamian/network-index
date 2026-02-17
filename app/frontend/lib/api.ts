@@ -57,3 +57,36 @@ export const authApi = {
     })
   },
 }
+
+export const postsApi = {
+  getAll: () => {
+    return apiRequest('/posts')
+  },
+
+  getById: (id: number) => {
+    return apiRequest(`/posts/${id}`)
+  },
+
+  create: (postData: { title: string; content: string }, token: string) => {
+    return apiRequest('/posts', {
+      method: 'POST',
+      body: JSON.stringify({ post: postData }),
+      token,
+    })
+  },
+
+  update: (id: number, postData: { title?: string; content?: string }, token: string) => {
+    return apiRequest(`/posts/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ post: postData }),
+      token,
+    })
+  },
+
+  delete: (id: number, token: string) => {
+    return apiRequest(`/posts/${id}`, {
+      method: 'DELETE',
+      token,
+    })
+  },
+}

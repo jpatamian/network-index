@@ -19,6 +19,9 @@ Rails.application.routes.draw do
 
       # User routes
       resources :users, only: [:index, :show]
+
+      # Post routes
+      resources :posts
     end
   end
 

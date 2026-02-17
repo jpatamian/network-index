@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  # Associations
+  has_many :posts, dependent: :destroy
+
   # BCrypt password authentication - allow_nil for anonymous users
   has_secure_password validations: false
 
