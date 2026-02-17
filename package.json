@@ -2,11 +2,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bin/vite dev",
-    "build": "bin/vite build",
+    "dev": "vite",
+    "build": "vite build",
     "preview": "vite preview",
-    "heroku-postbuild": "bin/vite build"
-  },  
+    "heroku-postbuild": "vite build"
+  },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^25.2.3",
