@@ -90,3 +90,24 @@ export const postsApi = {
     })
   },
 }
+
+export const commentsApi = {
+  getByPost: (postId: number) => {
+    return apiRequest(`/posts/${postId}/comments`)
+  },
+
+  create: (postId: number, message: string, token: string) => {
+    return apiRequest(`/posts/${postId}/comments`, {
+      method: 'POST',
+      body: JSON.stringify({ comment: { message } }),
+      token,
+    })
+  },
+
+  delete: (postId: number, commentId: number, token: string) => {
+    return apiRequest(`/posts/${postId}/comments/${commentId}`, {
+      method: 'DELETE',
+      token,
+    })
+  },
+}

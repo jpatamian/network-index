@@ -6,7 +6,7 @@ class Api::V1::PostsController < Api::BaseController
 
   # GET /api/v1/posts
   def index
-    posts = Post.includes(:user).recent.limit(50)
+    posts = Post.includes(:user, :comments).recent.limit(50)
     render json: posts.map { |post| post_response(post) }
   end
 
@@ -102,6 +102,7 @@ class Api::V1::PostsController < Api::BaseController
         username: post.user.username,
         email: post.user.email
       },
+      comment_count: post.comments.size,
       created_at: post.created_at,
       updated_at: post.updated_at
     }

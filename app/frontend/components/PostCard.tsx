@@ -2,6 +2,7 @@ import { Post } from '@/types/post'
 import { useAuth } from '@/hooks/useAuth'
 import { postsApi } from '@/lib/api'
 import { useState } from 'react'
+import CommentSection from './CommentSection'
 
 interface PostCardProps {
   post: Post
@@ -59,6 +60,7 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
         )}
       </div>
       <p className="text-gray-700 whitespace-pre-wrap">{post.content}</p>
+      <CommentSection postId={post.id} commentCount={post.comment_count} />
     </div>
   )
 }
