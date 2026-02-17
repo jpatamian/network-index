@@ -8,7 +8,7 @@ interface CreatePostProps {
 }
 
 export default function CreatePost({ onPostCreated }: CreatePostProps) {
-  const { token } = useAuth()
+  const { token, isAuthenticated } = useAuth()
   const [isExpanded, setIsExpanded] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -16,19 +16,33 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
+    zipcode: '',
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!token) return
+
+    if (!isAuthenticated && !formData.zipcode.trim()) {
+      setError('Zipcode is required for anonymous posts')
+      return
+    }
 
     setError('')
     setLoading(true)
 
     try {
-      const response = await postsApi.create(formData, token)
+      const postData: { title: string; content: string; zipcode?: string } = {
+        title: formData.title,
+        content: formData.content,
+      }
+
+      if (!isAuthenticated) {
+        postData.zipcode = formData.zipcode
+      }
+
+      const response = await postsApi.create(postData, token)
       onPostCreated(response)
-      setFormData({ title: '', content: '' })
+      setFormData({ title: '', content: '', zipcode: '' })
       setIsExpanded(false)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create post')
@@ -52,7 +66,17 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
 
   return (
     <div className="bg-white shadow rounded-lg p-6 mb-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Create a Post</h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        {isAuthenticated ? 'Create a Post' : 'Post Anonymously'}
+      </h3>
+
+      {!isAuthenticated && (
+        <div className="mb-4 rounded-md bg-yellow-50 border border-yellow-200 p-3">
+          <p className="text-sm text-yellow-800">
+            You're posting anonymously. Only your zipcode will be associated with this post.
+          </p>
+        </div>
+      )}
 
       {error && (
         <div className="mb-4 rounded-md bg-red-50 p-4">
@@ -62,6 +86,19 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
 
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
+          {!isAuthenticated && (
+            <div>
+              <input
+                type="text"
+                placeholder="Your zipcode *"
+                value={formData.zipcode}
+                onChange={(e) => setFormData({ ...formData, zipcode: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
+              />
+            </div>
+          )}
+
           <div>
             <input
               type="text"
@@ -91,7 +128,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
             type="button"
             onClick={() => {
               setIsExpanded(false)
-              setFormData({ title: '', content: '' })
+              setFormData({ title: '', content: '', zipcode: '' })
               setError('')
             }}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
@@ -103,7 +140,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
             disabled={loading}
             className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-400"
           >
-            {loading ? 'Posting...' : 'Post'}
+            {loading ? 'Posting...' : isAuthenticated ? 'Post' : 'Post Anonymously'}
           </button>
         </div>
       </form>

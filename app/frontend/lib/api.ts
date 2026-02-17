@@ -67,7 +67,7 @@ export const postsApi = {
     return apiRequest(`/posts/${id}`)
   },
 
-  create: (postData: { title: string; content: string }, token: string) => {
+  create: (postData: { title: string; content: string; zipcode?: string }, token?: string | null) => {
     return apiRequest('/posts', {
       method: 'POST',
       body: JSON.stringify({ post: postData }),

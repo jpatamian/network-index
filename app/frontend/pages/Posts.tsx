@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react'
-import { useAuth } from '@/hooks/useAuth'
 import { postsApi } from '@/lib/api'
 import { Post } from '@/types/post'
 import PostCard from '@/components/PostCard'
 import CreatePost from '@/components/CreatePost'
-import { Link } from 'react-router-dom'
 
 export default function Posts() {
-  const { isAuthenticated } = useAuth()
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -50,22 +47,7 @@ export default function Posts() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-extrabold text-gray-900 mb-8">Community Feed</h1>
 
-        {isAuthenticated ? (
-          <CreatePost onPostCreated={handlePostCreated} />
-        ) : (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <p className="text-blue-800 text-sm">
-              <Link to="/login" className="font-medium underline">
-                Sign in
-              </Link>{' '}
-              or{' '}
-              <Link to="/signup" className="font-medium underline">
-                create an account
-              </Link>{' '}
-              to create posts
-            </p>
-          </div>
-        )}
+        <CreatePost onPostCreated={handlePostCreated} />
 
         {error && (
           <div className="mb-6 rounded-md bg-red-50 p-4">

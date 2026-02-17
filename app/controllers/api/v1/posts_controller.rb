@@ -1,6 +1,6 @@
 class Api::V1::PostsController < Api::BaseController
   skip_before_action :verify_authenticity_token
-  before_action :require_authentication!, only: [:create, :update, :destroy]
+  before_action :require_authentication!, only: [:update, :destroy]
   before_action :set_post, only: [:show, :update, :destroy]
   before_action :authorize_post_owner!, only: [:update, :destroy]
 
@@ -17,7 +17,14 @@ class Api::V1::PostsController < Api::BaseController
 
   # POST /api/v1/posts
   def create
-    post = current_user.posts.build(post_params)
+    user = current_user || create_anonymous_user
+
+    unless user
+      render json: { error: 'Zipcode is required for anonymous posts' }, status: :unprocessable_entity
+      return
+    end
+
+    post = user.posts.build(post_params)
 
     if post.save
       render json: post_response(post), status: :created
@@ -71,6 +78,13 @@ class Api::V1::PostsController < Api::BaseController
 
   def require_authentication!
     render json: { error: 'Unauthorized' }, status: :unauthorized unless current_user
+  end
+
+  def create_anonymous_user
+    zipcode = params.dig(:post, :zipcode)
+    return nil if zipcode.blank?
+
+    User.create(zipcode: zipcode, anonymous: true)
   end
 
   def post_params
