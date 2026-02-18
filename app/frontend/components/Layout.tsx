@@ -1,84 +1,88 @@
-import { Outlet, Link } from 'react-router-dom'
+import { Outlet, Link as RouterLink } from 'react-router-dom'
+import {
+  Box,
+  Flex,
+  Container,
+  Button,
+  HStack,
+  Text,
+  Center,
+} from '@chakra-ui/react'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function Layout() {
   const { user, logout, isLoading, isAuthenticated } = useAuth()
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <Link to="/" className="flex items-center">
-                <span className="text-2xl font-bold text-indigo-600">
-                  Mutual Aid Club
-                </span>
-              </Link>
-            </div>
+    <Flex direction="column" minH="100vh">
+      {/* Navigation */}
+      <Box as="nav" bg="white" boxShadow="sm" borderBottom="1px" borderColor="gray.200">
+        <Container maxW="7xl">
+          <Flex justify="space-between" align="center" h={16}>
+            {/* Logo */}
+            <RouterLink to="/">
+              <Text fontSize="2xl" fontWeight="bold" color="blue.600">
+                Mutual Aid Club
+              </Text>
+            </RouterLink>
 
-            <div className="flex items-center space-x-4">
-              <Link
-                to="/"
-                className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
-              >
+            {/* Navigation Links */}
+            <HStack spacing={4}>
+              <Button as={RouterLink} to="/" variant="ghost">
                 Home
-              </Link>
-              <Link
-                to="/posts"
-                className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
-              >
+              </Button>
+              <Button as={RouterLink} to="/posts" variant="ghost">
                 Posts
-              </Link>
+              </Button>
 
               {!isLoading && (
                 <>
                   {isAuthenticated ? (
                     <>
-                      <span className="text-gray-700 px-3 py-2 text-sm">
+                      <Text color="gray.700" fontSize="sm">
                         {user?.username || user?.email || 'User'}
-                      </span>
-                      <button
-                        onClick={logout}
-                        className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
-                      >
+                      </Text>
+                      <Button onClick={logout} variant="ghost" size="sm">
                         Logout
-                      </button>
+                      </Button>
                     </>
                   ) : (
                     <>
-                      <Link
-                        to="/login"
-                        className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
-                      >
+                      <Button as={RouterLink} to="/login" variant="ghost" size="sm">
                         Login
-                      </Link>
-                      <Link
+                      </Button>
+                      <Button
+                        as={RouterLink}
                         to="/signup"
-                        className="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-sm font-medium"
+                        colorScheme="blue"
+                        size="sm"
                       >
                         Sign up
-                      </Link>
+                      </Button>
                     </>
                   )}
                 </>
               )}
-            </div>
-          </div>
-        </div>
-      </nav>
+            </HStack>
+          </Flex>
+        </Container>
+      </Box>
 
-      <main className="flex-grow">
+      {/* Main Content */}
+      <Box as="main" flex="1">
         <Outlet />
-      </main>
+      </Box>
 
-      <footer className="bg-white border-t">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-gray-500 text-sm">
-            © 2026 Mutual Aid Club. Built by the community, for the community. All rights reserved.
-          </p>
-        </div>
-      </footer>
-    </div>
+      {/* Footer */}
+      <Box as="footer" bg="white" borderTop="1px" borderColor="gray.200">
+        <Container maxW="7xl" py={6}>
+          <Center>
+            <Text fontSize="sm" color="gray.500" textAlign="center">
+              © 2026 Mutual Aid Club. Built by the community, for the community. All rights reserved.
+            </Text>
+          </Center>
+        </Container>
+      </Box>
+    </Flex>
   )
 }

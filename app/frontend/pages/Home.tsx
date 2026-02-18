@@ -1,66 +1,96 @@
-import { Link } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  Button,
+  Stack,
+  HStack,
+  Card,
+  SimpleGrid,
+  Center,
+} from '@chakra-ui/react'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth()
 
   return (
-    <div className="py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
-            {isAuthenticated ? `Welcome back, ${user?.username || user?.email}!` : 'Welcome to Mutual Aid Club'}
-          </h1>
-          <p className="mt-5 max-w-xl mx-auto text-xl text-gray-500">
-            {isAuthenticated
-              ? 'Your community networking platform'
-              : 'A community networking platform for mutual aid and resource sharing in your neighborhood.'}
-          </p>
+    <Box py={12}>
+      <Container maxW="7xl">
+        <Center mb={12}>
+          <Stack textAlign="center" spacing={6}>
+            <Heading as="h1" size="2xl">
+              {isAuthenticated ? `Welcome back, ${user?.username || user?.email}!` : 'Welcome to Mutual Aid Club'}
+            </Heading>
+            <Text fontSize="lg" color="gray.600" maxW="2xl">
+              {isAuthenticated
+                ? 'Your community networking platform'
+                : 'A community networking platform for mutual aid and resource sharing in your neighborhood.'}
+            </Text>
 
-          {!isAuthenticated && (
-            <div className="mt-8 flex justify-center gap-4">
-              <Link
-                to="/signup"
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-              >
-                Get started
-              </Link>
-              <Link
-                to="/login"
-                className="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-              >
-                Sign in
-              </Link>
-            </div>
-          )}
-        </div>
+            {!isAuthenticated && (
+              <HStack spacing={4} justify="center">
+                <Button
+                  as={RouterLink}
+                  to="/signup"
+                  colorScheme="blue"
+                  size="lg"
+                >
+                  Get started
+                </Button>
+                <Button
+                  as={RouterLink}
+                  to="/login"
+                  variant="outline"
+                  size="lg"
+                >
+                  Sign in
+                </Button>
+              </HStack>
+            )}
+          </Stack>
+        </Center>
 
         {isAuthenticated && user && (
-          <div className="mt-12 bg-white shadow rounded-lg p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Your Profile</h3>
-            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Email</dt>
-                <dd className="mt-1 text-sm text-gray-900">{user.email || 'Not set'}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Username</dt>
-                <dd className="mt-1 text-sm text-gray-900">{user.username || 'Not set'}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Zipcode</dt>
-                <dd className="mt-1 text-sm text-gray-900">{user.zipcode}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Account Type</dt>
-                <dd className="mt-1 text-sm text-gray-900">
-                  {user.anonymous ? 'Anonymous' : 'Authenticated'}
-                </dd>
-              </div>
-            </dl>
-          </div>
+          <Card.Root>
+            <Card.Body>
+              <Stack spacing={6}>
+                <Heading size="md">Your Profile</Heading>
+                <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={6}>
+                  <Box>
+                    <Text fontWeight="medium" color="gray.600" fontSize="sm">
+                      Email
+                    </Text>
+                    <Text mt={1}>{user.email || 'Not set'}</Text>
+                  </Box>
+                  <Box>
+                    <Text fontWeight="medium" color="gray.600" fontSize="sm">
+                      Username
+                    </Text>
+                    <Text mt={1}>{user.username || 'Not set'}</Text>
+                  </Box>
+                  <Box>
+                    <Text fontWeight="medium" color="gray.600" fontSize="sm">
+                      Zipcode
+                    </Text>
+                    <Text mt={1}>{user.zipcode}</Text>
+                  </Box>
+                  <Box>
+                    <Text fontWeight="medium" color="gray.600" fontSize="sm">
+                      Account Type
+                    </Text>
+                    <Text mt={1}>
+                      {user.anonymous ? 'Anonymous' : 'Authenticated'}
+                    </Text>
+                  </Box>
+                </SimpleGrid>
+              </Stack>
+            </Card.Body>
+          </Card.Root>
         )}
-      </div>
-    </div>
+      </Container>
+    </Box>
   )
 }
