@@ -1,5 +1,4 @@
-import React from 'react'
-import { render, waitFor } from '@testing-library/react'
+import { render, waitFor, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Posts from '../../features/posts/pages/Posts'
 import { TestWrapper } from '../setup/test-wrapper'
@@ -76,6 +75,47 @@ describe('Posts Page', () => {
 
     await waitFor(() => {
       expect(postsApi.getMine).toHaveBeenCalledWith('mock-token')
+    })
+  })
+
+  it('requests filtered posts when zipcode and query are in the URL', async () => {
+    window.history.pushState({}, '', '/posts?zipcode=30301&q=rides')
+
+    render(
+      <TestWrapper>
+        <Posts />
+      </TestWrapper>
+    )
+
+    await waitFor(() => {
+      expect(postsApi.getAll).toHaveBeenCalledWith({ zipcode: '30301', query: 'rides' })
+    })
+  })
+
+  it('submits the search form and updates filters', async () => {
+    render(
+      <TestWrapper>
+        <Posts />
+      </TestWrapper>
+    )
+
+    fireEvent.change(screen.getByPlaceholderText('Enter zipcode'), {
+      target: { value: '94110' },
+    })
+    fireEvent.change(screen.getByPlaceholderText('Try "rides to market"'), {
+      target: { value: 'tool share' },
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /apply filters/i }))
+
+    await waitFor(() => {
+      const params = new URLSearchParams(window.location.search)
+      expect(params.get('zipcode')).toBe('94110')
+      expect(params.get('q')).toBe('tool share')
+    })
+
+    await waitFor(() => {
+      expect(postsApi.getAll).toHaveBeenLastCalledWith({ zipcode: '94110', query: 'tool share' })
     })
   })
 })
