@@ -122,8 +122,8 @@ describe('Layout Component', () => {
       </TestWrapper>
     )
 
-    expect(screen.queryByRole('link', { name: /Login/i })).not.toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /Sign up/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Log In/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Sign Up/i })).not.toBeInTheDocument()
   })
 
   it('renders footer with copyright text', () => {
