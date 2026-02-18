@@ -20,9 +20,10 @@
     <%# Only include Vite client in development for HMR %>
     <% if Rails.env.development? %>
       <%= vite_client_tag %>
+      <%= vite_javascript_tag 'application.tsx' %>
+    <% else %>
+      <%= vite_javascript_tag 'application' %>
     <% end %>
-
-    <%= vite_javascript_tag 'application.tsx' %>
 
   </head>
 
