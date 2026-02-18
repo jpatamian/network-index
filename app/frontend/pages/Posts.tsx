@@ -1,4 +1,17 @@
 import { useState, useEffect } from 'react'
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  Stack,
+  Center,
+  Spinner,
+  Alert,
+  AlertTitle,
+  AlertDescription,
+} from '@chakra-ui/react'
+import { FaComments } from 'react-icons/fa'
 import { postsApi } from '@/lib/api'
 import { Post } from '@/types/post'
 import PostCard from '@/components/PostCard'
@@ -34,39 +47,90 @@ export default function Posts() {
 
   if (loading) {
     return (
-      <div className="py-12">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-gray-500">Loading posts...</div>
-        </div>
-      </div>
+      <Box py={12} bg="gray.50" minH="100vh">
+        <Container maxW="3xl">
+          <Center>
+            <Stack align="center" gap={4}>
+              <Spinner size="lg" color="teal.600" thickness="4px" />
+              <Text color="gray.600" fontSize="lg">
+                Loading posts...
+              </Text>
+            </Stack>
+          </Center>
+        </Container>
+      </Box>
     )
   }
 
   return (
-    <div className="py-12">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-extrabold text-gray-900 mb-8">Community Feed</h1>
+    <Box bg="gray.50" minH="100vh">
+      {/* Hero Section */}
+      <Box
+        bg="white"
+        py={{ base: 10, md: 12 }}
+        borderBottomWidth="1px"
+        borderColor="gray.100"
+      >
+        <Container maxW="3xl">
+          <Stack gap={4}>
+            <Heading
+              as="h1"
+              size="2xl"
+              color="gray.900"
+              fontWeight="700"
+            >
+              Community Feed
+            </Heading>
+            <Text fontSize="lg" color="gray.600" lineHeight="1.6">
+              Share what you need, offer what you can. Let's build together.
+            </Text>
+          </Stack>
+        </Container>
+      </Box>
 
-        <CreatePost onPostCreated={handlePostCreated} />
+      {/* Content Section */}
+      <Box py={{ base: 10, md: 12 }}>
+        <Container maxW="3xl">
+          <Stack gap={8}>
+            {/* Create Post Section */}
+            <Box>
+              <CreatePost onPostCreated={handlePostCreated} />
+            </Box>
 
-        {error && (
-          <div className="mb-6 rounded-md bg-red-50 p-4">
-            <p className="text-sm text-red-800">{error}</p>
-          </div>
-        )}
+            {/* Error Message */}
+            {error && (
+              <Box
+                bg="red.50"
+                borderLeft="4px"
+                borderColor="red.500"
+                p={4}
+                borderRadius="md"
+              >
+                <Heading size="sm" color="red.800" mb={2}>Failed to load posts</Heading>
+                <Text color="red.700" fontSize="sm">{error}</Text>
+              </Box>
+            )}
 
-        {posts.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No posts yet. Be the first to post!</p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} onDelete={handlePostDeleted} />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+            {/* Posts List */}
+            {posts.length === 0 ? (
+              <Center py={12}>
+                <Stack align="center" gap={3}>
+                  <Text fontSize="lg" fontWeight="600" color="gray.700">
+                    No posts yet
+                  </Text>
+                  <Text color="gray.500">Be the first to share with your community!</Text>
+                </Stack>
+              </Center>
+            ) : (
+              <Stack gap={6}>
+                {posts.map((post) => (
+                  <PostCard key={post.id} post={post} onDelete={handlePostDeleted} />
+                ))}
+              </Stack>
+            )}
+          </Stack>
+        </Container>
+      </Box>
+    </Box>
   )
 }
