@@ -3,9 +3,10 @@
 // next-themes enables light/dark mode switching
 import { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react"
 import { ThemeProvider } from "next-themes"
+import type { ReactNode } from "react"
 
 interface AppProviderProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 const system = createSystem(defaultConfig)
