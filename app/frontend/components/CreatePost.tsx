@@ -121,7 +121,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
               borderLeft="4px"
               borderColor="blue.400"
             >
-              <Icon as={FaInfoCircle} color="blue.600" fontSize="lg" flex="shrink: 0" />
+              <Icon as={FaInfoCircle} color="blue.600" fontSize="lg" flexShrink={0} />
               <Box>
                 <Heading size="xs" color="blue.800" mb={1} fontWeight="700">
                   Anonymous Post
