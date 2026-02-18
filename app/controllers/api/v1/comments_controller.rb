@@ -1,5 +1,8 @@
 class Api::V1::CommentsController < Api::BaseController
+  include Authenticable
+
   skip_before_action :verify_authenticity_token
+  skip_before_action :authorize_request, only: [:index]
   before_action :require_authentication!, only: [:create, :destroy]
   before_action :set_post
   before_action :set_comment, only: [:destroy]
@@ -46,20 +49,6 @@ class Api::V1::CommentsController < Api::BaseController
     unless @comment.user_id == current_user.id
       render json: { error: 'Unauthorized' }, status: :forbidden
     end
-  end
-
-  def current_user
-    return @current_user if defined?(@current_user)
-
-    header = request.headers['Authorization']
-    token = header.split(' ').last if header
-    decoded = JsonWebToken.decode(token)
-
-    @current_user = User.find_by(id: decoded[:user_id]) if decoded
-  end
-
-  def require_authentication!
-    render json: { error: 'Unauthorized' }, status: :unauthorized unless current_user
   end
 
   def comment_params

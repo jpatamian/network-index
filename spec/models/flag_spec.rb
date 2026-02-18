@@ -3,7 +3,8 @@ require 'rails_helper'
 RSpec.describe Flag, type: :model do
   describe 'associations' do
     it { should belong_to(:flaggable, polymorphic: true) }
-    it { should belong_to(:user) }
+    it { should belong_to(:flagger_user).class_name('User').with_foreign_key('flagger_user_id').optional }
+    it { should belong_to(:reviewed_by_user).class_name('User').with_foreign_key('reviewed_by_user_id').optional }
   end
 
   describe 'validations' do
@@ -12,19 +13,13 @@ RSpec.describe Flag, type: :model do
     it 'is valid with valid attributes' do
       user = create(:user)
       post = create(:post)
-      flag = build(:flag, user: user, flaggable: post)
+      flag = build(:flag, flagger_user: user, flaggable: post)
       expect(flag).to be_valid
     end
 
     it 'requires a flaggable resource' do
       user = create(:user)
-      flag = build(:flag, user: user, flaggable: nil)
-      expect(flag).not_to be_valid
-    end
-
-    it 'requires a user' do
-      post = create(:post)
-      flag = build(:flag, user: nil, flaggable: post)
+      flag = build(:flag, flagger_user: user, flaggable: nil)
       expect(flag).not_to be_valid
     end
   end
@@ -33,7 +28,7 @@ RSpec.describe Flag, type: :model do
     it 'can flag posts' do
       user = create(:user)
       post = create(:post)
-      flag = create(:flag, user: user, flaggable: post)
+      flag = create(:flag, flagger_user: user, flaggable: post)
 
       expect(flag.flaggable).to eq(post)
     end
@@ -41,7 +36,7 @@ RSpec.describe Flag, type: :model do
     it 'can flag comments' do
       user = create(:user)
       comment = create(:comment)
-      flag = create(:flag, user: user, flaggable: comment)
+      flag = create(:flag, flagger_user: user, flaggable: comment)
 
       expect(flag.flaggable).to eq(comment)
     end
@@ -56,7 +51,7 @@ RSpec.describe Flag, type: :model do
     it 'allows common flag reasons' do
       reasons = ['Spam', 'Harassment', 'Inappropriate Content', 'Other']
       reasons.each do |reason|
-        flag = build(:flag, reason: reason)
+        flag = build(:flag, :for_post, reason: reason)
         expect(flag).to be_valid
       end
     end

@@ -14,6 +14,7 @@ import {
 import { useAuth } from '@/hooks/useAuth'
 import { commentsApi } from '@/lib/api'
 import { Comment } from '@/types/post'
+import { formatDate } from '@/lib/date'
 
 interface CommentSectionProps {
   postId: number
@@ -80,16 +81,6 @@ export default function CommentSection({ postId, commentCount }: CommentSectionP
     }
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
-
   return (
     <Box borderTop="1px" borderColor="gray.200" mt={4} pt={4}>
       <Button
@@ -139,7 +130,12 @@ export default function CommentSection({ postId, commentCount }: CommentSectionP
                         {comment.author.name}
                       </Text>
                       <Text fontSize="xs" color="gray.500">
-                        {formatDate(comment.created_at)}
+                        {formatDate(comment.created_at, {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
                       </Text>
                     </Box>
                     {user?.id === comment.author.id && (

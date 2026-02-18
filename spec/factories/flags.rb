@@ -4,7 +4,7 @@ FactoryBot.define do
     reviewed_by_user { nil }
     reason { Faker::Lorem.sentence }
     description { Faker::Lorem.paragraph }
-    status { 'unreviewed' }
+    status { 'pending' }
 
     # Need to set flaggable - will be set in traits
     # This requires the test to specify the flaggable

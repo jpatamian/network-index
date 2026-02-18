@@ -1,5 +1,8 @@
 class Api::V1::PostsController < Api::BaseController
+  include Authenticable
+
   skip_before_action :verify_authenticity_token
+  skip_before_action :authorize_request, only: [:index, :show, :create]
   before_action :require_authentication!, only: [:update, :destroy, :my_posts]
   before_action :set_post, only: [:show, :update, :destroy]
   before_action :authorize_post_owner!, only: [:update, :destroy]
@@ -77,20 +80,6 @@ class Api::V1::PostsController < Api::BaseController
     unless @post.user_id == current_user.id
       render json: { error: 'Unauthorized' }, status: :forbidden
     end
-  end
-
-  def current_user
-    return @current_user if defined?(@current_user)
-
-    header = request.headers['Authorization']
-    token = header.split(' ').last if header
-    decoded = JsonWebToken.decode(token)
-
-    @current_user = User.find_by(id: decoded[:user_id]) if decoded
-  end
-
-  def require_authentication!
-    render json: { error: 'Unauthorized' }, status: :unauthorized unless current_user
   end
 
   def create_anonymous_user

@@ -1,6 +1,7 @@
 import { Post } from '@/types/post'
 import { useAuth } from '@/hooks/useAuth'
 import { postsApi } from '@/lib/api'
+import { formatDate } from '@/lib/date'
 import { useState } from 'react'
 import {
   Card,
@@ -40,17 +41,6 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
     }
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
-
   return (
     <Card.Root borderRadius="lg" overflow="hidden" borderWidth="1px" borderColor="gray.100" bg="white" _hover={{ boxShadow: 'md', transform: 'translateY(-1px)' }} transition="all 0.2s">
       <Card.Body p={6}>
@@ -68,7 +58,13 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
                 </HStack>
                 <HStack gap={1.5}>
                   <Icon as={FaClock} color="teal.600" fontSize="xs" />
-                  <Text>{formatDate(post.created_at)}</Text>
+                  <Text>{formatDate(post.created_at, {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}</Text>
                 </HStack>
               </HStack>
             </VStack>

@@ -1,5 +1,9 @@
 class Api::V1::UsersController < Api::BaseController
+  include Authenticable
+
   skip_before_action :verify_authenticity_token
+  skip_before_action :authorize_request, only: [:index, :show]
+  before_action :require_authentication!, only: [:update]
   before_action :authorize_user!, only: [:update]
 
   def index
@@ -30,15 +34,9 @@ class Api::V1::UsersController < Api::BaseController
   private
 
   def authorize_user!
-    header = request.headers['Authorization']
-    token = header.split(' ').last if header
-    decoded = JsonWebToken.decode(token)
-    
-    unless decoded && decoded[:user_id].to_i == params[:id].to_i
+    unless current_user&.id == params[:id].to_i
       render json: { error: 'Unauthorized' }, status: :unauthorized
     end
-  rescue
-    render json: { error: 'Unauthorized' }, status: :unauthorized
   end
 
   def user_params

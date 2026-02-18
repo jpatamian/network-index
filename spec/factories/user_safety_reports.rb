@@ -6,7 +6,7 @@ FactoryBot.define do
     reviewed_by_user { nil }
     incident_type { Faker::Lorem.sentence }
     description { Faker::Lorem.paragraphs(number: 2).join(' ') }
-    status { 'unreviewed' }
+    status { 'pending' }
 
     # Trait for reviewed reports
     trait :reviewed do

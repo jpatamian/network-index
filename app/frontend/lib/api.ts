@@ -90,10 +90,6 @@ export const postsApi = {
     return apiRequest(`/posts/${id}`)
   },
 
-  getByUser: (userId: number) => {
-    return apiRequest(`/users/${userId}/posts`)
-  },
-
   create: (postData: { title: string; content: string; zipcode?: string }, token?: string | null) => {
     return apiRequest('/posts', {
       method: 'POST',
