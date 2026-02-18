@@ -58,9 +58,25 @@ export const authApi = {
   },
 }
 
+type PostsQuery = {
+  zipcode?: string | null
+  query?: string | null
+}
+
 export const postsApi = {
-  getAll: (zipcode?: string | null) => {
-    const url = zipcode ? `/posts?zipcode=${encodeURIComponent(zipcode)}` : '/posts'
+  getAll: (filters: PostsQuery = {}) => {
+    const params = new URLSearchParams()
+
+    if (filters.zipcode) {
+      params.set('zipcode', filters.zipcode)
+    }
+
+    if (filters.query) {
+      params.set('q', filters.query)
+    }
+
+    const queryString = params.toString()
+    const url = queryString ? `/posts?${queryString}` : '/posts'
     return apiRequest(url)
   },
 

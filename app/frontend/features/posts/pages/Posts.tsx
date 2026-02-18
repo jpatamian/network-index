@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   Box,
@@ -11,16 +11,22 @@ import {
   HStack,
   Badge,
   Button,
+  Input,
+  Icon,
+  Fieldset,
+  chakra,
 } from '@chakra-ui/react'
 import { postsApi } from '@/lib/api'
 import { useAuth } from '@/hooks/useAuth'
 import { Post } from '@/types/post'
 import PostCard from '@/features/posts/components/PostCard'
 import CreatePost from '@/features/posts/components/CreatePost'
+import { FaMapMarkerAlt, FaSearch } from 'react-icons/fa'
 
 export default function Posts() {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const zipcode = searchParams.get('zipcode')
+  const query = searchParams.get('q')
   const filter = searchParams.get('filter')
   const viewingMine = filter === 'mine'
   const { token, isAuthenticated, isLoading } = useAuth()
@@ -28,15 +34,28 @@ export default function Posts() {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [zipcodeInput, setZipcodeInput] = useState(zipcode ?? '')
+  const [queryInput, setQueryInput] = useState(query ?? '')
 
-  const hasFilter = Boolean(zipcode) || viewingMine
+  const hasSearchFilters = Boolean(zipcode) || Boolean(query)
+  const hasFilter = hasSearchFilters || viewingMine
   const pageTitle = viewingMine ? 'My Posts' : 'Community Feed'
   const subtitle = viewingMine
     ? 'Posts you have shared with neighbors. Keep the community updated.'
     : zipcode
       ? `Posts from your neighborhood (${zipcode}). Share what you need, offer what you can.`
       : 'Share what you need, offer what you can. Let\'s build together.'
-  const clearFilterLabel = viewingMine ? 'View all posts' : '✕ Clear location filter'
+  const clearFilterLabel = viewingMine ? 'View all posts' : 'Reset filters'
+  const isSearchFormDirty = Boolean(zipcodeInput.trim()) || Boolean(queryInput.trim())
+  const canResetSearch = hasSearchFilters || isSearchFormDirty
+
+  useEffect(() => {
+    setZipcodeInput(zipcode ?? '')
+  }, [zipcode])
+
+  useEffect(() => {
+    setQueryInput(query ?? '')
+  }, [query])
 
   useEffect(() => {
     let isMounted = true
@@ -58,7 +77,7 @@ export default function Posts() {
           }
           data = await postsApi.getMine(token)
         } else {
-          data = await postsApi.getAll(zipcode)
+          data = await postsApi.getAll({ zipcode, query })
         }
 
         if (isMounted) {
@@ -81,7 +100,7 @@ export default function Posts() {
     return () => {
       isMounted = false
     }
-  }, [zipcode, viewingMine, token, isAuthenticated, isLoading])
+  }, [zipcode, query, viewingMine, token, isAuthenticated, isLoading])
 
   const handlePostCreated = (newPost: Post) => {
     setPosts((prev) => [newPost, ...prev])
@@ -91,8 +110,39 @@ export default function Posts() {
     setPosts((prev) => prev.filter((post) => post.id !== id))
   }
 
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const params = new URLSearchParams(searchParams)
+
+    if (zipcodeInput.trim()) {
+      params.set('zipcode', zipcodeInput.trim())
+    } else {
+      params.delete('zipcode')
+    }
+
+    if (queryInput.trim()) {
+      params.set('q', queryInput.trim())
+    } else {
+      params.delete('q')
+    }
+
+    params.delete('filter')
+    setSearchParams(params)
+  }
+
+  const handleSearchReset = () => {
+    setZipcodeInput('')
+    setQueryInput('')
+    const params = new URLSearchParams(searchParams)
+    params.delete('zipcode')
+    params.delete('q')
+    setSearchParams(params)
+  }
+
   const handleClearFilter = () => {
-    window.location.href = '/posts'
+    setZipcodeInput('')
+    setQueryInput('')
+    setSearchParams(new URLSearchParams())
   }
 
   if (loading) {
@@ -176,6 +226,104 @@ export default function Posts() {
       <Box py={{ base: 10, md: 12 }}>
         <Container maxW="3xl">
           <Stack gap={8}>
+            {/* Search & Filter */}
+            {!viewingMine && (
+              <Box bg="white" borderWidth="1px" borderColor="gray.100" borderRadius="lg" p={6} boxShadow="sm">
+                <chakra.form gap={4} onSubmit={handleSearchSubmit} display="flex" flexDirection="column">
+                  <Stack gap={1}>
+                    <Heading size="md" color="gray.900" fontWeight="700">
+                      Find the right posts
+                    </Heading>
+                    <Text fontSize="sm" color="gray.600">
+                      Combine zipcode with keywords to quickly surface what's relevant to you.
+                    </Text>
+                  </Stack>
+
+                  <Stack direction={{ base: 'column', md: 'row' }} gap={4}>
+                    <Fieldset.Root flex="1" gap={2}>
+                      <Fieldset.Legend fontSize="sm" color="gray.600">
+                        Zipcode
+                      </Fieldset.Legend>
+                      <Fieldset.Content>
+                        <Box position="relative">
+                          <Icon
+                            as={FaMapMarkerAlt}
+                            color="gray.400"
+                            fontSize="sm"
+                            position="absolute"
+                            left={3}
+                            top="50%"
+                            transform="translateY(-50%)"
+                            pointerEvents="none"
+                          />
+                          <Input
+                            value={zipcodeInput}
+                            onChange={(e) => setZipcodeInput(e.target.value)}
+                            placeholder="Enter zipcode"
+                            borderRadius="md"
+                            bg="white"
+                            borderColor="gray.200"
+                            pl={9}
+                          />
+                        </Box>
+                      </Fieldset.Content>
+                    </Fieldset.Root>
+
+                    <Fieldset.Root flex="1" gap={2}>
+                      <Fieldset.Legend fontSize="sm" color="gray.600">
+                        Search text
+                      </Fieldset.Legend>
+                      <Fieldset.Content>
+                        <Box position="relative">
+                          <Icon
+                            as={FaSearch}
+                            color="gray.400"
+                            fontSize="sm"
+                            position="absolute"
+                            left={3}
+                            top="50%"
+                            transform="translateY(-50%)"
+                            pointerEvents="none"
+                          />
+                          <Input
+                            value={queryInput}
+                            onChange={(e) => setQueryInput(e.target.value)}
+                            placeholder={'Try "rides to market"'}
+                            borderRadius="md"
+                            bg="white"
+                            borderColor="gray.200"
+                            pl={9}
+                          />
+                        </Box>
+                      </Fieldset.Content>
+                    </Fieldset.Root>
+                  </Stack>
+
+                  <HStack justify="flex-end" gap={3}>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={handleSearchReset}
+                      disabled={!canResetSearch}
+                      fontWeight="600"
+                    >
+                      Clear
+                    </Button>
+                    <Button
+                      type="submit"
+                      bg="teal.600"
+                      color="white"
+                      fontWeight="600"
+                      borderRadius="md"
+                      _hover={{ bg: 'teal.700', transform: 'translateY(-1px)', boxShadow: 'md' }}
+                    >
+                      Apply filters
+                    </Button>
+                  </HStack>
+                </chakra.form>
+              </Box>
+            )}
+
             {/* Create Post Section */}
             <Box>
               <CreatePost onPostCreated={handlePostCreated} />

@@ -9,9 +9,10 @@ class Api::V1::PostsController < Api::BaseController
     posts = Post.includes(:user, :comments).recent
     
     # Filter by zipcode if provided
-    if params[:zipcode].present?
-      posts = posts.by_zipcode(params[:zipcode])
-    end
+    posts = posts.by_zipcode(params[:zipcode]) if params[:zipcode].present?
+
+    # Free-text search across title/content
+    posts = posts.search_query(params[:q]) if params[:q].present?
     
     posts = posts.limit(50)
     render json: posts.map { |post| post_response(post) }
