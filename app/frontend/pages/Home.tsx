@@ -12,10 +12,9 @@ import {
   SimpleGrid,
   Center,
   Badge,
-  Grid,
   Icon,
 } from '@chakra-ui/react'
-import { FaHandsHelping, FaUsers, FaMapMarkerAlt, FaShieldAlt, FaHeart, FaHome, FaMapPin, FaUserCheck, FaUser, FaEnvelope } from 'react-icons/fa'
+import { FaHandsHelping, FaUsers, FaMapMarkerAlt, FaShieldAlt, FaHeart, FaMapPin, FaUserCheck, FaUser, FaEnvelope } from 'react-icons/fa'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function Home() {
