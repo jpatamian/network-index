@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import CreatePost from '../../components/CreatePost'
+import CreatePost from '../../features/posts/components/CreatePost'
 import { TestWrapper } from '../setup/test-wrapper'
 
 jest.mock('../../hooks/useAuth', () => ({

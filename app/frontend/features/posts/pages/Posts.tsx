@@ -14,8 +14,8 @@ import {
 } from '@chakra-ui/react'
 import { postsApi } from '@/lib/api'
 import { Post } from '@/types/post'
-import PostCard from '@/components/PostCard'
-import CreatePost from '@/components/CreatePost'
+import PostCard from '@/features/posts/components/PostCard'
+import CreatePost from '@/features/posts/components/CreatePost'
 
 export default function Posts() {
   const [searchParams] = useSearchParams()

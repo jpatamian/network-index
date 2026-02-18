@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import Posts from '../../pages/Posts'
+import Posts from '../../features/posts/pages/Posts'
 import { TestWrapper } from '../setup/test-wrapper'
 
 jest.mock('../../hooks/useAuth', () => ({

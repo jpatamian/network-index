@@ -1,4 +1,3 @@
-import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
@@ -15,7 +14,7 @@ jest.mock('../../hooks/useAuth', () => ({
   useAuth: jest.fn(),
 }))
 
-import Profile from '../../pages/Profile'
+import Profile from '../../features/profile/pages/Profile'
 import { TestWrapper } from '../setup/test-wrapper'
 import { useAuth } from '../../hooks/useAuth'
 

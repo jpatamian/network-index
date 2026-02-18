@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import HowItWorks from '../../components/HowItWorks'
+import HowItWorks from '../../features/home/components/HowItWorks'
 import { TestWrapper } from '../setup/test-wrapper'
 
 describe('HowItWorks Component', () => {
