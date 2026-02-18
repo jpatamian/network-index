@@ -6,11 +6,8 @@ import {
   Button,
   Stack,
   HStack,
-  Badge,
-  Icon,
   Center,
 } from '@chakra-ui/react'
-import { FaMapPin } from 'react-icons/fa'
 import { useAuth } from '@/hooks/useAuth'
 import HowItWorks from '@/components/HowItWorks'
 import FindYourNeighborhood from '@/components/FindYourNeighborhood'

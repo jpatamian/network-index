@@ -12,7 +12,9 @@ import {
 } from '@chakra-ui/react'
 import { FaHome } from 'react-icons/fa'
 import { useAuth } from '@/hooks/useAuth'
-import { GiEyeShield } from "react-icons/gi";
+import { GiEyeShield } from "react-icons/gi"
+import { Toaster } from '@/components/ui/toaster'
+
 export default function Layout() {
   const { user, logout, isLoading, isAuthenticated } = useAuth()
 
@@ -99,6 +101,9 @@ export default function Layout() {
           </Center>
         </Container>
       </Box>
+
+      {/* Global Toast Notifications */}
+      <Toaster />
     </Flex>
   )
 }

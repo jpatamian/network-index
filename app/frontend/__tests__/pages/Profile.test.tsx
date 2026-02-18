@@ -1,13 +1,22 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import Profile from '../../pages/Profile'
-import { TestWrapper } from '../setup/test-wrapper'
+
+// Mock useToast before importing components
+jest.mock('@chakra-ui/react', () => {
+  const actual = jest.requireActual('@chakra-ui/react')
+  return {
+    ...actual,
+    useToast: () => jest.fn(),
+  }
+})
 
 jest.mock('../../hooks/useAuth', () => ({
   useAuth: jest.fn(),
 }))
 
+import Profile from '../../pages/Profile'
+import { TestWrapper } from '../setup/test-wrapper'
 import { useAuth } from '../../hooks/useAuth'
 
 describe('Profile Page', () => {

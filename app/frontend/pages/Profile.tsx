@@ -1,13 +1,86 @@
-import { Box, Container, Heading, Text, Button, Stack, HStack, Badge, Icon, SimpleGrid, VStack } from '@chakra-ui/react'
+import { useState } from 'react'
+import { Box, Container, Heading, Text, Button, Stack, HStack, Badge, Icon, SimpleGrid, Input } from '@chakra-ui/react'
 import { FaHeart, FaMapPin, FaUserCheck, FaUser, FaEnvelope, FaArrowLeft } from 'react-icons/fa'
 import { useAuth } from '@/hooks/useAuth'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import { usersApi } from '@/lib/api'
+import { toaster } from '@/components/ui/toaster'
 
 export default function Profile() {
-  const { user } = useAuth()
+  const { user, token } = useAuth()
+  const [isEditing, setIsEditing] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [formData, setFormData] = useState({
+    username: user?.username || '',
+    email: user?.email || '',
+    zipcode: user?.zipcode || '',
+  })
 
   const handleBack = () => {
     window.location.href = '/'
+  }
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+  const handleCancel = () => {
+    setFormData({
+      username: user?.username || '',
+      email: user?.email || '',
+      zipcode: user?.zipcode || '',
+    })
+    setIsEditing(false)
+  }
+
+  const handleSave = async () => {
+    if (!user || !token) return
+
+    setIsSaving(true)
+    try {
+      const updateData: { username?: string; email?: string; zipcode?: string } = {}
+      
+      if (formData.username !== user.username) {
+        updateData.username = formData.username
+      }
+      if (formData.email !== user.email) {
+        updateData.email = formData.email
+      }
+      if (formData.zipcode !== user.zipcode) {
+        updateData.zipcode = formData.zipcode
+      }
+
+      if (Object.keys(updateData).length === 0) {
+        toaster.create({
+          title: 'No changes',
+          description: 'No fields were modified',
+          type: 'info',
+        })
+        setIsEditing(false)
+        return
+      }
+
+      await usersApi.update(user.id, updateData, token)
+      
+      toaster.success({
+        title: 'Profile updated',
+        description: 'Your profile has been updated successfully',
+      })
+      
+      setIsEditing(false)
+      // Refresh the page to update the auth context
+      window.location.reload()
+    } catch (error) {
+      toaster.error({
+        title: 'Error updating profile',
+        description: error instanceof Error ? error.message : 'An error occurred',
+      })
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -43,11 +116,54 @@ export default function Profile() {
                     </Box>
                     <Heading size="lg" color="gray.900" fontWeight="700">Your Profile</Heading>
                   </HStack>
-                  <Badge bg="teal.50" color="teal.700" fontWeight="600" px={3} py={1} borderRadius="full">
-                    <Text>
-                      {user.anonymous ? 'Anonymous' : 'Verified'}
-                    </Text>
-                  </Badge>
+                  <HStack gap={3}>
+                    {isEditing ? (
+                      <>
+                        <Button
+                          onClick={handleSave}
+                          bg="teal.600"
+                          color="white"
+                          size="sm"
+                          fontWeight="600"
+                          borderRadius="md"
+                          loading={isSaving}
+                          _hover={{ bg: 'teal.700' }}
+                        >
+                          Save Changes
+                        </Button>
+                        <Button
+                          onClick={handleCancel}
+                          variant="outline"
+                          size="sm"
+                          fontWeight="600"
+                          borderRadius="md"
+                          disabled={isSaving}
+                        >
+                          Cancel
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          onClick={() => setIsEditing(true)}
+                          variant="outline"
+                          borderColor="teal.600"
+                          color="teal.600"
+                          size="sm"
+                          fontWeight="600"
+                          borderRadius="md"
+                          _hover={{ bg: 'teal.50' }}
+                        >
+                          Edit Profile
+                        </Button>
+                        <Badge bg="teal.50" color="teal.700" fontWeight="600" px={3} py={1} borderRadius="full">
+                          <Text>
+                            {user.anonymous ? 'Anonymous' : 'Verified'}
+                          </Text>
+                        </Badge>
+                      </>
+                    )}
+                  </HStack>
                 </HStack>
 
                 <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={6}>
@@ -58,9 +174,20 @@ export default function Profile() {
                         Email
                       </Text>
                     </HStack>
-                    <Text fontWeight="600" color="gray.900" fontSize="sm">
-                      {user.email || 'Not set'}
-                    </Text>
+                    {isEditing ? (
+                      <Input
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        type="email"
+                        placeholder="Email"
+                        size="sm"
+                        borderRadius="md"
+                      />
+                    ) : (
+                      <Text fontWeight="600" color="gray.900" fontSize="sm">
+                        {user.email || 'Not set'}
+                      </Text>
+                    )}
                   </Box>
 
                   <Box bg="white" border="1px" borderColor="gray.100" p={4} borderRadius="lg">
@@ -70,9 +197,20 @@ export default function Profile() {
                         Username
                       </Text>
                     </HStack>
-                    <Text fontWeight="600" color="gray.900" fontSize="sm">
-                      {user.username || 'Not set'}
-                    </Text>
+                    {isEditing ? (
+                      <Input
+                        value={formData.username}
+                        onChange={(e) => handleInputChange('username', e.target.value)}
+                        type="text"
+                        placeholder="Username"
+                        size="sm"
+                        borderRadius="md"
+                      />
+                    ) : (
+                      <Text fontWeight="600" color="gray.900" fontSize="sm">
+                        {user.username || 'Not set'}
+                      </Text>
+                    )}
                   </Box>
 
                   <Box bg="white" border="1px" borderColor="gray.100" p={4} borderRadius="lg">
@@ -82,9 +220,20 @@ export default function Profile() {
                         Zipcode
                       </Text>
                     </HStack>
-                    <Text fontWeight="600" color="gray.900" fontSize="sm">
-                      {user.zipcode}
-                    </Text>
+                    {isEditing ? (
+                      <Input
+                        value={formData.zipcode}
+                        onChange={(e) => handleInputChange('zipcode', e.target.value)}
+                        type="text"
+                        placeholder="Zipcode"
+                        size="sm"
+                        borderRadius="md"
+                      />
+                    ) : (
+                      <Text fontWeight="600" color="gray.900" fontSize="sm">
+                        {user.zipcode}
+                      </Text>
+                    )}
                   </Box>
 
                   <Box bg="white" border="1px" borderColor="gray.100" p={4} borderRadius="lg">

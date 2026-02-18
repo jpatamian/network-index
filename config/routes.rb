@@ -18,7 +18,7 @@ Rails.application.routes.draw do
       get 'auth/me', to: 'authentication#me'
 
       # User routes
-      resources :users, only: [:index, :show]
+      resources :users, only: [:index, :show, :update]
 
       # Post routes
       resources :posts do

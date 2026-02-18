@@ -84,9 +84,7 @@ describe('Layout Component', () => {
       </TestWrapper>
     )
 
-    expect(
-      screen.getByText('testuser', { selector: 'p' })
-    ).toBeInTheDocument()
+    expect(screen.getByText('testuser')).toBeInTheDocument()
   })
 
   it('calls logout when logout button is clicked', () => {

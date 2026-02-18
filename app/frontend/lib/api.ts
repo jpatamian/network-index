@@ -7,9 +7,9 @@ interface ApiOptions extends RequestInit {
 export async function apiRequest(endpoint: string, options: ApiOptions = {}) {
   const { token, ...fetchOptions } = options
 
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...fetchOptions.headers,
+    ...(typeof fetchOptions.headers === 'object' && !Array.isArray(fetchOptions.headers) ? fetchOptions.headers : {}),
   }
 
   if (token) {
@@ -108,6 +108,16 @@ export const commentsApi = {
   delete: (postId: number, commentId: number, token: string) => {
     return apiRequest(`/posts/${postId}/comments/${commentId}`, {
       method: 'DELETE',
+      token,
+    })
+  },
+}
+
+export const usersApi = {
+  update: (userId: number, userData: { username?: string; email?: string; zipcode?: string }, token: string) => {
+    return apiRequest(`/users/${userId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ user: userData }),
       token,
     })
   },
