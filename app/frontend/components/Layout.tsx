@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { FaHome } from 'react-icons/fa'
 import { useAuth } from '@/hooks/useAuth'
-
+import { GiEyeShield } from "react-icons/gi";
 export default function Layout() {
   const { user, logout, isLoading, isAuthenticated } = useAuth()
 
@@ -29,11 +29,12 @@ export default function Layout() {
             {/* Logo */}
             <Box as="button" onClick={() => handleNavigation('/')} _hover={{ opacity: 0.8 }} transition="all 0.2s" bg="none" border="none" cursor="pointer" p={0}>
               <HStack gap={3}>
-                <Box fontSize="2xl" color="teal.600">
+                <Box display="flex" gap={1} fontSize="2xl" color="teal.600">
                   <Icon as={FaHome} />
+                  <Icon as={GiEyeShield} />
                 </Box>
                 <Heading color="gray.900" size="lg" fontWeight="700" letterSpacing="tight">
-                  Mutual Aid
+                  Mutual Aid Club
                 </Heading>
               </HStack>
             </Box>
