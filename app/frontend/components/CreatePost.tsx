@@ -87,7 +87,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
               bg="transparent"
               _placeholder={{ color: 'gray.500' }}
               _focus={{ outline: 'none' }}
-              pointer-events="none"
+              pointerEvents="none"
               fontSize="sm"
               color="gray.600"
             />
