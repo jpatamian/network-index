@@ -17,8 +17,8 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Vite application bundle %>
-    <script type="module" src="<%= asset_path 'application.js' %>"></script>
+    <%= vite_client_tag %>
+    <%= vite_javascript_tag 'application' %>
 
   </head>
 

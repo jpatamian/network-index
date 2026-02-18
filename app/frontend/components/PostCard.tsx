@@ -97,7 +97,7 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
           </Text>
 
           {/* Comment Section */}
-          <Box pt={4} borderTopWidth="1px" borderColor="gray.100" w="100%">
+          <Box pt={2} borderTopWidth="1px" borderColor="gray.100" w="100%">
             <CommentSection postId={post.id} commentCount={post.comment_count} />
           </Box>
         </VStack>

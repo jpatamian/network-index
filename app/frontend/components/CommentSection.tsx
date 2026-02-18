@@ -1,4 +1,16 @@
 import { useState } from 'react'
+import {
+  Box,
+  VStack,
+  HStack,
+  Button,
+  Input,
+  Text,
+  Avatar,
+  Alert,
+  Spinner,
+  Flex,
+} from '@chakra-ui/react'
 import { useAuth } from '@/hooks/useAuth'
 import { commentsApi } from '@/lib/api'
 import { Comment } from '@/types/post'
@@ -79,72 +91,114 @@ export default function CommentSection({ postId, commentCount }: CommentSectionP
   }
 
   return (
-    <div className="border-t border-gray-200 mt-4 pt-3">
-      <button
+    <Box borderTop="1px" borderColor="gray.200" mt={4} pt={4}>
+      <Button
         onClick={handleExpand}
-        className="text-sm text-gray-500 hover:text-indigo-600 font-medium"
+        variant="ghost"
+        size="sm"
+        fontWeight="600"
+        color="gray.600"
+        _hover={{ color: 'teal.600' }}
       >
-        {isExpanded ? 'Hide Comments' : `Comments (${count})`}
-      </button>
+        {isExpanded ? '▼ Hide Comments' : `▶ Comments (${count})`}
+      </Button>
 
       {isExpanded && (
-        <div className="mt-3 space-y-3">
-          {loading && <p className="text-sm text-gray-400">Loading comments...</p>}
-
+        <VStack gap={4} mt={4}>
           {error && (
-            <div className="rounded-md bg-red-50 p-2">
-              <p className="text-xs text-red-800">{error}</p>
-            </div>
+            <Alert.Root status="error" borderRadius="md" fontSize="sm">
+              {error}
+            </Alert.Root>
+          )}
+
+          {loading && (
+            <Flex justify="center" w="full">
+              <Spinner color="teal.600" size="sm" />
+            </Flex>
           )}
 
           {!loading && comments.length === 0 && (
-            <p className="text-sm text-gray-400">No comments yet.</p>
+            <Text fontSize="sm" color="gray.400" w="full" textAlign="center">
+              No comments yet. Be the first to share your thoughts!
+            </Text>
           )}
 
           {comments.map((comment) => (
-            <div key={comment.id} className="flex justify-between items-start bg-gray-50 rounded-md p-3">
-              <div>
-                <p className="text-sm text-gray-800">{comment.message}</p>
-                <p className="text-xs text-gray-400 mt-1">
-                  {comment.author.name} &middot; {formatDate(comment.created_at)}
-                </p>
-              </div>
-              {user?.id === comment.author.id && (
-                <button
-                  onClick={() => handleDelete(comment.id)}
-                  className="text-xs text-red-500 hover:text-red-700 ml-2 shrink-0"
-                >
-                  Delete
-                </button>
-              )}
-            </div>
+            <Box key={comment.id} w="full">
+              <HStack gap={3} align="flex-start">
+                <Avatar.Root size="sm">
+                  <Avatar.Image />
+                  <Avatar.Fallback bg="teal.600" color="white" fontWeight="bold">
+                    {comment.author.name.charAt(0).toUpperCase()}
+                  </Avatar.Fallback>
+                </Avatar.Root>
+                <Box flex={1} minW={0}>
+                  <Flex justify="space-between" align="flex-start">
+                    <Box>
+                      <Text fontSize="sm" fontWeight="600" color="gray.900">
+                        {comment.author.name}
+                      </Text>
+                      <Text fontSize="xs" color="gray.500">
+                        {formatDate(comment.created_at)}
+                      </Text>
+                    </Box>
+                    {user?.id === comment.author.id && (
+                      <Button
+                        onClick={() => handleDelete(comment.id)}
+                        size="xs"
+                        variant="ghost"
+                        color="red.500"
+                        fontWeight="500"
+                        _hover={{ bg: 'red.50' }}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </Flex>
+                  <Text fontSize="sm" color="gray.700" mt={2}>
+                    {comment.message}
+                  </Text>
+                </Box>
+              </HStack>
+            </Box>
           ))}
 
           {isAuthenticated ? (
-            <form onSubmit={handleSubmit} className="flex gap-2">
-              <input
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Add a comment..."
-                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                required
-              />
-              <button
-                type="submit"
-                disabled={submitting || !message.trim()}
-                className="px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-400"
-              >
-                {submitting ? '...' : 'Post'}
-              </button>
-            </form>
+            <Box as="form" onSubmit={handleSubmit} w="full">
+              <VStack gap={2} align="stretch">
+                <HStack gap={2} align="flex-end">
+                  <Input
+                    type="text"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Share your thoughts..."
+                    size="sm"
+                    borderRadius="md"
+                    required
+                  />
+                  <Button
+                    type="submit"
+                    disabled={submitting || !message.trim()}
+                    size="sm"
+                    bg="teal.600"
+                    color="white"
+                    fontWeight="600"
+                    _hover={{ bg: 'teal.700' }}
+                    _disabled={{ bg: 'gray.300', cursor: 'not-allowed' }}
+                    minW="70px"
+                  >
+                    {submitting ? <Spinner size="xs" /> : 'Post'}
+                  </Button>
+                </HStack>
+              </VStack>
+            </Box>
           ) : (
-            <p className="text-xs text-gray-400">
-              Sign in to leave a comment.
-            </p>
+            <Text fontSize="xs" color="gray.500" fontStyle="italic" w="full" textAlign="center">
+              Sign in to leave a comment
+            </Text>
           )}
-        </div>
+        </VStack>
       )}
-    </div>
+    </Box>
   )
 }
