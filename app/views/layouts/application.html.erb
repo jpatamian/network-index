@@ -17,13 +17,12 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    
     <%# Only include Vite client in development for HMR %>
     <% if Rails.env.development? %>
       <%= vite_client_tag %>
     <% end %>
 
-    <%= vite_typescript_tag 'application' %>
+    <%= vite_javascript_tag 'application' %>
 
   </head>
 
