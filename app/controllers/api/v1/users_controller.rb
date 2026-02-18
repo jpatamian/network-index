@@ -1,5 +1,6 @@
 class Api::V1::UsersController < Api::BaseController
   include Authenticable
+  include ResponseSerializable
 
   skip_before_action :verify_authenticity_token
   skip_before_action :authorize_request, only: [:index, :show]
@@ -41,17 +42,5 @@ class Api::V1::UsersController < Api::BaseController
 
   def user_params
     params.require(:user).permit(:username, :email, :zipcode)
-  end
-
-  def user_response(user)
-    {
-      id: user.id,
-      email: user.email,
-      phone: user.phone,
-      username: user.username,
-      zipcode: user.zipcode,
-      anonymous: user.anonymous,
-      created_at: user.created_at
-    }
   end
 end

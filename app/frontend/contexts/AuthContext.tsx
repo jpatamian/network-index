@@ -1,15 +1,6 @@
 import { createContext, useState, useEffect, ReactNode } from 'react'
 import { authApi } from '@/lib/api'
-
-interface User {
-  id: number
-  email: string | null
-  phone: string | null
-  username: string | null
-  zipcode: string
-  anonymous: boolean
-  created_at: string
-}
+import { User } from '@/types/user'
 
 interface AuthContextType {
   user: User | null

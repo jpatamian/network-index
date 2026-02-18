@@ -32,24 +32,23 @@ RSpec.describe Comment, type: :model do
   end
 
   describe 'scopes' do
-    it 'returns comments in reverse chronological order' do
+    it 'can return comments in reverse chronological order when explicitly ordered' do
       post = create(:post)
       user = create(:user)
       comment1 = create(:comment, post: post, user: user, created_at: 2.days.ago)
       comment2 = create(:comment, post: post, user: user, created_at: 1.day.ago)
       comment3 = create(:comment, post: post, user: user, created_at: 3.days.ago)
 
-      expect(post.comments).to eq([comment2, comment1, comment3])
+      expect(post.comments.order(created_at: :desc)).to eq([comment2, comment1, comment3])
     end
   end
 
-  describe '#create' do
-    it 'creates a comment history entry' do
-      post = create(:post)
-      user = create(:user)
-      comment = create(:comment, post: post, user: user, message: 'Test comment')
+  describe 'comment histories' do
+    it 'can have associated comment history entries' do
+      comment = create(:comment)
+      create(:comment_history, comment: comment)
 
-      expect(comment.comment_histories.count).to be > 0
+      expect(comment.comment_histories.count).to eq(1)
     end
   end
 

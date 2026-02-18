@@ -12,9 +12,19 @@ export default defineConfig({
     },
   },
   build: {
+    sourcemap: false,
     rollupOptions: {
       input: {
         application: path.resolve(__dirname, "app/frontend/entrypoints/application.tsx"),
+      },
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined
+          if (id.includes('@chakra-ui') || id.includes('@emotion') || id.includes('framer-motion')) {
+            return 'ui-vendor'
+          }
+          return undefined
+        },
       },
     },
   },

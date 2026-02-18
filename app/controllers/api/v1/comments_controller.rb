@@ -1,5 +1,6 @@
 class Api::V1::CommentsController < Api::BaseController
   include Authenticable
+  include ResponseSerializable
 
   skip_before_action :verify_authenticity_token
   skip_before_action :authorize_request, only: [:index]
@@ -53,18 +54,5 @@ class Api::V1::CommentsController < Api::BaseController
 
   def comment_params
     params.require(:comment).permit(:message)
-  end
-
-  def comment_response(comment)
-    {
-      id: comment.id,
-      message: comment.message,
-      author: {
-        id: comment.user.id,
-        name: comment.user.username || comment.user.email || 'Anonymous User',
-        username: comment.user.username
-      },
-      created_at: comment.created_at
-    }
   end
 end

@@ -2,15 +2,10 @@
  * Neighborhood navigation utilities
  * Handles user navigation for neighborhood-related actions
  */
-
-interface User {
-  zipcode?: string
-  username?: string
-  email?: string
-}
+import { NeighborhoodUser } from '@/types/user'
 
 export const neighborhoodActions = {
-  browseFeed: (user: User) => {
+  browseFeed: (user: NeighborhoodUser) => {
     if (user.zipcode) {
       window.location.href = `/posts?zipcode=${encodeURIComponent(user.zipcode)}`
     } else {
@@ -22,7 +17,7 @@ export const neighborhoodActions = {
     window.location.href = '/posts/new'
   },
 
-  searchNeighborhood: (user: User) => {
+  searchNeighborhood: (user: NeighborhoodUser) => {
     if (user.zipcode) {
       window.location.href = `/posts?zipcode=${encodeURIComponent(user.zipcode)}`
     }

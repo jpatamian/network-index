@@ -1,4 +1,6 @@
 class Api::V1::AuthenticationController < Api::BaseController
+  include ResponseSerializable
+
   skip_before_action :verify_authenticity_token
 
   # POST /api/v1/auth/signup
@@ -62,17 +64,5 @@ class Api::V1::AuthenticationController < Api::BaseController
 
   def login_params
     params.require(:user).permit(:email, :password)
-  end
-
-  def user_response(user)
-    {
-      id: user.id,
-      email: user.email,
-      phone: user.phone,
-      username: user.username,
-      zipcode: user.zipcode,
-      anonymous: user.anonymous,
-      created_at: user.created_at
-    }
   end
 end

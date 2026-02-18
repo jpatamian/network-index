@@ -1,5 +1,6 @@
 class Api::V1::PostsController < Api::BaseController
   include Authenticable
+  include ResponseSerializable
 
   skip_before_action :verify_authenticity_token
   skip_before_action :authorize_request, only: [:index, :show, :create]
@@ -91,22 +92,5 @@ class Api::V1::PostsController < Api::BaseController
 
   def post_params
     params.require(:post).permit(:title, :content)
-  end
-
-  def post_response(post)
-    {
-      id: post.id,
-      title: post.title,
-      content: post.content,
-      author: {
-        id: post.user.id,
-        name: post.author_name,
-        username: post.user.username,
-        email: post.user.email
-      },
-      comment_count: post.comments.size,
-      created_at: post.created_at,
-      updated_at: post.updated_at
-    }
   end
 end

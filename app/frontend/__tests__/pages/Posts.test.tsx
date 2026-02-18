@@ -99,6 +99,9 @@ describe('Posts Page', () => {
       </TestWrapper>
     )
 
+    await screen.findByPlaceholderText('Enter zipcode')
+    await screen.findByPlaceholderText('Try "rides to market"')
+
     fireEvent.change(screen.getByPlaceholderText('Enter zipcode'), {
       target: { value: '94110' },
     })
