@@ -64,8 +64,18 @@ export const postsApi = {
     return apiRequest(url)
   },
 
+  getMine: (token: string) => {
+    return apiRequest('/posts/my_posts', {
+      token,
+    })
+  },
+
   getById: (id: number) => {
     return apiRequest(`/posts/${id}`)
+  },
+
+  getByUser: (userId: number) => {
+    return apiRequest(`/users/${userId}/posts`)
   },
 
   create: (postData: { title: string; content: string; zipcode?: string }, token?: string | null) => {

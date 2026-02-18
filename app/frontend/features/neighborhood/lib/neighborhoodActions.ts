@@ -19,7 +19,7 @@ export const neighborhoodActions = {
   },
 
   createPost: () => {
-    window.location.href = '/posts#create'
+    window.location.href = '/posts/new'
   },
 
   searchNeighborhood: (user: User) => {
@@ -29,8 +29,9 @@ export const neighborhoodActions = {
   },
 
   viewMyPosts: () => {
-    window.location.href = '/posts?my_posts=true'
+    window.location.href = '/posts?filter=mine'
   },
+
 
   updateProfile: () => {
     window.location.href = '/profile'

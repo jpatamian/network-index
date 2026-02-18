@@ -73,4 +73,14 @@ describe('CreatePost Component', () => {
 
     expect(document.body).toBeInTheDocument()
   })
+
+  it('shows expanded form when forceExpanded is true', () => {
+    render(
+      <TestWrapper>
+        <CreatePost onPostCreated={mockOnPostCreated} forceExpanded />
+      </TestWrapper>
+    )
+
+    expect(screen.getByPlaceholderText('Post title')).toBeInTheDocument()
+  })
 })

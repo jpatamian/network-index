@@ -13,6 +13,7 @@ import {
   Button,
 } from '@chakra-ui/react'
 import { postsApi } from '@/lib/api'
+import { useAuth } from '@/hooks/useAuth'
 import { Post } from '@/types/post'
 import PostCard from '@/features/posts/components/PostCard'
 import CreatePost from '@/features/posts/components/CreatePost'
@@ -20,32 +21,74 @@ import CreatePost from '@/features/posts/components/CreatePost'
 export default function Posts() {
   const [searchParams] = useSearchParams()
   const zipcode = searchParams.get('zipcode')
+  const filter = searchParams.get('filter')
+  const viewingMine = filter === 'mine'
+  const { token, isAuthenticated, isLoading } = useAuth()
   
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    loadPosts()
-  }, [zipcode])
+  const hasFilter = Boolean(zipcode) || viewingMine
+  const pageTitle = viewingMine ? 'My Posts' : 'Community Feed'
+  const subtitle = viewingMine
+    ? 'Posts you have shared with neighbors. Keep the community updated.'
+    : zipcode
+      ? `Posts from your neighborhood (${zipcode}). Share what you need, offer what you can.`
+      : 'Share what you need, offer what you can. Let\'s build together.'
+  const clearFilterLabel = viewingMine ? 'View all posts' : '✕ Clear location filter'
 
-  const loadPosts = async () => {
-    try {
-      const data = await postsApi.getAll(zipcode)
-      setPosts(data)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load posts')
-    } finally {
-      setLoading(false)
+  useEffect(() => {
+    let isMounted = true
+
+    const fetchPosts = async () => {
+      if (viewingMine && isLoading) {
+        return
+      }
+
+      setLoading(true)
+      setError('')
+
+      try {
+        let data: Post[]
+
+        if (viewingMine) {
+          if (!isAuthenticated || !token) {
+            throw new Error('Sign in to view your posts.')
+          }
+          data = await postsApi.getMine(token)
+        } else {
+          data = await postsApi.getAll(zipcode)
+        }
+
+        if (isMounted) {
+          setPosts(data)
+        }
+      } catch (err) {
+        if (isMounted) {
+          setPosts([])
+          setError(err instanceof Error ? err.message : 'Failed to load posts')
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
     }
-  }
+
+    fetchPosts()
+
+    return () => {
+      isMounted = false
+    }
+  }, [zipcode, viewingMine, token, isAuthenticated, isLoading])
 
   const handlePostCreated = (newPost: Post) => {
-    setPosts([newPost, ...posts])
+    setPosts((prev) => [newPost, ...prev])
   }
 
   const handlePostDeleted = (id: number) => {
-    setPosts(posts.filter((post) => post.id !== id))
+    setPosts((prev) => prev.filter((post) => post.id !== id))
   }
 
   const handleClearFilter = () => {
@@ -87,24 +130,31 @@ export default function Posts() {
                 color="gray.900"
                 fontWeight="700"
               >
-                Community Feed
+                {pageTitle}
               </Heading>
-              {zipcode && (
+              {viewingMine ? (
                 <Badge bg="teal.50" color="teal.700" fontWeight="600" px={3} py={1.5} borderRadius="full">
                   <HStack gap={1} fontSize="sm">
-                    <span>📍</span>
-                    <Text>{zipcode}</Text>
+                    <span>🙋</span>
+                    <Text>My posts</Text>
                   </HStack>
                 </Badge>
+              ) : (
+                zipcode && (
+                  <Badge bg="teal.50" color="teal.700" fontWeight="600" px={3} py={1.5} borderRadius="full">
+                    <HStack gap={1} fontSize="sm">
+                      <span>📍</span>
+                      <Text>{zipcode}</Text>
+                    </HStack>
+                  </Badge>
+                )
               )}
             </HStack>
             <Stack gap={3}>
               <Text fontSize="lg" color="gray.600" lineHeight="1.6">
-                {zipcode
-                  ? `Posts from your neighborhood (${zipcode}). Share what you need, offer what you can.`
-                  : 'Share what you need, offer what you can. Let\'s build together.'}
+                {subtitle}
               </Text>
-              {zipcode && (
+              {hasFilter && (
                 <Button
                   onClick={handleClearFilter}
                   variant="ghost"
@@ -114,7 +164,7 @@ export default function Posts() {
                   w="fit-content"
                   _hover={{ bg: 'teal.50' }}
                 >
-                  ✕ Clear location filter
+                  {clearFilterLabel}
                 </Button>
               )}
             </Stack>

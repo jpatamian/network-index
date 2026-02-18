@@ -18,9 +18,15 @@ import { Post } from '@/types/post'
 
 interface CreatePostProps {
   onPostCreated: (post: Post) => void
+  forceExpanded?: boolean
+  onCancel?: () => void
 }
 
-export default function CreatePost({ onPostCreated }: CreatePostProps) {
+export default function CreatePost({
+  onPostCreated,
+  forceExpanded = false,
+  onCancel,
+}: CreatePostProps) {
   const { token, isAuthenticated, user } = useAuth()
   const [isExpanded, setIsExpanded] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -31,6 +37,8 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
     content: '',
     zipcode: '',
   })
+
+  const isFormVisible = forceExpanded || isExpanded
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -56,7 +64,9 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
       const response = await postsApi.create(postData, token)
       onPostCreated(response)
       setFormData({ title: '', content: '', zipcode: '' })
-      setIsExpanded(false)
+      if (!forceExpanded) {
+        setIsExpanded(false)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create post')
     } finally {
@@ -64,7 +74,18 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
     }
   }
 
-  if (!isExpanded) {
+  const handleCancel = () => {
+    setFormData({ title: '', content: '', zipcode: '' })
+    setError('')
+
+    if (forceExpanded) {
+      onCancel?.()
+    } else {
+      setIsExpanded(false)
+    }
+  }
+
+  if (!isFormVisible) {
     return (
       <Card.Root borderRadius="lg" boxShadow="sm" mb={6} borderWidth="1px" borderColor="gray.100" bg="white">
         <Card.Body p={4}>
@@ -199,11 +220,7 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
               <HStack justify="flex-end" gap={3}>
                 <Button
                   type="button"
-                  onClick={() => {
-                    setIsExpanded(false)
-                    setFormData({ title: '', content: '', zipcode: '' })
-                    setError('')
-                  }}
+                  onClick={handleCancel}
                   variant="outline"
                   borderRadius="lg"
                   _hover={{ bg: 'gray.50' }}
