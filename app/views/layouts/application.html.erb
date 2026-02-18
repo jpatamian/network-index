@@ -22,9 +22,8 @@
     <% if Rails.env.development? %>
       <%= vite_client_tag %>
     <% end %>
-    
-    <%# Vite entrypoint for React app with Tailwind CSS %>
-    <%= vite_javascript_tag 'application' %>
+
+    <%= vite_typescript_tag 'application' %>
 
   </head>
 
