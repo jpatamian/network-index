@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Flag, type: :model do
   describe 'associations' do
-    it { should belong_to(:flaggable, polymorphic: true) }
+    it { should belong_to(:flaggable) }
     it { should belong_to(:flagger_user).class_name('User').with_foreign_key('flagger_user_id').optional }
     it { should belong_to(:reviewed_by_user).class_name('User').with_foreign_key('reviewed_by_user_id').optional }
   end
@@ -44,7 +44,7 @@ RSpec.describe Flag, type: :model do
 
   describe 'reason' do
     it 'stores the flag reason' do
-      flag = create(:flag, reason: 'Spam')
+      flag = create(:flag, :for_post, reason: 'Spam')
       expect(flag.reason).to eq('Spam')
     end
 

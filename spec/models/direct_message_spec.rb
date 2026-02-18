@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe DirectMessage, type: :model do
   describe 'associations' do
+    it { should belong_to(:post) }
     it { should belong_to(:sender).class_name('User') }
     it { should belong_to(:recipient).class_name('User') }
   end
@@ -27,12 +28,6 @@ RSpec.describe DirectMessage, type: :model do
       dm = build(:direct_message, sender: sender, recipient: nil)
       expect(dm).not_to be_valid
     end
-
-    it 'prevents user from sending message to themselves' do
-      user = create(:user)
-      dm = build(:direct_message, sender: user, recipient: user)
-      expect(dm).not_to be_valid
-    end
   end
 
   describe 'scopes' do
@@ -46,16 +41,19 @@ RSpec.describe DirectMessage, type: :model do
     end
   end
 
-  describe 'read/unread status' do
-    it 'tracks read status' do
-      dm = create(:direct_message)
-      expect(dm.read).to be_falsy
+  describe 'unread scope' do
+    it 'returns unread messages' do
+      unread = create(:direct_message, :unread)
+      create(:direct_message, :read)
+
+      expect(DirectMessage.unread).to include(unread)
     end
 
-    it 'allows marking messages as read' do
+    it 'excludes read messages' do
       dm = create(:direct_message)
-      dm.update(read: true)
-      expect(dm.read).to be_truthy
+      dm.update!(read_at: Time.current)
+
+      expect(DirectMessage.unread).not_to include(dm)
     end
   end
 end

@@ -4,7 +4,8 @@ RSpec.describe Post, type: :model do
   describe 'associations' do
     it { should belong_to(:user) }
     it { should have_many(:comments).dependent(:destroy) }
-    it { should have_many(:ratings).dependent(:destroy) }
+    it { should have_many(:direct_messages).dependent(:destroy) }
+    it { should have_many(:ratings).dependent(:nullify) }
     it { should have_many(:flags).dependent(:destroy) }
   end
 
@@ -43,7 +44,7 @@ RSpec.describe Post, type: :model do
       post2 = create(:post, user: user, created_at: 1.day.ago)
       post3 = create(:post, user: user, created_at: 3.days.ago)
 
-      expect(Post.all).to eq([post2, post1, post3])
+      expect(Post.recent).to eq([post2, post1, post3])
     end
   end
 
@@ -55,11 +56,12 @@ RSpec.describe Post, type: :model do
       expect { post.destroy }.to change(Comment, :count).by(-1)
     end
 
-    it 'destroys associated ratings' do
+    it 'nullifies associated ratings post reference' do
       post = create(:post)
       create(:rating, post: post)
 
-      expect { post.destroy }.to change(Rating, :count).by(-1)
+      expect { post.destroy }.not_to change(Rating, :count)
+      expect(Rating.last.post_id).to be_nil
     end
 
     it 'destroys associated flags' do

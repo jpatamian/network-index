@@ -7,13 +7,11 @@ interface ApiOptions extends RequestInit {
 export async function apiRequest(endpoint: string, options: ApiOptions = {}) {
   const { token, ...fetchOptions } = options
 
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(typeof fetchOptions.headers === 'object' && !Array.isArray(fetchOptions.headers) ? fetchOptions.headers : {}),
-  }
+  const headers = new Headers(fetchOptions.headers)
+  headers.set('Content-Type', 'application/json')
 
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`
+    headers.set('Authorization', `Bearer ${token}`)
   }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
