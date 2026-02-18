@@ -17,8 +17,12 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Vite client for HMR in development %>
-    <%= vite_client_tag %>
+    
+    <%# Only include Vite client in development for HMR %>
+    <% if Rails.env.development? %>
+      <%= vite_client_tag %>
+    <% end %>
+    
     <%# Vite entrypoint for React app with Tailwind CSS %>
     <%= vite_javascript_tag 'application' %>
 
