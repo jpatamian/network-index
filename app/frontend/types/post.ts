@@ -33,3 +33,7 @@ export interface UpdatePostData {
   title?: string
   content?: string
 }
+
+export interface PostInputProps {
+  setIsExpanded: (expanded: boolean) => void
+}

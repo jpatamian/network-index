@@ -15,6 +15,7 @@ import { FaUser, FaPen, FaInfoCircle, FaExclamationCircle } from 'react-icons/fa
 import { useAuth } from '@/hooks/useAuth'
 import { postsApi } from '@/lib/api'
 import { Post } from '@/types/post'
+import { PostInput } from './PostInput'
 
 interface CreatePostProps {
   onPostCreated: (post: Post) => void
@@ -87,39 +88,12 @@ export default function CreatePost({
 
   if (!isFormVisible) {
     return (
-      <Card.Root borderRadius="lg" boxShadow="sm" mb={6} borderWidth="1px" borderColor="gray.100" bg="white">
-        <Card.Body p={4}>
-          <HStack
-            gap={3}
-            onClick={() => setIsExpanded(true)}
-            cursor="pointer"
-            p={3}
-            bg="gray.50"
-            borderRadius="lg"
-            _hover={{ bg: 'gray.100' }}
-            transition="all 0.2s"
-          >
-            <Box fontSize="lg" color="teal.600">
-              <Icon as={FaUser} />
-            </Box>
-            <Input
-              placeholder={isAuthenticated ? `What's on your mind, ${user?.username || 'friend'}?` : "What's on your mind?"}
-              border="none"
-              bg="transparent"
-              _placeholder={{ color: 'gray.500' }}
-              _focus={{ outline: 'none' }}
-              pointerEvents="none"
-              fontSize="sm"
-              color="gray.600"
-            />
-          </HStack>
-        </Card.Body>
-      </Card.Root>
+      <PostInput setIsExpanded={setIsExpanded} />
     )
   }
 
   return (
-    <Card.Root borderRadius="lg" boxShadow="sm" mb={6} borderWidth="1px" borderColor="gray.100" bg="white">
+    <Card.Root borderRadius="lg" boxShadow="sm" mb={6} borderWidth="1px" borderColor="border.subtle" bg="bg">
       <Card.Body p={6}>
         <VStack align="stretch" gap={4}>
           {/* Header */}
@@ -127,7 +101,7 @@ export default function CreatePost({
             <Box fontSize="lg" color="teal.600">
               <Icon as={FaPen} />
             </Box>
-            <Heading size="md" color="gray.900" fontWeight="700">
+            <Heading size="md" color="fg" fontWeight="700">
               {isAuthenticated ? 'Share with Your Community' : 'Post Anonymously'}
             </Heading>
           </HStack>
@@ -182,7 +156,7 @@ export default function CreatePost({
                   value={formData.zipcode}
                   onChange={(e) => setFormData({ ...formData, zipcode: e.target.value })}
                   borderRadius="lg"
-                  borderColor="gray.200"
+                  borderColor="border"
                   _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
                   required
                 />
@@ -223,7 +197,7 @@ export default function CreatePost({
                   onClick={handleCancel}
                   variant="outline"
                   borderRadius="lg"
-                  _hover={{ bg: 'gray.50' }}
+                  _hover={{ bg: 'bg.subtle' }}
                 >
                   Cancel
                 </Button>

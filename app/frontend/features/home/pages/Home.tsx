@@ -20,10 +20,10 @@ export default function Home() {
     <Box>
       {/* Hero Section */}
       <Box
-        bg="white"
+        bg="bg"
         py={{ base: 12, md: 16 }}
         borderBottomWidth="1px"
-        borderColor="gray.100"
+        borderColor="border.subtle"
       >
         <Container maxW="7xl">
           <Center mb={8}>
@@ -32,14 +32,14 @@ export default function Home() {
                   as="h1"
                   size="2xl"
                   fontWeight="700"
-                  color="gray.900"
+                  color="fg"
                   lineHeight="1.2"
                 >
                   {isAuthenticated
                     ? `Welcome back, ${user?.username || user?.email}!`
                     : 'Your Neighborhood, Connected'}
                 </Heading>
-                <Text fontSize="lg" color="gray.600" lineHeight={1.6}>
+                <Text fontSize="lg" color="fg.muted" lineHeight={1.6}>
                   {isAuthenticated
                     ? 'Connect with neighbors to share resources, ask for help, and build community.'
                     : 'Share resources, ask for help, and build genuine connections with neighbors near you.'}
@@ -71,9 +71,9 @@ export default function Home() {
                 size="lg"
                 fontWeight="600"
                 borderRadius="md"
-                borderColor="gray.300"
-                color="gray.700"
-                _hover={{ bg: 'gray.50', transform: 'translateY(-1px)', boxShadow: 'md' }}
+                borderColor="border"
+                color="fg"
+                _hover={{ bg: 'bg.subtle', transform: 'translateY(-1px)', boxShadow: 'md' }}
                 transition="all 0.2s"
               >
                 Sign In

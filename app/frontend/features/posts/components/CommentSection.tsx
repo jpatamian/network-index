@@ -82,13 +82,13 @@ export default function CommentSection({ postId, commentCount }: CommentSectionP
   }
 
   return (
-    <Box borderTop="1px" borderColor="gray.200" mt={4} pt={4}>
+    <Box borderTop="1px" borderColor="border" mt={4} pt={4}>
       <Button
         onClick={handleExpand}
         variant="ghost"
         size="sm"
         fontWeight="600"
-        color="gray.600"
+        color="fg.muted"
         _hover={{ color: 'teal.600' }}
       >
         {isExpanded ? '▼ Hide Comments' : `▶ Comments (${count})`}
@@ -109,7 +109,7 @@ export default function CommentSection({ postId, commentCount }: CommentSectionP
           )}
 
           {!loading && comments.length === 0 && (
-            <Text fontSize="sm" color="gray.400" w="full" textAlign="center">
+            <Text fontSize="sm" color="fg.subtle" w="full" textAlign="center">
               No comments yet. Be the first to share your thoughts!
             </Text>
           )}
@@ -126,10 +126,10 @@ export default function CommentSection({ postId, commentCount }: CommentSectionP
                 <Box flex={1} minW={0}>
                   <Flex justify="space-between" align="flex-start">
                     <Box>
-                      <Text fontSize="sm" fontWeight="600" color="gray.900">
+                      <Text fontSize="sm" fontWeight="600" color="fg">
                         {comment.author.name}
                       </Text>
-                      <Text fontSize="xs" color="gray.500">
+                      <Text fontSize="xs" color="fg.subtle">
                         {formatDate(comment.created_at, {
                           month: 'short',
                           day: 'numeric',
@@ -151,7 +151,7 @@ export default function CommentSection({ postId, commentCount }: CommentSectionP
                       </Button>
                     )}
                   </Flex>
-                  <Text fontSize="sm" color="gray.700" mt={2}>
+                  <Text fontSize="sm" color="fg" mt={2}>
                     {comment.message}
                   </Text>
                 </Box>
@@ -189,7 +189,7 @@ export default function CommentSection({ postId, commentCount }: CommentSectionP
               </VStack>
             </Box>
           ) : (
-            <Text fontSize="xs" color="gray.500" fontStyle="italic" w="full" textAlign="center">
+            <Text fontSize="xs" color="fg.subtle" fontStyle="italic" w="full" textAlign="center">
               Sign in to leave a comment
             </Text>
           )}

@@ -22,7 +22,7 @@ export default function CreatePostPage() {
   }
 
   return (
-    <Box bg="gray.50" minH="100vh" py={{ base: 10, md: 16 }}>
+    <Box bg="bg.subtle" minH="100vh" py={{ base: 10, md: 16 }}>
       <Container maxW="3xl">
         <Stack gap={8}>
           <Button
@@ -38,17 +38,17 @@ export default function CreatePostPage() {
             Back to feed
           </Button>
 
-          <Box bg="white" borderRadius="lg" p={{ base: 6, md: 8 }} borderWidth="1px" borderColor="gray.100" boxShadow="sm">
+          <Box bg="bg" borderRadius="lg" p={{ base: 6, md: 8 }} borderWidth="1px" borderColor="border.subtle" boxShadow="sm">
             <Stack gap={4}>
               <HStack gap={3}>
                 <Box color="teal.600" fontSize="2xl">
                   <Icon as={FaPen} />
                 </Box>
-                <Heading size="lg" color="gray.900" fontWeight="700">
+                <Heading size="lg" color="fg" fontWeight="700">
                   Share something new
                 </Heading>
               </HStack>
-              <Text color="gray.600" lineHeight="1.6">
+              <Text color="fg.muted" lineHeight="1.6">
                 Start a conversation, ask for support, or offer help to your neighborhood. Posts shared here will appear in the community feed.
               </Text>
             </Stack>

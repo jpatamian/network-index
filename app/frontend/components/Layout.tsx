@@ -25,7 +25,7 @@ export default function Layout() {
   return (
     <Flex direction="column" minH="100vh">
       {/* Navigation */}
-      <Box as="nav" bg="white" boxShadow="sm" borderBottomWidth="1px" borderColor="gray.100">
+      <Box as="nav" bg="bg" boxShadow="sm" borderBottomWidth="1px" borderColor="border.subtle">
         <Container maxW="7xl">
           <Flex justify="space-between" align="center" h={16}>
             {/* Logo */}
@@ -35,7 +35,7 @@ export default function Layout() {
                   <Icon as={FaHome} />
                   <Icon as={GiEyeShield} />
                 </Box>
-                <Heading color="gray.900" size="lg" fontWeight="700" letterSpacing="tight">
+                <Heading color="fg" size="lg" fontWeight="700" letterSpacing="tight">
                   Mutual Aid Club
                 </Heading>
               </HStack>
@@ -43,10 +43,10 @@ export default function Layout() {
 
             {/* Navigation Links */}
             <HStack gap={6}>
-              <Button onClick={() => handleNavigation('/')} variant="ghost" color="gray.700" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
+              <Button onClick={() => handleNavigation('/')} variant="ghost" color="fg" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
                 Home
               </Button>
-              <Button onClick={() => handleNavigation('/posts')} variant="ghost" color="gray.700" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
+              <Button onClick={() => handleNavigation('/posts')} variant="ghost" color="fg" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
                 Posts
               </Button>
 
@@ -92,10 +92,10 @@ export default function Layout() {
       </Box>
 
       {/* Footer */}
-      <Box as="footer" bg="white" borderTop="1px" borderColor="gray.200">
+      <Box as="footer" bg="bg" borderTop="1px" borderColor="border">
         <Container maxW="7xl" py={6}>
           <Center>
-            <Text fontSize="sm" color="gray.500" textAlign="center">
+            <Text fontSize="sm" color="fg.subtle" textAlign="center">
               © 2026 Mutual Aid Club. Built by the community, for the community. All rights reserved.
             </Text>
           </Center>

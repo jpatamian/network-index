@@ -18,17 +18,17 @@ export default function FindYourNeighborhood() {
   }
 
   return (
-    <Box py={{ base: 12, md: 16 }} bg="white" borderBottomWidth="1px" borderColor="gray.100">
+    <Box py={{ base: 12, md: 16 }} bg="bg" borderBottomWidth="1px" borderColor="border.subtle">
       <Container maxW="7xl">
         <VStack gap={8} align="center" textAlign="center">
           <Box color="teal.600" fontSize="4xl">
             <Icon as={FaMapPin} />
           </Box>
           <Stack gap={3} maxW="2xl">
-            <Heading size="lg" color="gray.900" fontWeight="700">
+            <Heading size="lg" color="fg" fontWeight="700">
               Find Your Neighborhood
             </Heading>
-            <Text fontSize="md" color="gray.600" lineHeight="1.6">
+            <Text fontSize="md" color="fg.muted" lineHeight="1.6">
               Enter your zipcode to find resources and connect with neighbors in your area.
             </Text>
           </Stack>
@@ -41,8 +41,8 @@ export default function FindYourNeighborhood() {
               type="text"
               size="lg"
               borderRadius="md"
-              bg="white"
-              borderColor="gray.300"
+              bg="bg"
+              borderColor="border"
             />
             <Button
               onClick={handleSearch}

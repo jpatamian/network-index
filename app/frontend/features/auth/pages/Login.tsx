@@ -65,7 +65,7 @@ export default function Login() {
         <VStack gap={8} align="stretch">
           {/* Header */}
           <VStack align="center" gap={2}>
-            <Heading as="h1" size="2xl" color="gray.900" fontWeight="700" textAlign="center">
+            <Heading as="h1" size="2xl" color="fg" fontWeight="700" textAlign="center">
               Discover your neighborhood
             </Heading>
           </VStack>
@@ -76,12 +76,12 @@ export default function Login() {
               onClick={handleGoogleLogin}
               w="100%"
               h="56px"
-              bg="gray.100"
-              color="gray.900"
+              bg="bg.muted"
+              color="fg"
               fontSize="md"
               fontWeight="600"
               borderRadius="full"
-              _hover={{ bg: 'gray.200' }}
+              _hover={{ bg: 'bg.emphasized' }}
               gap={3}
             >
               <Icon as={FaGoogle} fontSize="lg" color="red.500" />
@@ -91,12 +91,12 @@ export default function Login() {
               onClick={handleAppleLogin}
               w="100%"
               h="56px"
-              bg="gray.100"
-              color="gray.900"
+              bg="bg.muted"
+              color="fg"
               fontSize="md"
               fontWeight="600"
               borderRadius="full"
-              _hover={{ bg: 'gray.200' }}
+              _hover={{ bg: 'bg.emphasized' }}
               gap={3}
             >
               <Icon as={FaApple} fontSize="lg" />
@@ -106,11 +106,11 @@ export default function Login() {
 
           {/* Divider */}
           <HStack w="100%" gap={0}>
-            <Box flex={1} h="1px" bg="gray.300" />
-            <Text color="gray.500" fontSize="sm" fontWeight="600" px={3} whiteSpace="nowrap">
+            <Box flex={1} h="1px" bg="border" />
+            <Text color="fg.subtle" fontSize="sm" fontWeight="600" px={3} whiteSpace="nowrap">
               or
             </Text>
-            <Box flex={1} h="1px" bg="gray.300" />
+            <Box flex={1} h="1px" bg="border" />
           </HStack>
 
           {/* Error Message */}
@@ -135,9 +135,9 @@ export default function Login() {
                 required
                 h="56px"
                 fontSize="base"
-                borderColor="gray.300"
+                borderColor="border"
                 borderRadius="lg"
-                _placeholder={{ color: 'gray.400' }}
+                _placeholder={{ color: 'fg.subtle' }}
                 _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
               />
 
@@ -152,9 +152,9 @@ export default function Login() {
                   required
                   h="56px"
                   fontSize="base"
-                  borderColor="gray.300"
+                  borderColor="border"
                   borderRadius="lg"
-                  _placeholder={{ color: 'gray.400' }}
+                  _placeholder={{ color: 'fg.subtle' }}
                   _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
                   pr="48px"
                 />
@@ -166,8 +166,8 @@ export default function Login() {
                   top="50%"
                   transform="translateY(-50%)"
                   onClick={() => setShowPassword(!showPassword)}
-                  color="gray.500"
-                  _hover={{ color: 'gray.700', bg: 'transparent' }}
+                  color="fg.subtle"
+                  _hover={{ color: 'fg', bg: 'transparent' }}
                 >
                   {showPassword ? <Icon as={FaEyeSlash} /> : <Icon as={FaEye} />}
                 </Button>
@@ -195,13 +195,13 @@ export default function Login() {
           {/* Footer Links */}
           <VStack gap={4} align="center" w="100%">
             <HStack gap={1} justify="center" flexWrap="wrap">
-              <Text fontSize="sm" color="gray.600">
+              <Text fontSize="sm" color="fg.muted">
                 Have a business?
               </Text>
               <ChakraLink
                 href="#"
                 fontSize="sm"
-                color="gray.900"
+                color="fg"
                 fontWeight="600"
                 textDecoration="underline"
                 _hover={{ color: 'teal.600' }}
@@ -213,7 +213,7 @@ export default function Login() {
             <ChakraLink
               href="#"
               fontSize="sm"
-              color="gray.900"
+              color="fg"
               fontWeight="600"
               textDecoration="underline"
               _hover={{ color: 'teal.600' }}
@@ -221,17 +221,17 @@ export default function Login() {
               Have an invite code?
             </ChakraLink>
 
-            <Text fontSize="xs" color="gray.500" textAlign="center" lineHeight={1.4}>
+            <Text fontSize="xs" color="fg.subtle" textAlign="center" lineHeight={1.4}>
               By continuing with sign up, you agree to our{' '}
-              <ChakraLink href="#" textDecoration="underline" color="gray.900" fontWeight="600">
+              <ChakraLink href="#" textDecoration="underline" color="fg" fontWeight="600">
                 Privacy Policy
               </ChakraLink>
               ,{' '}
-              <ChakraLink href="#" textDecoration="underline" color="gray.900" fontWeight="600">
+              <ChakraLink href="#" textDecoration="underline" color="fg" fontWeight="600">
                 Cookie Policy
               </ChakraLink>
               , and{' '}
-              <ChakraLink href="#" textDecoration="underline" color="gray.900" fontWeight="600">
+              <ChakraLink href="#" textDecoration="underline" color="fg" fontWeight="600">
                 Member Agreement
               </ChakraLink>
               .
@@ -239,7 +239,7 @@ export default function Login() {
           </VStack>
 
           {/* Sign Up Link */}
-          <Text fontSize="sm" color="gray.600" textAlign="center">
+          <Text fontSize="sm" color="fg.muted" textAlign="center">
             Don't have an account?{' '}
             <ChakraLink
               href="/signup"

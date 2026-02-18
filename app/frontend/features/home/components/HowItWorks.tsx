@@ -37,15 +37,15 @@ export default function HowItWorks() {
   ]
 
   return (
-    <Box py={{ base: 12, md: 16 }} bg="gray.50" borderBottomWidth="1px" borderColor="gray.100">
+    <Box py={{ base: 12, md: 16 }} bg="bg.subtle" borderBottomWidth="1px" borderColor="border.subtle">
       <Container maxW="7xl">
         <Stack padding={4} gap={8}>
           <Center>
             <Stack textAlign="center">
-              <Heading size="lg" color="gray.900" fontWeight="700">
+              <Heading size="lg" color="fg" fontWeight="700">
                 How It Works
               </Heading>
-              <Text fontSize="md" color="gray.600" maxW="2xl">
+              <Text fontSize="md" color="fg.muted" maxW="2xl">
                 Connect with neighbors to share, help, and grow together
               </Text>
             </Stack>
@@ -57,7 +57,7 @@ export default function HowItWorks() {
                 key={idx}
                 _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }}
                 transition="all 0.3s"
-                borderColor="gray.100"
+                borderColor="border.subtle"
                 borderWidth="1px"
               >
                 <Card.Body>
@@ -73,10 +73,10 @@ export default function HowItWorks() {
                     >
                       <Icon as={feature.icon} />
                     </Box>
-                    <Heading size="sm" color="gray.900" fontWeight="600">
+                    <Heading size="sm" color="fg" fontWeight="600">
                       {feature.title}
                     </Heading>
-                    <Text fontSize="sm" color="gray.600" lineHeight="1.5">
+                    <Text fontSize="sm" color="fg.muted" lineHeight="1.5">
                       {feature.description}
                     </Text>
                   </VStack>

@@ -42,19 +42,19 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
   }
 
   return (
-    <Card.Root borderRadius="lg" overflow="hidden" borderWidth="1px" borderColor="gray.100" bg="white" _hover={{ boxShadow: 'md', transform: 'translateY(-1px)' }} transition="all 0.2s">
+    <Card.Root borderRadius="lg" overflow="hidden" borderWidth="1px" borderColor="border.subtle" bg="bg" _hover={{ boxShadow: 'md', transform: 'translateY(-1px)' }} transition="all 0.2s">
       <Card.Body p={6}>
         <VStack align="stretch" gap={5}>
           {/* Header Section */}
           <HStack justify="space-between" align="flex-start">
             <VStack align="start" gap={2} flex={1}>
-              <Heading size="lg" fontWeight="700" color="gray.900">
+              <Heading size="lg" fontWeight="700" color="fg">
                 {post.title}
               </Heading>
-              <HStack gap={4} fontSize="sm" color="gray.500">
+              <HStack gap={4} fontSize="sm" color="fg.subtle">
                 <HStack gap={1.5}>
                   <Icon as={FaUser} color="teal.600" fontSize="xs" />
-                  <Text fontWeight="500" color="gray.700">{post.author.name}</Text>
+                  <Text fontWeight="500" color="fg">{post.author.name}</Text>
                 </HStack>
                 <HStack gap={1.5}>
                   <Icon as={FaClock} color="teal.600" fontSize="xs" />
@@ -88,12 +88,12 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
           </HStack>
 
           {/* Content Section */}
-          <Text fontSize="base" color="gray.700" whiteSpace="pre-wrap" lineHeight="1.6" py={2}>
+          <Text fontSize="base" color="fg" whiteSpace="pre-wrap" lineHeight="1.6" py={2}>
             {post.content}
           </Text>
 
           {/* Comment Section */}
-          <Box pt={2} borderTopWidth="1px" borderColor="gray.100" w="100%">
+          <Box pt={2} borderTopWidth="1px" borderColor="border.subtle" w="100%">
             <CommentSection postId={post.id} commentCount={post.comment_count} />
           </Box>
         </VStack>

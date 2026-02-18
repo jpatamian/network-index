@@ -13,14 +13,14 @@ interface YourNeighborhoodProps {
 export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
 
   return (
-    <Box py={{ base: 12, md: 16 }} bg="gray.50" borderTopWidth="1px" borderColor="gray.100" borderBottomWidth="1px">
+    <Box py={{ base: 12, md: 16 }} bg="bg.subtle" borderTopWidth="1px" borderColor="border.subtle" borderBottomWidth="1px">
       <Container maxW="7xl">
         <VStack gap={8}>
           <HStack gap={3} w="100%">
             <Box color="teal.600" fontSize="2xl">
               <Icon as={FaMapPin} />
             </Box>
-            <Heading size="lg" color="gray.900" fontWeight="700">
+            <Heading size="lg" color="fg" fontWeight="700">
               Your Neighborhood
             </Heading>
             {user.zipcode && (
@@ -36,7 +36,7 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
           {user.zipcode ? (
             <VStack gap={6} align="stretch" w="100%">
               <VStack gap={3} align="stretch">
-                <Text color="gray.600" fontSize="md" lineHeight="1.6">
+                <Text color="fg.muted" fontSize="md" lineHeight="1.6">
                   Posts and resources from your area (zipcode {user.zipcode})
                 </Text>
                 <Button
@@ -56,7 +56,7 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
 
               {/* Quick Actions */}
               <Box>
-                <Text color="gray.700" fontSize="sm" fontWeight="600" mb={3}>
+                <Text color="fg" fontSize="sm" fontWeight="600" mb={3}>
                   Quick Actions
                 </Text>
                 <SimpleGrid columns={{ base: 3, sm: 3 }} gap={3}>
@@ -117,8 +117,8 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
               </Box>
             </VStack>
           ) : (
-            <VStack gap={4} align="stretch" w="100%" p={6} bg="white" borderRadius="lg" borderWidth="1px" borderColor="gray.200">
-              <Text color="gray.600" fontSize="md">
+            <VStack gap={4} align="stretch" w="100%" p={6} bg="bg" borderRadius="lg" borderWidth="1px" borderColor="border">
+              <Text color="fg.muted" fontSize="md">
                 Add your zipcode to discover resources and connect with neighbors in your area.
               </Text>
               <Button
