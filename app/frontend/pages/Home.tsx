@@ -128,7 +128,7 @@ export default function Home() {
                 </Stack>
               </Center>
 
-              <SimpleGrid columns={{ base: '1', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={6}>
+              <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
                 {features.map((feature, idx) => (
                   <Card.Root key={idx} _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }} transition="all 0.3s" borderColor="gray.100" borderWidth="1px">
                     <Card.Body>
