@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   Box,
   Container,
@@ -7,28 +8,30 @@ import {
   Stack,
   Center,
   Spinner,
-  Alert,
-  AlertTitle,
-  AlertDescription,
+  HStack,
+  Badge,
+  Button,
 } from '@chakra-ui/react'
-import { FaComments } from 'react-icons/fa'
 import { postsApi } from '@/lib/api'
 import { Post } from '@/types/post'
 import PostCard from '@/components/PostCard'
 import CreatePost from '@/components/CreatePost'
 
 export default function Posts() {
+  const [searchParams] = useSearchParams()
+  const zipcode = searchParams.get('zipcode')
+  
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
     loadPosts()
-  }, [])
+  }, [zipcode])
 
   const loadPosts = async () => {
     try {
-      const data = await postsApi.getAll()
+      const data = await postsApi.getAll(zipcode)
       setPosts(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load posts')
@@ -45,13 +48,17 @@ export default function Posts() {
     setPosts(posts.filter((post) => post.id !== id))
   }
 
+  const handleClearFilter = () => {
+    window.location.href = '/posts'
+  }
+
   if (loading) {
     return (
       <Box py={12} bg="gray.50" minH="100vh">
         <Container maxW="3xl">
           <Center>
             <Stack align="center" gap={4}>
-              <Spinner size="lg" color="teal.600" thickness="4px" />
+              <Spinner size="lg" color="teal.600" />
               <Text color="gray.600" fontSize="lg">
                 Loading posts...
               </Text>
@@ -73,17 +80,44 @@ export default function Posts() {
       >
         <Container maxW="3xl">
           <Stack gap={4}>
-            <Heading
-              as="h1"
-              size="2xl"
-              color="gray.900"
-              fontWeight="700"
-            >
-              Community Feed
-            </Heading>
-            <Text fontSize="lg" color="gray.600" lineHeight="1.6">
-              Share what you need, offer what you can. Let's build together.
-            </Text>
+            <HStack justify="space-between" align="center">
+              <Heading
+                as="h1"
+                size="2xl"
+                color="gray.900"
+                fontWeight="700"
+              >
+                Community Feed
+              </Heading>
+              {zipcode && (
+                <Badge bg="teal.50" color="teal.700" fontWeight="600" px={3} py={1.5} borderRadius="full">
+                  <HStack gap={1} fontSize="sm">
+                    <span>📍</span>
+                    <Text>{zipcode}</Text>
+                  </HStack>
+                </Badge>
+              )}
+            </HStack>
+            <Stack gap={3}>
+              <Text fontSize="lg" color="gray.600" lineHeight="1.6">
+                {zipcode
+                  ? `Posts from your neighborhood (${zipcode}). Share what you need, offer what you can.`
+                  : 'Share what you need, offer what you can. Let\'s build together.'}
+              </Text>
+              {zipcode && (
+                <Button
+                  onClick={handleClearFilter}
+                  variant="ghost"
+                  color="teal.600"
+                  fontSize="sm"
+                  fontWeight="600"
+                  w="fit-content"
+                  _hover={{ bg: 'teal.50' }}
+                >
+                  ✕ Clear location filter
+                </Button>
+              )}
+            </Stack>
           </Stack>
         </Container>
       </Box>

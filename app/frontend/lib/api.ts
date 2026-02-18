@@ -59,8 +59,9 @@ export const authApi = {
 }
 
 export const postsApi = {
-  getAll: () => {
-    return apiRequest('/posts')
+  getAll: (zipcode?: string | null) => {
+    const url = zipcode ? `/posts?zipcode=${encodeURIComponent(zipcode)}` : '/posts'
+    return apiRequest(url)
   },
 
   getById: (id: number) => {

@@ -6,7 +6,14 @@ class Api::V1::PostsController < Api::BaseController
 
   # GET /api/v1/posts
   def index
-    posts = Post.includes(:user, :comments).recent.limit(50)
+    posts = Post.includes(:user, :comments).recent
+    
+    # Filter by zipcode if provided
+    if params[:zipcode].present?
+      posts = posts.by_zipcode(params[:zipcode])
+    end
+    
+    posts = posts.limit(50)
     render json: posts.map { |post| post_response(post) }
   end
 

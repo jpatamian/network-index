@@ -1,4 +1,3 @@
-import { Link as RouterLink } from 'react-router-dom'
 import {
   Box,
   Container,
@@ -8,44 +7,22 @@ import {
   Stack,
   HStack,
   VStack,
-  Card,
-  SimpleGrid,
-  Center,
   Badge,
   Icon,
+  Center,
+  SimpleGrid,
 } from '@chakra-ui/react'
-import { FaHandsHelping, FaUsers, FaMapMarkerAlt, FaShieldAlt, FaHeart, FaMapPin, FaUserCheck, FaUser, FaEnvelope } from 'react-icons/fa'
+import { FaMapMarkerAlt, FaHeart, FaMapPin, FaUserCheck, FaUser, FaEnvelope } from 'react-icons/fa'
 import { useAuth } from '@/hooks/useAuth'
+import HowItWorks from '@/components/HowItWorks'
+import FindYourNeighborhood from '@/components/FindYourNeighborhood'
+import YourNeighborhood from '@/components/YourNeighborhood'
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth()
 
-  const features = [
-    {
-      icon: FaHandsHelping,
-      title: 'Mutual Aid',
-      description: 'Help and support your neighbors with what they need',
-    },
-    {
-      icon: FaUsers,
-      title: 'Community',
-      description: 'Connect with people in your local area',
-    },
-    {
-      icon: FaMapMarkerAlt,
-      title: 'Neighborhood',
-      description: 'Share resources and opportunities nearby',
-    },
-    {
-      icon: FaShieldAlt,
-      title: 'Safe & Secure',
-      description: 'Your privacy and safety are our priority',
-    },
-  ]
-
   return (
     <Box>
-
       {/* Hero Section */}
       <Box
         bg="white"
@@ -78,7 +55,6 @@ export default function Home() {
           {!isAuthenticated && (
             <HStack gap={4} justify="center" pt={4}>
               <Button
-                as={RouterLink}
                 onClick={() => {
                   window.location.href = '/signup'
                 }}
@@ -93,10 +69,9 @@ export default function Home() {
                 Get Started
               </Button>
               <Button
-                as={RouterLink}
                 onClick={() => {
                   window.location.href = '/login'
-                }}                    
+                }}
                 variant="outline"
                 size="lg"
                 fontWeight="600"
@@ -113,41 +88,15 @@ export default function Home() {
         </Container>
       </Box>
 
-      {/* Features Section */}
-      {!isAuthenticated && (
-        <Box py={{ base: 12, md: 16 }} bg="gray.50" borderBottomWidth="1px" borderColor="gray.100">
-          <Container maxW="7xl">
-            <Stack padding={4} gap={8}>
-              <Center>
-                <Stack textAlign="center">
-                  <Heading size="lg" color="gray.900" fontWeight="700">How It Works</Heading>
-                  <Text fontSize="md" color="gray.600" maxW="2xl">
-                    Connect with neighbors to share, help, and grow together
-                  </Text>
-                </Stack>
-              </Center>
+      {/* Find Your Neighborhood Section - For Unauthenticated Users */}
+      {!isAuthenticated && <FindYourNeighborhood />}
 
-              <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
-                {features.map((feature, idx) => (
-                  <Card.Root key={idx} _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }} transition="all 0.3s" borderColor="gray.100" borderWidth="1px">
-                    <Card.Body>
-                      <VStack gap={4} textAlign="center">
-                  <Box color="teal.600" fontSize="3xl" p={3} bg="teal.50" borderRadius="lg" w="fit-content" mx="auto">
-                          <Icon as={feature.icon} />
-                        </Box>
-                        <Heading size="sm" color="gray.900" fontWeight="600">{feature.title}</Heading>
-                        <Text fontSize="sm" color="gray.600" lineHeight="1.5">
-                          {feature.description}
-                        </Text>
-                      </VStack>
-                    </Card.Body>
-                  </Card.Root>
-                ))}
-              </SimpleGrid>
-            </Stack>
-          </Container>
-        </Box>
-      )}
+
+      {/* Your Neighborhood Section - For Authenticated Users */}
+      {isAuthenticated && user && <YourNeighborhood user={user} />}
+
+      {/* Features Section */}
+      {!isAuthenticated && <HowItWorks />}
 
       {/* Authenticated User Profile Section */}
       {isAuthenticated && user && (

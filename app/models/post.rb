@@ -11,6 +11,7 @@ class Post < ApplicationRecord
 
   scope :recent, -> { order(created_at: :desc) }
   scope :by_user, ->(user_id) { where(user_id: user_id) }
+  scope :by_zipcode, ->(zipcode) { joins(:user).where(users: { zipcode: zipcode }) }
   scope :open, -> { where(status: 'open') }
   scope :fulfilled, -> { where(status: 'fulfilled') }
   scope :visible, -> { where(is_hidden: false) }
