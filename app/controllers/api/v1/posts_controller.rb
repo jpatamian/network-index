@@ -1,6 +1,6 @@
 class Api::V1::PostsController < Api::BaseController
   skip_before_action :verify_authenticity_token
-  before_action :require_authentication!, only: [:update, :destroy]
+  before_action :require_authentication!, only: [:update, :destroy, :my_posts]
   before_action :set_post, only: [:show, :update, :destroy]
   before_action :authorize_post_owner!, only: [:update, :destroy]
 
@@ -9,9 +9,10 @@ class Api::V1::PostsController < Api::BaseController
     posts = Post.includes(:user, :comments).recent
     
     # Filter by zipcode if provided
-    if params[:zipcode].present?
-      posts = posts.by_zipcode(params[:zipcode])
-    end
+    posts = posts.by_zipcode(params[:zipcode]) if params[:zipcode].present?
+
+    # Free-text search across title/content
+    posts = posts.search_query(params[:q]) if params[:q].present?
     
     posts = posts.limit(50)
     render json: posts.map { |post| post_response(post) }
@@ -20,6 +21,11 @@ class Api::V1::PostsController < Api::BaseController
   # GET /api/v1/posts/:id
   def show
     render json: post_response(@post)
+  end
+
+  def my_posts
+    posts = current_user.posts.includes(:user, :comments).recent.limit(50)
+    render json: posts.map { |post| post_response(post) }
   end
 
   # POST /api/v1/posts

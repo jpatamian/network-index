@@ -9,9 +9,9 @@ import {
   Center,
 } from '@chakra-ui/react'
 import { useAuth } from '@/hooks/useAuth'
-import HowItWorks from '@/components/HowItWorks'
-import FindYourNeighborhood from '@/components/FindYourNeighborhood'
-import YourNeighborhood from '@/components/YourNeighborhood'
+import HowItWorks from '@/features/home/components/HowItWorks'
+import FindYourNeighborhood from '@/features/home/components/FindYourNeighborhood'
+import YourNeighborhood from '@/features/neighborhood/components/YourNeighborhood'
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth()
@@ -86,7 +86,6 @@ export default function Home() {
       {/* Find Your Neighborhood Section - For Unauthenticated Users */}
       {!isAuthenticated && <FindYourNeighborhood />}
 
-
       {/* Your Neighborhood Section - For Authenticated Users */}
       {isAuthenticated && user && (
         <YourNeighborhood
@@ -99,7 +98,7 @@ export default function Home() {
       )}
 
       {/* Features Section */}
-      {!isAuthenticated && <HowItWorks />}
+      <HowItWorks />
     </Box>
   )
 }

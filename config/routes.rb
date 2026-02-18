@@ -22,6 +22,7 @@ Rails.application.routes.draw do
 
       # Post routes
       resources :posts do
+        get 'my_posts', on: :collection
         resources :comments, only: [:index, :create, :destroy]
       end
     end

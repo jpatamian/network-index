@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import FindYourNeighborhood from '../../components/FindYourNeighborhood'
+import FindYourNeighborhood from '../../features/home/components/FindYourNeighborhood'
 import { TestWrapper } from '../setup/test-wrapper'
 
 describe('FindYourNeighborhood Component', () => {
