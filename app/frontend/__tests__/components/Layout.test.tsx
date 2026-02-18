@@ -29,7 +29,7 @@ describe('Layout Component', () => {
       </TestWrapper>
     )
 
-    expect(screen.getByText('Mutual Aid Club')).toBeInTheDocument()
+    expect(screen.getByText('Mutual Aid')).toBeInTheDocument()
   })
 
   it('displays navigation links', () => {
@@ -46,8 +46,8 @@ describe('Layout Component', () => {
       </TestWrapper>
     )
 
-    expect(screen.getByRole('link', { name: /Home/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Posts/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Home/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Posts/i })).toBeInTheDocument()
   })
 
   it('displays login and signup buttons for unauthenticated users', () => {
@@ -64,8 +64,8 @@ describe('Layout Component', () => {
       </TestWrapper>
     )
 
-    expect(screen.getByRole('link', { name: /Login/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Sign up/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Log In/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Sign Up/i })).toBeInTheDocument()
   })
 
   it('displays user info and logout button for authenticated users', () => {

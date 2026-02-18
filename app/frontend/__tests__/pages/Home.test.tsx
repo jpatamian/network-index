@@ -27,10 +27,10 @@ describe('Home Page', () => {
       </TestWrapper>
     )
 
-    expect(screen.getByText('Welcome to Mutual Aid Club')).toBeInTheDocument()
+    expect(screen.getByText('Your Neighborhood, Connected')).toBeInTheDocument()
     expect(
       screen.getByText(
-        /A community networking platform for mutual aid and resource sharing/
+        /Share resources, ask for help, and build genuine connections/
       )
     ).toBeInTheDocument()
   })

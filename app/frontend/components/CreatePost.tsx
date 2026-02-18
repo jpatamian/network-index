@@ -1,4 +1,17 @@
 import { useState } from 'react'
+import {
+  Card,
+  Box,
+  Heading,
+  Stack,
+  Input,
+  Textarea,
+  Button,
+  HStack,
+  VStack,
+  Icon,
+} from '@chakra-ui/react'
+import { FaUser, FaPen, FaInfoCircle, FaExclamationCircle } from 'react-icons/fa'
 import { useAuth } from '@/hooks/useAuth'
 import { postsApi } from '@/lib/api'
 import { Post } from '@/types/post'
@@ -8,7 +21,7 @@ interface CreatePostProps {
 }
 
 export default function CreatePost({ onPostCreated }: CreatePostProps) {
-  const { token, isAuthenticated } = useAuth()
+  const { token, isAuthenticated, user } = useAuth()
   const [isExpanded, setIsExpanded] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -53,97 +66,167 @@ export default function CreatePost({ onPostCreated }: CreatePostProps) {
 
   if (!isExpanded) {
     return (
-      <div className="bg-white shadow rounded-lg p-4 mb-6">
-        <button
-          onClick={() => setIsExpanded(true)}
-          className="w-full text-left px-4 py-3 border border-gray-300 rounded-md text-gray-500 hover:border-indigo-500 hover:text-indigo-500 transition"
-        >
-          What's on your mind?
-        </button>
-      </div>
+      <Card.Root borderRadius="lg" boxShadow="sm" mb={6} borderWidth="1px" borderColor="gray.100" bg="white">
+        <Card.Body p={4}>
+          <HStack
+            gap={3}
+            onClick={() => setIsExpanded(true)}
+            cursor="pointer"
+            p={3}
+            bg="gray.50"
+            borderRadius="lg"
+            _hover={{ bg: 'gray.100' }}
+            transition="all 0.2s"
+          >
+            <Box fontSize="lg" color="teal.600">
+              <Icon as={FaUser} />
+            </Box>
+            <Input
+              placeholder={isAuthenticated ? `What's on your mind, ${user?.username || 'friend'}?` : "What's on your mind?"}
+              border="none"
+              bg="transparent"
+              _placeholder={{ color: 'gray.500' }}
+              _focus={{ outline: 'none' }}
+              pointer-events="none"
+              fontSize="sm"
+              color="gray.600"
+            />
+          </HStack>
+        </Card.Body>
+      </Card.Root>
     )
   }
 
   return (
-    <div className="bg-white shadow rounded-lg p-6 mb-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        {isAuthenticated ? 'Create a Post' : 'Post Anonymously'}
-      </h3>
+    <Card.Root borderRadius="lg" boxShadow="sm" mb={6} borderWidth="1px" borderColor="gray.100" bg="white">
+      <Card.Body p={6}>
+        <VStack align="stretch" gap={4}>
+          {/* Header */}
+          <HStack gap={3}>
+            <Box fontSize="lg" color="teal.600">
+              <Icon as={FaPen} />
+            </Box>
+            <Heading size="md" color="gray.900" fontWeight="700">
+              {isAuthenticated ? 'Share with Your Community' : 'Post Anonymously'}
+            </Heading>
+          </HStack>
 
-      {!isAuthenticated && (
-        <div className="mb-4 rounded-md bg-yellow-50 border border-yellow-200 p-3">
-          <p className="text-sm text-yellow-800">
-            You're posting anonymously. Only your zipcode will be associated with this post.
-          </p>
-        </div>
-      )}
-
-      {error && (
-        <div className="mb-4 rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">{error}</p>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-4">
+          {/* Anonymous Warning */}
           {!isAuthenticated && (
-            <div>
-              <input
-                type="text"
-                placeholder="Your zipcode *"
-                value={formData.zipcode}
-                onChange={(e) => setFormData({ ...formData, zipcode: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                required
-              />
-            </div>
+            <HStack
+              gap={3}
+              p={4}
+              borderRadius="lg"
+              bg="blue.50"
+              borderLeft="4px"
+              borderColor="blue.400"
+            >
+              <Icon as={FaInfoCircle} color="blue.600" fontSize="lg" flex="shrink: 0" />
+              <Box>
+                <Heading size="xs" color="blue.800" mb={1} fontWeight="700">
+                  Anonymous Post
+                </Heading>
+                <Box fontSize="sm" color="blue.700" lineHeight="1.4">
+                  Your zipcode will be associated with this post for community context.
+                </Box>
+              </Box>
+            </HStack>
           )}
 
-          <div>
-            <input
-              type="text"
-              placeholder="Post title"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-              maxLength={200}
-            />
-          </div>
+          {/* Error Message */}
+          {error && (
+            <HStack
+              gap={3}
+              p={4}
+              borderRadius="lg"
+              bg="red.50"
+              borderLeft="4px"
+              borderColor="red.400"
+            >
+              <Icon as={FaExclamationCircle} color="red.600" fontSize="lg" flex="shrink: 0" />
+              <Box fontSize="sm" color="red.700">
+                {error}
+              </Box>
+            </HStack>
+          )}
 
-          <div>
-            <textarea
-              placeholder="What's on your mind?"
-              value={formData.content}
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 min-h-[120px]"
-              required
-              maxLength={5000}
-            />
-          </div>
-        </div>
+          {/* Form */}
+          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+            <Stack gap={4}>
+              {/* Zipcode Input */}
+              {!isAuthenticated && (
+                <Input
+                  type="text"
+                  placeholder="Your zipcode *"
+                  value={formData.zipcode}
+                  onChange={(e) => setFormData({ ...formData, zipcode: e.target.value })}
+                  borderRadius="lg"
+                  borderColor="gray.200"
+                  _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
+                  required
+                />
+              )}
 
-        <div className="mt-4 flex justify-end space-x-3">
-          <button
-            type="button"
-            onClick={() => {
-              setIsExpanded(false)
-              setFormData({ title: '', content: '', zipcode: '' })
-              setError('')
-            }}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-400"
-          >
-            {loading ? 'Posting...' : isAuthenticated ? 'Post' : 'Post Anonymously'}
-          </button>
-        </div>
-      </form>
-    </div>
+              {/* Title Input */}
+              <Input
+                type="text"
+                placeholder="Post title"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                borderRadius="lg"
+                borderColor="gray.200"
+                _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
+                required
+                maxLength={200}
+                fontWeight="medium"
+              />
+
+              {/* Content Textarea */}
+              <Textarea
+                placeholder="What's on your mind? Share what you need or offer..."
+                value={formData.content}
+                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                borderRadius="lg"
+                borderColor="gray.200"
+                minH="120px"
+                _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
+                required
+                maxLength={5000}
+                resize="vertical"
+              />
+
+              {/* Action Buttons */}
+              <HStack justify="flex-end" gap={3}>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setIsExpanded(false)
+                    setFormData({ title: '', content: '', zipcode: '' })
+                    setError('')
+                  }}
+                  variant="outline"
+                  borderRadius="lg"
+                  _hover={{ bg: 'gray.50' }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  bg="teal.600"
+                  color="white"
+                  borderRadius="lg"
+                  fontWeight="600"
+                  _hover={{ bg: 'teal.700', transform: 'translateY(-1px)', boxShadow: 'md' }}
+                  transition="all 0.2s"
+                >
+                  {loading ? 'Posting...' : isAuthenticated ? 'Share' : 'Post Anonymously'}
+                </Button>
+              </HStack>
+            </Stack>
+          </form>
+        </VStack>
+      </Card.Body>
+    </Card.Root>
   )
 }

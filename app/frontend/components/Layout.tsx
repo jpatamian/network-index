@@ -23,27 +23,27 @@ export default function Layout() {
   return (
     <Flex direction="column" minH="100vh">
       {/* Navigation */}
-      <Box as="nav" bg="linear-gradient(to right, #10b981, #14b8a6)" boxShadow="lg" borderBottomWidth="1px" borderColor="emerald.600">
+      <Box as="nav" bg="white" boxShadow="sm" borderBottomWidth="1px" borderColor="gray.100">
         <Container maxW="7xl">
           <Flex justify="space-between" align="center" h={16}>
             {/* Logo */}
             <Box as="button" onClick={() => handleNavigation('/')} _hover={{ opacity: 0.8 }} transition="all 0.2s" bg="none" border="none" cursor="pointer" p={0}>
               <HStack gap={3}>
-                <Box fontSize="2xl" color="white">
+                <Box fontSize="2xl" color="teal.600">
                   <Icon as={FaHome} />
                 </Box>
-                <Heading color="white" size="lg" fontWeight="bold">
-                  Mutual Aid Club
+                <Heading color="gray.900" size="lg" fontWeight="700" letterSpacing="tight">
+                  Mutual Aid
                 </Heading>
               </HStack>
             </Box>
 
             {/* Navigation Links */}
-            <HStack gap={4}>
-              <Button onClick={() => handleNavigation('/')} variant="ghost" color="white" _hover={{ bg: 'rgba(255,255,255,0.1)' }}>
+            <HStack gap={6}>
+              <Button onClick={() => handleNavigation('/')} variant="ghost" color="gray.700" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
                 Home
               </Button>
-              <Button onClick={() => handleNavigation('/posts')} variant="ghost" color="white" _hover={{ bg: 'rgba(255,255,255,0.1)' }}>
+              <Button onClick={() => handleNavigation('/posts')} variant="ghost" color="gray.700" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
                 Posts
               </Button>
 
@@ -51,27 +51,28 @@ export default function Layout() {
                 <>
                   {isAuthenticated ? (
                     <>
-                      <Text color="white" fontSize="sm" fontWeight="medium">
+                      <Text color="gray.700" fontSize="sm" fontWeight="500">
                         {user?.username || user?.email || 'User'}
                       </Text>
-                      <Button onClick={logout} variant="ghost" color="white" size="sm" _hover={{ bg: 'rgba(255,255,255,0.1)' }}>
+                      <Button onClick={logout} variant="ghost" color="gray.700" size="sm" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
                         Logout
                       </Button>
                     </>
                   ) : (
                     <>
-                      <Button onClick={() => handleNavigation('/login')} variant="ghost" color="white" size="sm" _hover={{ bg: 'rgba(255,255,255,0.1)' }}>
-                        Login
+                      <Button onClick={() => handleNavigation('/login')} variant="ghost" color="gray.700" size="sm" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
+                        Log In
                       </Button>
                       <Button
                         onClick={() => handleNavigation('/signup')}
-                        bg="white"
-                        color='rgb(16,185,129)'
+                        bg="teal.600"
+                        color="white"
                         size="sm"
-                        fontWeight="bold"
-                        _hover={{ bg: 'gray.100' }}
+                        fontWeight="600"
+                        borderRadius="md"
+                        _hover={{ bg: 'teal.700' }}
                       >
-                        Sign up
+                        Sign Up
                       </Button>
                     </>
                   )}

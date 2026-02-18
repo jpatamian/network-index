@@ -49,99 +49,102 @@ export default function Home() {
 
       {/* Hero Section */}
       <Box
-        bg="linear-gradient(to bottom, #f0fdf4, #f0fef9)"
-        py={{ base: 8, md: 12 }}
+        bg="white"
+        py={{ base: 12, md: 16 }}
         borderBottomWidth="1px"
-        borderColor="emerald.100"
+        borderColor="gray.100"
       >
         <Container maxW="7xl">
-          <Center mb={12}>
-            <Stack textAlign="center" padding={8} maxW="2xl">
-              <VStack padding={4}>
+          <Center mb={8}>
+            <Stack textAlign="center" maxW="2xl" gap={6}>
               <Heading
                   as="h1"
-                  size="3xl"
-                  fontWeight="bold"
-                  bgGradient="linear(90deg, #059669, #0891b2)"
-                  bgClip="text"
+                  size="2xl"
+                  fontWeight="700"
+                  color="gray.900"
+                  lineHeight="1.2"
                 >
                   {isAuthenticated
                     ? `Welcome back, ${user?.username || user?.email}!`
-                    : 'Welcome to Mutual Aid Club'}
+                    : 'Your Neighborhood, Connected'}
                 </Heading>
-                <Text fontSize="xl" color="gray.600" lineHeight={1.8}>
+                <Text fontSize="lg" color="gray.600" lineHeight={1.6}>
                   {isAuthenticated
-                    ? 'Your community networking platform'
-                    : 'A community networking platform for mutual aid and resource sharing in your neighborhood.'}
+                    ? 'Connect with neighbors to share resources, ask for help, and build community.'
+                    : 'Share resources, ask for help, and build genuine connections with neighbors near you.'}
                 </Text>
-              </VStack>
-
-              {!isAuthenticated && (
-                <HStack padding={4} justify="center" pt={4}>
-                  <Button
-                    as={RouterLink}
-                    onClick={() => {
-                      window.location.href = '/signup'
-                    }}
-                    colorScheme="green"
-                    size="lg"
-                    fontWeight="bold"
-                    _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
-                    transition="all 0.2s"
-                  >
-                    Get Started
-                  </Button>
-                  <Button
-                    as={RouterLink}
-                    onClick={() => {
-                      window.location.href = '/login'
-                    }}                    
-                    variant="outline"
-                    size="lg"
-                    fontWeight="bold"
-                    _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
-                    transition="all 0.2s"
-                  >
-                    Sign In
-                  </Button>
-                </HStack>
-              )}
-            </Stack>
+              </Stack>
           </Center>
+
+          {!isAuthenticated && (
+            <HStack gap={4} justify="center" pt={4}>
+              <Button
+                as={RouterLink}
+                onClick={() => {
+                  window.location.href = '/signup'
+                }}
+                bg="teal.600"
+                color="white"
+                size="lg"
+                fontWeight="600"
+                borderRadius="md"
+                _hover={{ bg: 'teal.700', transform: 'translateY(-1px)', boxShadow: 'md' }}
+                transition="all 0.2s"
+              >
+                Get Started
+              </Button>
+              <Button
+                as={RouterLink}
+                onClick={() => {
+                  window.location.href = '/login'
+                }}                    
+                variant="outline"
+                size="lg"
+                fontWeight="600"
+                borderRadius="md"
+                borderColor="gray.300"
+                color="gray.700"
+                _hover={{ bg: 'gray.50', transform: 'translateY(-1px)', boxShadow: 'md' }}
+                transition="all 0.2s"
+              >
+                Sign In
+              </Button>
+            </HStack>
+          )}
         </Container>
       </Box>
 
       {/* Features Section */}
       {!isAuthenticated && (
-        <Box py={{ base: 6, md: 8 }} bg="white" borderBottomWidth="1px" borderColor="emerald.100">
+        <Box py={{ base: 12, md: 16 }} bg="gray.50" borderBottomWidth="1px" borderColor="gray.100">
           <Container maxW="7xl">
-            <Stack padding={12}>
+            <Stack padding={4} gap={8}>
               <Center>
-                <Stack textAlign="center" padding={3}>
-                  <Heading size="xl">What We Offer</Heading>
-                  <Text fontSize="md" color="gray.600" maxW="xl">
-                    Connect with your community and make a real difference
+                <Stack textAlign="center">
+                  <Heading size="lg" color="gray.900" fontWeight="700">How It Works</Heading>
+                  <Text fontSize="md" color="gray.600" maxW="2xl">
+                    Connect with neighbors to share, help, and grow together
                   </Text>
                 </Stack>
               </Center>
 
-              <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={6}>
+              <SimpleGrid columns={{ base: '1', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={6}>
                 {features.map((feature, idx) => (
-                  <Card.Root key={idx} _hover={{ boxShadow: 'lg', transform: 'translateY(-4px)' }} transition="all 0.3s">
+                  <Card.Root key={idx} _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }} transition="all 0.3s" borderColor="gray.100" borderWidth="1px">
                     <Card.Body>
-                      <VStack padding={4} textAlign="center">
-                  <Box color="emerald.600" fontSize="3xl" p={2} bg="emerald.50" borderRadius="full">
+                      <VStack gap={4} textAlign="center">
+                  <Box color="teal.600" fontSize="3xl" p={3} bg="teal.50" borderRadius="lg" w="fit-content" mx="auto">
                           <Icon as={feature.icon} />
                         </Box>
-                        <Heading size="sm">{feature.title}</Heading>
-                        <Text fontSize="sm" color="gray.600">
+                        <Heading size="sm" color="gray.900" fontWeight="600">{feature.title}</Heading>
+                        <Text fontSize="sm" color="gray.600" lineHeight="1.5">
                           {feature.description}
                         </Text>
                       </VStack>
                     </Card.Body>
                   </Card.Root>
                 ))}
-              </Grid>
+              </SimpleGrid>
             </Stack>
           </Container>
         </Box>
@@ -149,77 +152,75 @@ export default function Home() {
 
       {/* Authenticated User Profile Section */}
       {isAuthenticated && user && (
-        <Box py={{ base: 6, md: 8 }} bg="emerald.50" borderTopWidth="1px" borderColor="emerald.100">
+        <Box py={{ base: 12, md: 16 }} bg="white" borderTopWidth="1px" borderColor="gray.100">
           <Container maxW="7xl">
-            <Card.Root>
-              <Card.Body>
-                <Stack padding={8}>
-                  <HStack justify="space-between" align="center" gap={3}>
-                    <HStack gap={2}>
-                      <Box color="emerald.600" fontSize="xl">
-                        <Icon as={FaUserCheck} />
-                      </Box>
-                      <Heading size="lg">Your Profile</Heading>
-                    </HStack>
-                    <Badge colorScheme={user.anonymous ? 'gray' : 'green'}>
-                      <Text>
-                        {user.anonymous ? 'Anonymous' : 'Verified'}
-                      </Text>
-                    </Badge>
+          <Container maxW="7xl">
+            <Stack gap={8}>
+              <HStack justify="space-between" align="center">
+                <HStack gap={3}>
+                  <Box color="teal.600" fontSize="xl">
+                    <Icon as={FaUserCheck} />
+                  </Box>
+                  <Heading size="lg" color="gray.900" fontWeight="700">Your Profile</Heading>
+                </HStack>
+                <Badge bg="teal.50" color="teal.700" fontWeight="600" px={3} py={1} borderRadius="full">
+                  <Text>
+                    {user.anonymous ? 'Anonymous' : 'Verified'}
+                  </Text>
+                </Badge>
+              </HStack>
+
+              <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={6}>
+                <Box bg="white" border="1px" borderColor="gray.100" p={4} borderRadius="lg">
+                  <HStack gap={3} mb={3}>
+                    <Icon as={FaEnvelope} color="teal.600" fontSize="lg" />
+                    <Text fontWeight="600" color="gray.700" fontSize="sm">
+                      Email
+                    </Text>
                   </HStack>
+                  <Text fontWeight="600" color="gray.900" fontSize="sm">
+                    {user.email || 'Not set'}
+                  </Text>
+                </Box>
 
-                  <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} padding={6}>
-                    <Box bg="emerald.100" p={4} borderRadius="lg">
-                      <HStack gap={3} mb={2}>
-                        <Icon as={FaEnvelope} color="emerald.600" />
-                        <Text fontWeight="semibold" color="gray.600" fontSize="sm">
-                          Email
-                        </Text>
-                      </HStack>
-                      <Text fontWeight="bold" color="gray.900">
-                        {user.email || 'Not set'}
-                      </Text>
-                    </Box>
+                <Box bg="white" border="1px" borderColor="gray.100" p={4} borderRadius="lg">
+                  <HStack gap={3} mb={3}>
+                    <Icon as={FaUser} color="teal.600" fontSize="lg" />
+                    <Text fontWeight="600" color="gray.700" fontSize="sm">
+                      Username
+                    </Text>
+                  </HStack>
+                  <Text fontWeight="600" color="gray.900" fontSize="sm">
+                    {user.username || 'Not set'}
+                  </Text>
+                </Box>
 
-                    <Box bg="teal.100" p={4} borderRadius="lg">
-                      <HStack gap={3} mb={2}>
-                        <Icon as={FaUser} color="teal.600" />
-                        <Text fontWeight="semibold" color="gray.600" fontSize="sm">
-                          Username
-                        </Text>
-                      </HStack>
-                      <Text fontWeight="bold" color="gray.900">
-                        {user.username || 'Not set'}
-                      </Text>
-                    </Box>
+                <Box bg="white" border="1px" borderColor="gray.100" p={4} borderRadius="lg">
+                  <HStack gap={3} mb={3}>
+                    <Icon as={FaMapPin} color="teal.600" fontSize="lg" />
+                    <Text fontWeight="600" color="gray.700" fontSize="sm">
+                      Zipcode
+                    </Text>
+                  </HStack>
+                  <Text fontWeight="600" color="gray.900" fontSize="sm">
+                    {user.zipcode}
+                  </Text>
+                </Box>
 
-                    <Box bg="cyan.100" p={4} borderRadius="lg">
-                      <HStack gap={3} mb={2}>
-                        <Icon as={FaMapPin} color="cyan.600" />
-                        <Text fontWeight="semibold" color="gray.600" fontSize="sm">
-                          Zipcode
-                        </Text>
-                      </HStack>
-                      <Text fontWeight="bold" color="gray.900">
-                        {user.zipcode}
-                      </Text>
-                    </Box>
-
-                    <Box bg="rose.100" p={4} borderRadius="lg">
-                      <HStack gap={3} mb={2}>
-                        <Icon as={FaHeart} color="rose.600" />
-                        <Text fontWeight="semibold" color="gray.600" fontSize="sm">
-                          Account Type
-                        </Text>
-                      </HStack>
-                      <Text fontWeight="bold" color="gray.900">
-                        {user.anonymous ? 'Anonymous' : 'Authenticated'}
-                      </Text>
-                    </Box>
-                  </SimpleGrid>
-                </Stack>
-              </Card.Body>
-            </Card.Root>
+                <Box bg="white" border="1px" borderColor="gray.100" p={4} borderRadius="lg">
+                  <HStack gap={3} mb={3}>
+                    <Icon as={FaHeart} color="teal.600" fontSize="lg" />
+                    <Text fontWeight="600" color="gray.700" fontSize="sm">
+                      Type
+                    </Text>
+                  </HStack>
+                  <Text fontWeight="600" color="gray.900" fontSize="sm">
+                    {user.anonymous ? 'Anonymous' : 'Verified'}
+                  </Text>
+                </Box>
+              </SimpleGrid>
+            </Stack>
+          </Container>
           </Container>
         </Box>
       )}
