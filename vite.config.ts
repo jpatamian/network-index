@@ -10,4 +10,11 @@ export default defineConfig({
       "@": path.resolve(__dirname, "app/frontend"),
     },
   },
+  build: {
+    rollupOptions: {
+      input: {
+        application: path.resolve(__dirname, "app/frontend/entrypoints/application.tsx"),
+      },
+    },
+  },
 })
