@@ -41,7 +41,6 @@ export default function FindYourNeighborhood() {
               type="text"
               size="lg"
               borderRadius="md"
-              focusBorderColor="teal.600"
               bg="white"
               borderColor="gray.300"
             />
@@ -55,9 +54,9 @@ export default function FindYourNeighborhood() {
               _hover={{ bg: 'teal.700', transform: 'translateY(-1px)', boxShadow: 'md' }}
               transition="all 0.2s"
               gap={2}
-              leftIcon={<Icon as={FaSearch} />}
-              isDisabled={!zipcode.trim()}
+              disabled={!zipcode.trim()}
             >
+            <Icon as={FaSearch} />
               Search
             </Button>
           </HStack>

@@ -12,7 +12,7 @@ import {
   HStack,
   Icon,
 } from '@chakra-ui/react'
-import { FaGoogle, FaApple, FaEye, FaEyeSlash } from 'react-icons/fa'
+import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function Signup() {
@@ -38,7 +38,7 @@ export default function Signup() {
     })
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
     if (formData.password !== formData.password_confirmation) {
@@ -60,11 +60,6 @@ export default function Signup() {
   const handleGoogleSignup = () => {
     // TODO: Implement Google OAuth
     setError('Google signup coming soon')
-  }
-
-  const handleAppleSignup = () => {
-    // TODO: Implement Apple OAuth
-    setError('Apple signup coming soon')
   }
 
   return (
@@ -95,25 +90,10 @@ export default function Signup() {
               <Icon as={FaGoogle} fontSize="lg" color="red.500" />
               Continue with Google
             </Button>
-            <Button
-              onClick={handleAppleSignup}
-              w="100%"
-              h="56px"
-              bg="gray.100"
-              color="gray.900"
-              fontSize="md"
-              fontWeight="600"
-              borderRadius="full"
-              _hover={{ bg: 'gray.200' }}
-              gap={3}
-            >
-              <Icon as={FaApple} fontSize="lg" />
-              Continue with Apple
-            </Button>
           </VStack>
 
           {/* Divider */}
-          <HStack w="100%" spacing={0}>
+          <HStack w="100%" gap={0}>
             <Box flex={1} h="1px" bg="gray.300" />
             <Text color="gray.500" fontSize="sm" fontWeight="600" px={3} whiteSpace="nowrap">
               or
@@ -265,22 +245,6 @@ export default function Signup() {
 
           {/* Footer Links */}
           <VStack gap={4} align="center" w="100%">
-            <HStack gap={1} justify="center" flexWrap="wrap">
-              <Text fontSize="sm" color="gray.600">
-                Have a business?
-              </Text>
-              <ChakraLink
-                href="#"
-                fontSize="sm"
-                color="gray.900"
-                fontWeight="600"
-                textDecoration="underline"
-                _hover={{ color: 'teal.600' }}
-              >
-                Get started
-              </ChakraLink>
-            </HStack>
-
             <Text fontSize="xs" color="gray.500" textAlign="center" lineHeight={1.4}>
               By continuing with sign up, you agree to our{' '}
               <ChakraLink href="#" textDecoration="underline" color="gray.900" fontWeight="600">

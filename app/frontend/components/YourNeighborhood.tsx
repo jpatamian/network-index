@@ -11,7 +11,11 @@ interface YourNeighborhoodProps {
 
 export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
   const handleBrowseFeed = () => {
-    window.location.href = '/posts'
+    if (user.zipcode) {
+      window.location.href = `/posts?zipcode=${encodeURIComponent(user.zipcode)}`
+    } else {
+      window.location.href = '/posts'
+    }
   }
 
   const handleUpdateProfile = () => {

@@ -52,9 +52,9 @@ export default function Layout() {
                 <>
                   {isAuthenticated ? (
                     <>
-                      <Text color="gray.700" fontSize="sm" fontWeight="500">
-                        {user?.username || user?.email || 'User'}
-                      </Text>
+                      <Button onClick={() => handleNavigation('/profile')} variant="ghost" color="gray.700" size="sm" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
+                      {user?.username || user?.email || 'User'}
+                      </Button>
                       <Button onClick={logout} variant="ghost" color="gray.700" size="sm" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
                         Logout
                       </Button>
