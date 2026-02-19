@@ -1,43 +1,64 @@
-import { Box, Container, Heading, Text, Button, VStack, HStack, Badge, Icon, SimpleGrid, Image } from '@chakra-ui/react'
-import { FaMapPin, FaMapMarkerAlt, FaPlus, FaSearch, FaHistory } from 'react-icons/fa'
-import { neighborhoodActions } from '@/features/neighborhood/lib/neighborhoodActions'
-import communityGatheringImage from '@/assets/images/community-gathering.svg'
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  Button,
+  VStack,
+  HStack,
+  Badge,
+  Icon,
+  SimpleGrid,
+} from "@chakra-ui/react";
+import {
+  FaMapPin,
+  FaMapMarkerAlt,
+  FaPlus,
+  FaSearch,
+  FaHistory,
+} from "react-icons/fa";
+import { neighborhoodActions } from "@/features/neighborhood/lib/neighborhoodActions";
 
 interface YourNeighborhoodProps {
   user: {
-    zipcode?: string
-    username?: string
-    email?: string
-  }
+    zipcode: string;
+    username: string;
+    email: string;
+  };
 }
 
 export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
-
   return (
-    <Box py={{ base: 12, md: 16 }} bg="bg.subtle" borderTopWidth="1px" borderColor="border.subtle" borderBottomWidth="1px">
+    <Box
+      py={{ base: 12, md: 16 }}
+      bg="bg.subtle"
+      borderTopWidth="1px"
+      borderColor="border.subtle"
+      borderBottomWidth="1px"
+    >
       <Container maxW="7xl">
         <VStack gap={8}>
-          {/* Community gathering image */}
-          <Box w="100%" maxW="3xl" mx="auto">
-            <Image
-              src={communityGatheringImage}
-              alt="Community members gathering at a park"
-              w="100%"
-              h="auto"
-              borderRadius="lg"
-              boxShadow="md"
-            />
-          </Box>
-          
-          <HStack gap={3} w="100%">
+          <HStack gap={3}>
             <Box color="teal.600" fontSize="2xl">
               <Icon as={FaMapPin} />
             </Box>
-            <Heading size="lg" color="fg" fontWeight="700">
+            <Heading
+              justifyContent="center"
+              size="lg"
+              color="fg"
+              fontWeight="700"
+            >
               Your Neighborhood
             </Heading>
             {user.zipcode && (
-              <Badge bg="teal.50" color="teal.700" fontWeight="600" px={3} py={1.5} borderRadius="full">
+              <Badge
+                bg="teal.50"
+                color="teal.700"
+                fontWeight="600"
+                px={3}
+                py={1.5}
+                borderRadius="full"
+              >
                 <HStack gap={1} fontSize="sm">
                   <Icon as={FaMapMarkerAlt} fontSize="sm" />
                   <Text>{user.zipcode}</Text>
@@ -47,11 +68,8 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
           </HStack>
 
           {user.zipcode ? (
-            <VStack gap={6} align="stretch" w="100%">
+            <VStack gap={6} align="stretch">
               <VStack gap={3} align="stretch">
-                <Text color="fg.muted" fontSize="md" lineHeight="1.6">
-                  Posts and resources from your area (zipcode {user.zipcode})
-                </Text>
                 <Button
                   onClick={() => neighborhoodActions.browseFeed(user)}
                   bg="teal.600"
@@ -59,7 +77,11 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
                   size="lg"
                   fontWeight="600"
                   borderRadius="md"
-                  _hover={{ bg: 'teal.700', transform: 'translateY(-1px)', boxShadow: 'md' }}
+                  _hover={{
+                    bg: "teal.700",
+                    transform: "translateY(-1px)",
+                    boxShadow: "md",
+                  }}
                   transition="all 0.2s"
                   w="fit-content"
                 >
@@ -84,7 +106,7 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
                     height="fit-content"
                     py={4}
                     flexDirection="column"
-                    _hover={{ bg: 'teal.50' }}
+                    _hover={{ bg: "teal.50" }}
                     transition="all 0.2s"
                   >
                     <Icon as={FaPlus} fontSize="lg" />
@@ -102,7 +124,7 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
                     height="fit-content"
                     py={4}
                     flexDirection="column"
-                    _hover={{ bg: 'teal.50' }}
+                    _hover={{ bg: "teal.50" }}
                     transition="all 0.2s"
                   >
                     <Icon as={FaSearch} fontSize="lg" />
@@ -120,7 +142,7 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
                     height="fit-content"
                     py={4}
                     flexDirection="column"
-                    _hover={{ bg: 'teal.50' }}
+                    _hover={{ bg: "teal.50" }}
                     transition="all 0.2s"
                   >
                     <Icon as={FaHistory} fontSize="lg" />
@@ -130,9 +152,19 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
               </Box>
             </VStack>
           ) : (
-            <VStack gap={4} align="stretch" w="100%" p={6} bg="bg" borderRadius="lg" borderWidth="1px" borderColor="border">
+            <VStack
+              gap={4}
+              align="stretch"
+              w="100%"
+              p={6}
+              bg="bg"
+              borderRadius="lg"
+              borderWidth="1px"
+              borderColor="border"
+            >
               <Text color="fg.muted" fontSize="md">
-                Add your zipcode to discover resources and connect with neighbors in your area.
+                Add your zipcode to discover resources and connect with
+                neighbors in your area.
               </Text>
               <Button
                 onClick={() => neighborhoodActions.updateProfile()}
@@ -142,7 +174,7 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
                 size="md"
                 fontWeight="600"
                 borderRadius="md"
-                _hover={{ bg: 'teal.50' }}
+                _hover={{ bg: "teal.50" }}
                 w="fit-content"
               >
                 Update Profile
@@ -152,5 +184,5 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
         </VStack>
       </Container>
     </Box>
-  )
+  );
 }
