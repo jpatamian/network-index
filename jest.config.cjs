@@ -5,6 +5,7 @@ module.exports = {
   testMatch: ['**/__tests__/**/*.test.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   moduleNameMapper: {
+    '\\.(svg|png|jpg|jpeg|gif)$': '<rootDir>/jest.fileMock.cjs',
     '^@/(.*)$': '<rootDir>/app/frontend/$1',
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
