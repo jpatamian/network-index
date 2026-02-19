@@ -1,6 +1,7 @@
 import { Box, Container, Heading, Text, Button, VStack, HStack, Badge, Icon, SimpleGrid, Image } from '@chakra-ui/react'
 import { FaMapPin, FaMapMarkerAlt, FaPlus, FaSearch, FaHistory } from 'react-icons/fa'
 import { neighborhoodActions } from '@/features/neighborhood/lib/neighborhoodActions'
+import communityGatheringImage from '@/assets/images/community-gathering.svg'
 
 interface YourNeighborhoodProps {
   user: {
@@ -19,7 +20,7 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
           {/* Community gathering image */}
           <Box w="100%" maxW="3xl" mx="auto">
             <Image
-              src="/images/community-gathering.svg"
+              src={communityGatheringImage}
               alt="Community members gathering at a park"
               w="100%"
               h="auto"

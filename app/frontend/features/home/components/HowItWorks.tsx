@@ -12,6 +12,7 @@ import {
   Image,
 } from '@chakra-ui/react'
 import { FaHandsHelping, FaUsers, FaMapMarkerAlt, FaShieldAlt } from 'react-icons/fa'
+import helpingHandsImage from '@/assets/images/helping-hands.svg'
 
 export default function HowItWorks() {
   const features = [
@@ -52,7 +53,7 @@ export default function HowItWorks() {
               {/* Community helping image */}
               <Box maxW="lg" mx="auto" mt={4}>
                 <Image
-                  src="/images/helping-hands.svg"
+                  src={helpingHandsImage}
                   alt="Community members helping each other"
                   w="100%"
                   h="auto"

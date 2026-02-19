@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Box, Container, Heading, Text, Button, VStack, Stack, Icon, Input, HStack, Image } from '@chakra-ui/react'
 import { FaMapPin, FaSearch } from 'react-icons/fa'
+import neighborhoodMapImage from '@/assets/images/neighborhood-map.svg'
 
 export default function FindYourNeighborhood() {
   const [zipcode, setZipcode] = useState('')
@@ -24,7 +25,7 @@ export default function FindYourNeighborhood() {
           {/* Neighborhood map image */}
           <Box maxW="lg" w="100%">
             <Image
-              src="/images/neighborhood-map.svg"
+              src={neighborhoodMapImage}
               alt="Map of neighborhoods with location pins"
               w="100%"
               h="auto"

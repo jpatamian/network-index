@@ -13,6 +13,7 @@ import { useAuth } from '@/hooks/useAuth'
 import HowItWorks from '@/features/home/components/HowItWorks'
 import FindYourNeighborhood from '@/features/home/components/FindYourNeighborhood'
 import YourNeighborhood from '@/features/neighborhood/components/YourNeighborhood'
+import communityHeroImage from '@/assets/images/community-hero.svg'
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth()
@@ -38,7 +39,7 @@ export default function Home() {
               bg="white"
             >
               <Image
-                src="/images/community-hero.svg"
+                src={communityHeroImage}
                 alt="Friendly neighborhood community with houses and people"
                 w="100%"
                 h="auto"
