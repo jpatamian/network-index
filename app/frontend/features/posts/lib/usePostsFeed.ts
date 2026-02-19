@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { postsApi } from "@/lib/api";
 import { Post } from "@/types/post";
-import { toErrorMessage } from "@/features/posts/lib/utils";
+import { postsErrorMessages, toErrorMessage } from "@/features/posts/lib/utils";
 
 interface UsePostsFeedParams {
   viewingMine: boolean;
@@ -46,7 +46,7 @@ export function usePostsFeed({
       } catch (err) {
         if (isMounted) {
           setPosts([]);
-          setError(toErrorMessage(err, "Failed to load posts"));
+          setError(toErrorMessage(err, postsErrorMessages.loadPostsFailed));
         }
       } finally {
         if (isMounted) {
@@ -81,7 +81,7 @@ export function usePostsFeed({
 
 async function fetchMinePosts(isAuthenticated: boolean, token: string | null) {
   if (!isAuthenticated || !token) {
-    throw new Error("Sign in to view your posts.");
+    throw new Error(postsErrorMessages.signInToViewMine);
   }
 
   return postsApi.getMine(token);

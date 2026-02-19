@@ -15,7 +15,11 @@ import { FaPen, FaInfoCircle, FaExclamationCircle } from "react-icons/fa";
 import { useAuth } from "@/hooks/useAuth";
 import { postsApi } from "@/lib/api";
 import { Post } from "@/types/post";
-import { toErrorMessage } from "@/features/posts/lib/utils";
+import {
+  postsErrorMessages,
+  postsText,
+  toErrorMessage,
+} from "@/features/posts/lib/utils";
 import { PostInput } from "./PostInput";
 
 interface CreatePostProps {
@@ -47,7 +51,7 @@ export const CreatePost = ({
     e.preventDefault();
 
     if (!isAuthenticated && !formData.zipcode.trim()) {
-      setError("Zipcode is required for anonymous posts");
+      setError(postsErrorMessages.anonymousZipRequired);
       return;
     }
 
@@ -71,7 +75,7 @@ export const CreatePost = ({
         setIsExpanded(false);
       }
     } catch (err) {
-      setError(toErrorMessage(err, "Failed to create post"));
+      setError(toErrorMessage(err, postsErrorMessages.createPostFailed));
     } finally {
       setLoading(false);
     }
@@ -179,7 +183,7 @@ export const CreatePost = ({
               {!isAuthenticated && (
                 <Input
                   type="text"
-                  placeholder="Your zipcode *"
+                  placeholder={postsText.anonymousZipPlaceholder}
                   value={formData.zipcode}
                   onChange={(e) => handleFieldChange("zipcode", e.target.value)}
                   borderRadius="lg"
@@ -195,7 +199,7 @@ export const CreatePost = ({
               {/* Title Input */}
               <Input
                 type="text"
-                placeholder="Post title"
+                placeholder={postsText.createPostTitlePlaceholder}
                 value={formData.title}
                 onChange={(e) => handleFieldChange("title", e.target.value)}
                 borderRadius="lg"
@@ -211,7 +215,7 @@ export const CreatePost = ({
 
               {/* Content Textarea */}
               <Textarea
-                placeholder="What's on your mind? Share what you need or offer..."
+                placeholder={postsText.createPostContentPlaceholder}
                 value={formData.content}
                 onChange={(e) => handleFieldChange("content", e.target.value)}
                 borderRadius="lg"

@@ -15,7 +15,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { commentsApi } from "@/lib/api";
 import { Comment } from "@/types/post";
 import { formatDate } from "@/lib/date";
-import { getInitial, toErrorMessage } from "@/features/posts/lib/utils";
+import {
+  commentDateFormat,
+  getInitial,
+  postsErrorMessages,
+  postsText,
+  toErrorMessage,
+} from "@/features/posts/lib/utils";
 
 interface CommentSectionProps {
   postId: number;
@@ -42,7 +48,7 @@ export const CommentSection = ({
       const data = await commentsApi.getByPost(postId);
       setComments(data);
     } catch (err) {
-      setError(toErrorMessage(err, "Failed to load comments"));
+      setError(toErrorMessage(err, postsErrorMessages.loadCommentsFailed));
     } finally {
       setLoading(false);
     }
@@ -75,7 +81,7 @@ export const CommentSection = ({
       setCount((prev) => prev + 1);
       setMessage("");
     } catch (err) {
-      setError(toErrorMessage(err, "Failed to add comment"));
+      setError(toErrorMessage(err, postsErrorMessages.addCommentFailed));
     } finally {
       setSubmitting(false);
     }
@@ -89,7 +95,7 @@ export const CommentSection = ({
       setComments((prev) => prev.filter((comment) => comment.id !== commentId));
       setCount((prev) => prev - 1);
     } catch (err) {
-      alert(toErrorMessage(err, "Failed to delete comment"));
+      alert(toErrorMessage(err, postsErrorMessages.deleteCommentFailed));
     }
   };
 
@@ -146,12 +152,7 @@ export const CommentSection = ({
                         {comment.author.name}
                       </Text>
                       <Text fontSize="xs" color="fg.subtle">
-                        {formatDate(comment.created_at, {
-                          month: "short",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {formatDate(comment.created_at, commentDateFormat)}
                       </Text>
                     </Box>
                     {user?.id === comment.author.id && (
@@ -183,7 +184,7 @@ export const CommentSection = ({
                     type="text"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Share your thoughts..."
+                    placeholder={postsText.commentInputPlaceholder}
                     size="sm"
                     borderRadius="md"
                     required

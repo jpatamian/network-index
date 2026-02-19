@@ -2,7 +2,12 @@ import { Post } from "@/types/post";
 import { useAuth } from "@/hooks/useAuth";
 import { postsApi } from "@/lib/api";
 import { formatDate } from "@/lib/date";
-import { toErrorMessage } from "@/features/posts/lib/utils";
+import {
+  postCardDateFormat,
+  postsErrorMessages,
+  postsText,
+  toErrorMessage,
+} from "@/features/posts/lib/utils";
 import { useState } from "react";
 import {
   Card,
@@ -26,16 +31,10 @@ export const PostCard = ({ post, onDelete }: PostCardProps) => {
   const { user, token } = useAuth();
   const [deleting, setDeleting] = useState(false);
   const isAuthor = user?.id === post.author.id;
-  const createdAt = formatDate(post.created_at, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const createdAt = formatDate(post.created_at, postCardDateFormat);
 
   const handleDelete = async () => {
-    if (!token || !confirm("Are you sure you want to delete this post?")) {
+    if (!token || !confirm(postsText.deletePostConfirm)) {
       return;
     }
 
@@ -44,7 +43,7 @@ export const PostCard = ({ post, onDelete }: PostCardProps) => {
       await postsApi.delete(post.id, token);
       onDelete?.(post.id);
     } catch (error) {
-      alert(toErrorMessage(error, "Failed to delete post"));
+      alert(toErrorMessage(error, postsErrorMessages.deletePostFailed));
     } finally {
       setDeleting(false);
     }

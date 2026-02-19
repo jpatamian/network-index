@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { FaMapMarkerAlt, FaSearch } from "react-icons/fa";
 import { SearchAndFilterProps } from "@/types/post";
+import { postsText } from "@/features/posts/lib/utils";
 
 export const SearchAndFilter = ({ state, actions }: SearchAndFilterProps) => {
   const { zipcodeInput, queryInput, canResetSearch } = state;
@@ -67,7 +68,7 @@ export const SearchAndFilter = ({ state, actions }: SearchAndFilterProps) => {
                 <Input
                   value={zipcodeInput}
                   onChange={(e) => onZipcodeInputChange(e.target.value)}
-                  placeholder="Enter zipcode"
+                  placeholder={postsText.searchZipPlaceholder}
                   borderRadius="md"
                   bg="bg"
                   borderColor="border"
@@ -96,7 +97,7 @@ export const SearchAndFilter = ({ state, actions }: SearchAndFilterProps) => {
                 <Input
                   value={queryInput}
                   onChange={(e) => onQueryInputChange(e.target.value)}
-                  placeholder={'Try "rides to market"'}
+                  placeholder={postsText.searchQueryPlaceholder}
                   borderRadius="md"
                   bg="bg"
                   borderColor="border"
