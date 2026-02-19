@@ -1,87 +1,112 @@
-import { useState } from 'react'
-import { Box, Container, Heading, Text, Button, Stack, HStack, Badge, Icon, SimpleGrid, Input } from '@chakra-ui/react'
-import { FaHeart, FaMapPin, FaUserCheck, FaUser, FaEnvelope, FaArrowLeft } from 'react-icons/fa'
-import { useAuth } from '@/hooks/useAuth'
-import ProtectedRoute from '@/components/ProtectedRoute'
-import { usersApi } from '@/lib/api'
-import { toaster } from '@/components/ui/toaster'
+import { useState } from "react";
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  Button,
+  Stack,
+  HStack,
+  Badge,
+  Icon,
+  SimpleGrid,
+  Input,
+} from "@chakra-ui/react";
+import {
+  FaHeart,
+  FaMapPin,
+  FaUserCheck,
+  FaUser,
+  FaEnvelope,
+  FaArrowLeft,
+} from "react-icons/fa";
+import { useAuth } from "@/hooks/useAuth";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { usersApi } from "@/lib/api";
+import { toaster } from "@/components/ui/toaster";
 
 export default function Profile() {
-  const { user, token } = useAuth()
-  const [isEditing, setIsEditing] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
+  const { user, token } = useAuth();
+  const needsZipcode = user?.zipcode === "00000";
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
-    username: user?.username || '',
-    email: user?.email || '',
-    zipcode: user?.zipcode || '',
-  })
+    username: user?.username || "",
+    email: user?.email || "",
+    zipcode: user?.zipcode || "",
+  });
 
   const handleBack = () => {
-    window.location.href = '/'
-  }
+    window.location.href = "/";
+  };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
-    }))
-  }
+      [field]: value,
+    }));
+  };
 
   const handleCancel = () => {
     setFormData({
-      username: user?.username || '',
-      email: user?.email || '',
-      zipcode: user?.zipcode || '',
-    })
-    setIsEditing(false)
-  }
+      username: user?.username || "",
+      email: user?.email || "",
+      zipcode: user?.zipcode || "",
+    });
+    setIsEditing(false);
+  };
 
   const handleSave = async () => {
-    if (!user || !token) return
+    if (!user || !token) return;
 
-    setIsSaving(true)
+    setIsSaving(true);
     try {
-      const updateData: { username?: string; email?: string; zipcode?: string } = {}
-      
+      const updateData: {
+        username?: string;
+        email?: string;
+        zipcode?: string;
+      } = {};
+
       if (formData.username !== user.username) {
-        updateData.username = formData.username
+        updateData.username = formData.username;
       }
       if (formData.email !== user.email) {
-        updateData.email = formData.email
+        updateData.email = formData.email;
       }
       if (formData.zipcode !== user.zipcode) {
-        updateData.zipcode = formData.zipcode
+        updateData.zipcode = formData.zipcode;
       }
 
       if (Object.keys(updateData).length === 0) {
         toaster.create({
-          title: 'No changes',
-          description: 'No fields were modified',
-          type: 'info',
-        })
-        setIsEditing(false)
-        return
+          title: "No changes",
+          description: "No fields were modified",
+          type: "info",
+        });
+        setIsEditing(false);
+        return;
       }
 
-      await usersApi.update(user.id, updateData, token)
-      
+      await usersApi.update(user.id, updateData, token);
+
       toaster.success({
-        title: 'Profile updated',
-        description: 'Your profile has been updated successfully',
-      })
-      
-      setIsEditing(false)
+        title: "Profile updated",
+        description: "Your profile has been updated successfully",
+      });
+
+      setIsEditing(false);
       // Refresh the page to update the auth context
-      window.location.reload()
+      window.location.reload();
     } catch (error) {
       toaster.error({
-        title: 'Error updating profile',
-        description: error instanceof Error ? error.message : 'An error occurred',
-      })
+        title: "Error updating profile",
+        description:
+          error instanceof Error ? error.message : "An error occurred",
+      });
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   return (
     <ProtectedRoute>
@@ -96,7 +121,7 @@ export default function Profile() {
               fontWeight="600"
               gap={2}
               fontSize="sm"
-              _hover={{ bg: 'teal.50' }}
+              _hover={{ bg: "teal.50" }}
             >
               <Icon as={FaArrowLeft} />
               Back to Home
@@ -106,15 +131,55 @@ export default function Profile() {
 
         {/* Profile Section */}
         {user && (
-          <Box py={{ base: 12, md: 16 }} bg="bg" borderBottomWidth="1px" borderColor="border.subtle">
+          <Box
+            py={{ base: 12, md: 16 }}
+            bg="bg"
+            borderBottomWidth="1px"
+            borderColor="border.subtle"
+          >
             <Container maxW="7xl">
               <Stack gap={8}>
+                {needsZipcode && (
+                  <Box
+                    bg="orange.50"
+                    border="1px"
+                    borderColor="orange.200"
+                    borderRadius="lg"
+                    p={4}
+                  >
+                    <HStack
+                      justify="space-between"
+                      align="center"
+                      flexWrap="wrap"
+                      gap={3}
+                    >
+                      <Text color="orange.800" fontSize="sm" fontWeight="500">
+                        Your zipcode is missing. Add it now to complete your
+                        profile.
+                      </Text>
+                      {!isEditing && (
+                        <Button
+                          size="sm"
+                          bg="orange.500"
+                          color="white"
+                          _hover={{ bg: "orange.600" }}
+                          onClick={() => setIsEditing(true)}
+                        >
+                          Update Zipcode
+                        </Button>
+                      )}
+                    </HStack>
+                  </Box>
+                )}
+
                 <HStack justify="space-between" align="center">
                   <HStack gap={3}>
                     <Box color="teal.600" fontSize="xl">
                       <Icon as={FaUserCheck} />
                     </Box>
-                    <Heading size="lg" color="fg" fontWeight="700">Your Profile</Heading>
+                    <Heading size="lg" color="fg" fontWeight="700">
+                      Your Profile
+                    </Heading>
                   </HStack>
                   <HStack gap={3}>
                     {isEditing ? (
@@ -127,7 +192,7 @@ export default function Profile() {
                           fontWeight="600"
                           borderRadius="md"
                           loading={isSaving}
-                          _hover={{ bg: 'teal.700' }}
+                          _hover={{ bg: "teal.700" }}
                         >
                           Save Changes
                         </Button>
@@ -152,13 +217,20 @@ export default function Profile() {
                           size="sm"
                           fontWeight="600"
                           borderRadius="md"
-                          _hover={{ bg: 'teal.50' }}
+                          _hover={{ bg: "teal.50" }}
                         >
                           Edit Profile
                         </Button>
-                        <Badge bg="teal.50" color="teal.700" fontWeight="600" px={3} py={1} borderRadius="full">
+                        <Badge
+                          bg="teal.50"
+                          color="teal.700"
+                          fontWeight="600"
+                          px={3}
+                          py={1}
+                          borderRadius="full"
+                        >
                           <Text>
-                            {user.anonymous ? 'Anonymous' : 'Verified'}
+                            {user.anonymous ? "Anonymous" : "Verified"}
                           </Text>
                         </Badge>
                       </>
@@ -167,7 +239,13 @@ export default function Profile() {
                 </HStack>
 
                 <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={6}>
-                  <Box bg="bg" border="1px" borderColor="border.subtle" p={4} borderRadius="lg">
+                  <Box
+                    bg="bg"
+                    border="1px"
+                    borderColor="border.subtle"
+                    p={4}
+                    borderRadius="lg"
+                  >
                     <HStack gap={3} mb={3}>
                       <Icon as={FaEnvelope} color="teal.600" fontSize="lg" />
                       <Text fontWeight="600" color="fg" fontSize="sm">
@@ -177,7 +255,9 @@ export default function Profile() {
                     {isEditing ? (
                       <Input
                         value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("email", e.target.value)
+                        }
                         type="email"
                         placeholder="Email"
                         size="sm"
@@ -185,12 +265,18 @@ export default function Profile() {
                       />
                     ) : (
                       <Text fontWeight="600" color="fg" fontSize="sm">
-                        {user.email || 'Not set'}
+                        {user.email || "Not set"}
                       </Text>
                     )}
                   </Box>
 
-                  <Box bg="bg" border="1px" borderColor="border.subtle" p={4} borderRadius="lg">
+                  <Box
+                    bg="bg"
+                    border="1px"
+                    borderColor="border.subtle"
+                    p={4}
+                    borderRadius="lg"
+                  >
                     <HStack gap={3} mb={3}>
                       <Icon as={FaUser} color="teal.600" fontSize="lg" />
                       <Text fontWeight="600" color="fg" fontSize="sm">
@@ -200,7 +286,9 @@ export default function Profile() {
                     {isEditing ? (
                       <Input
                         value={formData.username}
-                        onChange={(e) => handleInputChange('username', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("username", e.target.value)
+                        }
                         type="text"
                         placeholder="Username"
                         size="sm"
@@ -208,12 +296,18 @@ export default function Profile() {
                       />
                     ) : (
                       <Text fontWeight="600" color="fg" fontSize="sm">
-                        {user.username || 'Not set'}
+                        {user.username || "Not set"}
                       </Text>
                     )}
                   </Box>
 
-                  <Box bg="bg" border="1px" borderColor="border.subtle" p={4} borderRadius="lg">
+                  <Box
+                    bg="bg"
+                    border="1px"
+                    borderColor="border.subtle"
+                    p={4}
+                    borderRadius="lg"
+                  >
                     <HStack gap={3} mb={3}>
                       <Icon as={FaMapPin} color="teal.600" fontSize="lg" />
                       <Text fontWeight="600" color="fg" fontSize="sm">
@@ -223,7 +317,9 @@ export default function Profile() {
                     {isEditing ? (
                       <Input
                         value={formData.zipcode}
-                        onChange={(e) => handleInputChange('zipcode', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("zipcode", e.target.value)
+                        }
                         type="text"
                         placeholder="Zipcode"
                         size="sm"
@@ -236,7 +332,13 @@ export default function Profile() {
                     )}
                   </Box>
 
-                  <Box bg="bg" border="1px" borderColor="border.subtle" p={4} borderRadius="lg">
+                  <Box
+                    bg="bg"
+                    border="1px"
+                    borderColor="border.subtle"
+                    p={4}
+                    borderRadius="lg"
+                  >
                     <HStack gap={3} mb={3}>
                       <Icon as={FaHeart} color="teal.600" fontSize="lg" />
                       <Text fontWeight="600" color="fg" fontSize="sm">
@@ -244,7 +346,7 @@ export default function Profile() {
                       </Text>
                     </HStack>
                     <Text fontWeight="600" color="gray.900" fontSize="sm">
-                      {user.anonymous ? 'Anonymous' : 'Verified'}
+                      {user.anonymous ? "Anonymous" : "Verified"}
                     </Text>
                   </Box>
                 </SimpleGrid>
@@ -254,5 +356,5 @@ export default function Profile() {
         )}
       </Box>
     </ProtectedRoute>
-  )
+  );
 }

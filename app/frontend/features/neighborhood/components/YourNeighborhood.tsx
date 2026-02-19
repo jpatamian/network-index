@@ -21,7 +21,7 @@ import { neighborhoodActions } from "@/features/neighborhood/lib/neighborhoodAct
 
 interface YourNeighborhoodProps {
   user: {
-    zipcode: string;
+    zipcode?: string;
     username: string;
     email: string;
   };

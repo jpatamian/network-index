@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Container,
@@ -11,91 +11,150 @@ import {
   Link as ChakraLink,
   HStack,
   Icon,
-} from '@chakra-ui/react'
-import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa'
-import { useAuth } from '@/hooks/useAuth'
+} from "@chakra-ui/react";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Signup() {
-  const navigate = useNavigate()
-  const { signup } = useAuth()
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false)
+  const navigate = useNavigate();
+  const { signup, loginWithGoogle } = useAuth();
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const googleClientIdConfigured = Boolean(
+    import.meta.env.VITE_GOOGLE_CLIENT_ID,
+  );
 
   const [formData, setFormData] = useState({
-    email: '',
-    username: '',
-    zipcode: '',
-    password: '',
-    password_confirmation: '',
-  })
+    email: "",
+    username: "",
+    zipcode: "",
+    password: "",
+    password_confirmation: "",
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-    })
-  }
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError("");
     if (formData.password !== formData.password_confirmation) {
-      setError('Passwords do not match')
-      return
+      setError("Passwords do not match");
+      return;
     }
-    setLoading(true)
+    setLoading(true);
 
     try {
-      await signup(formData)
-      navigate('/')
+      await signup(formData);
+      navigate("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Signup failed')
+      setError(err instanceof Error ? err.message : "Signup failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const handleGoogleSignup = () => {
-    // TODO: Implement Google OAuth
-    setError('Google signup coming soon')
-  }
+  const handleGoogleSignup = async (response: CredentialResponse) => {
+    const credential = response.credential;
+
+    if (!credential) {
+      setError("Google authentication failed");
+      return;
+    }
+
+    setError("");
+    setGoogleLoading(true);
+
+    try {
+      await loginWithGoogle(credential, formData.zipcode.trim() || undefined);
+      navigate("/");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Google signup failed");
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   return (
-    <Box minH="100vh" bg="white" display="flex" alignItems="center" justifyContent="center" py={12} px={4}>
+    <Box
+      minH="100vh"
+      bg="white"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      py={12}
+      px={4}
+    >
       <Container maxW="sm">
         <VStack gap={8} align="stretch">
           {/* Header */}
           <VStack align="center" gap={2}>
-            <Heading as="h1" size="2xl" color="fg" fontWeight="700" textAlign="center">
+            <Heading
+              as="h1"
+              size="2xl"
+              color="fg"
+              fontWeight="700"
+              textAlign="center"
+            >
               Discover your neighborhood
             </Heading>
           </VStack>
 
           {/* OAuth Buttons */}
           <VStack gap={3} w="100%">
-            <Button
-              onClick={handleGoogleSignup}
-              w="100%"
-              h="56px"
-              bg="bg.muted"
-              color="fg"
-              fontSize="md"
-              fontWeight="600"
-              borderRadius="full"
-              _hover={{ bg: 'bg.emphasized' }}
-              gap={3}
-            >
-              <Icon as={FaGoogle} fontSize="lg" color="red.500" />
-              Continue with Google
-            </Button>
+            {googleClientIdConfigured ? (
+              <Box
+                w="100%"
+                display="flex"
+                justifyContent="center"
+                opacity={googleLoading ? 0.6 : 1}
+              >
+                <GoogleLogin
+                  onSuccess={handleGoogleSignup}
+                  onError={() => setError("Google authentication failed")}
+                  text="continue_with"
+                  shape="pill"
+                  size="large"
+                />
+              </Box>
+            ) : (
+              <Button
+                disabled
+                w="100%"
+                h="56px"
+                bg="bg.muted"
+                color="fg.subtle"
+                fontSize="md"
+                fontWeight="600"
+                borderRadius="full"
+              >
+                Google OAuth not configured
+              </Button>
+            )}
+            <Text fontSize="xs" color="fg.subtle" textAlign="center">
+              You can continue with Google now and add your zipcode later on
+              your profile.
+            </Text>
           </VStack>
 
           {/* Divider */}
           <HStack w="100%" gap={0}>
             <Box flex={1} h="1px" bg="border" />
-            <Text color="fg.subtle" fontSize="sm" fontWeight="600" px={3} whiteSpace="nowrap">
+            <Text
+              color="fg.subtle"
+              fontSize="sm"
+              fontWeight="600"
+              px={3}
+              whiteSpace="nowrap"
+            >
               or
             </Text>
             <Box flex={1} h="1px" bg="border" />
@@ -103,7 +162,13 @@ export default function Signup() {
 
           {/* Error Message */}
           {error && (
-            <Box bg="red.50" border="1px" borderColor="red.200" p={4} borderRadius="lg">
+            <Box
+              bg="red.50"
+              border="1px"
+              borderColor="red.200"
+              p={4}
+              borderRadius="lg"
+            >
               <Text color="red.700" fontSize="sm">
                 {error}
               </Text>
@@ -111,7 +176,7 @@ export default function Signup() {
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          <form onSubmit={handleSubmit} style={{ width: "100%" }}>
             <VStack gap={4}>
               {/* Email Input */}
               <Input
@@ -125,8 +190,11 @@ export default function Signup() {
                 fontSize="base"
                 borderColor="border"
                 borderRadius="lg"
-                _placeholder={{ color: 'fg.subtle' }}
-                _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
+                _placeholder={{ color: "fg.subtle" }}
+                _focus={{
+                  borderColor: "teal.500",
+                  boxShadow: "0 0 0 1px #14b8a6",
+                }}
               />
 
               {/* Username Input */}
@@ -140,8 +208,11 @@ export default function Signup() {
                 fontSize="base"
                 borderColor="border"
                 borderRadius="lg"
-                _placeholder={{ color: 'fg.subtle' }}
-                _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
+                _placeholder={{ color: "fg.subtle" }}
+                _focus={{
+                  borderColor: "teal.500",
+                  boxShadow: "0 0 0 1px #14b8a6",
+                }}
               />
 
               {/* Zipcode Input */}
@@ -156,15 +227,18 @@ export default function Signup() {
                 fontSize="base"
                 borderColor="border"
                 borderRadius="lg"
-                _placeholder={{ color: 'fg.subtle' }}
-                _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
+                _placeholder={{ color: "fg.subtle" }}
+                _focus={{
+                  borderColor: "teal.500",
+                  boxShadow: "0 0 0 1px #14b8a6",
+                }}
               />
 
               {/* Password Input */}
               <Box position="relative">
                 <Input
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   placeholder="Create a password"
                   value={formData.password}
                   onChange={handleChange}
@@ -173,8 +247,11 @@ export default function Signup() {
                   fontSize="base"
                   borderColor="gray.300"
                   borderRadius="lg"
-                  _placeholder={{ color: 'gray.400' }}
-                  _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
+                  _placeholder={{ color: "gray.400" }}
+                  _focus={{
+                    borderColor: "teal.500",
+                    boxShadow: "0 0 0 1px #14b8a6",
+                  }}
                   pr="48px"
                 />
                 <Button
@@ -186,9 +263,13 @@ export default function Signup() {
                   transform="translateY(-50%)"
                   onClick={() => setShowPassword(!showPassword)}
                   color="fg.subtle"
-                  _hover={{ color: 'fg', bg: 'transparent' }}
+                  _hover={{ color: "fg", bg: "transparent" }}
                 >
-                  {showPassword ? <Icon as={FaEyeSlash} /> : <Icon as={FaEye} />}
+                  {showPassword ? (
+                    <Icon as={FaEyeSlash} />
+                  ) : (
+                    <Icon as={FaEye} />
+                  )}
                 </Button>
               </Box>
 
@@ -196,7 +277,7 @@ export default function Signup() {
               <Box position="relative">
                 <Input
                   name="password_confirmation"
-                  type={showPasswordConfirm ? 'text' : 'password'}
+                  type={showPasswordConfirm ? "text" : "password"}
                   placeholder="Confirm password"
                   value={formData.password_confirmation}
                   onChange={handleChange}
@@ -205,8 +286,11 @@ export default function Signup() {
                   fontSize="base"
                   borderColor="gray.300"
                   borderRadius="lg"
-                  _placeholder={{ color: 'gray.400' }}
-                  _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
+                  _placeholder={{ color: "gray.400" }}
+                  _focus={{
+                    borderColor: "teal.500",
+                    boxShadow: "0 0 0 1px #14b8a6",
+                  }}
                   pr="48px"
                 />
                 <Button
@@ -218,9 +302,13 @@ export default function Signup() {
                   transform="translateY(-50%)"
                   onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
                   color="fg.subtle"
-                  _hover={{ color: 'fg', bg: 'transparent' }}
+                  _hover={{ color: "fg", bg: "transparent" }}
                 >
-                  {showPasswordConfirm ? <Icon as={FaEyeSlash} /> : <Icon as={FaEye} />}
+                  {showPasswordConfirm ? (
+                    <Icon as={FaEyeSlash} />
+                  ) : (
+                    <Icon as={FaEye} />
+                  )}
                 </Button>
               </Box>
 
@@ -235,27 +323,47 @@ export default function Signup() {
                 fontSize="lg"
                 fontWeight="700"
                 borderRadius="full"
-                _hover={{ bg: 'teal.700' }}
-                _disabled={{ bg: 'teal.400' }}
+                _hover={{ bg: "teal.700" }}
+                _disabled={{ bg: "teal.400" }}
               >
-                {loading ? 'Creating account...' : 'Continue'}
+                {loading ? "Creating account..." : "Continue"}
               </Button>
             </VStack>
           </form>
 
           {/* Footer Links */}
           <VStack gap={4} align="center" w="100%">
-            <Text fontSize="xs" color="fg.subtle" textAlign="center" lineHeight={1.4}>
-              By continuing with sign up, you agree to our{' '}
-              <ChakraLink href="#" textDecoration="underline" color="fg" fontWeight="600">
+            <Text
+              fontSize="xs"
+              color="fg.subtle"
+              textAlign="center"
+              lineHeight={1.4}
+            >
+              By continuing with sign up, you agree to our{" "}
+              <ChakraLink
+                href="#"
+                textDecoration="underline"
+                color="fg"
+                fontWeight="600"
+              >
                 Privacy Policy
               </ChakraLink>
-              ,{' '}
-              <ChakraLink href="#" textDecoration="underline" color="fg" fontWeight="600">
+              ,{" "}
+              <ChakraLink
+                href="#"
+                textDecoration="underline"
+                color="fg"
+                fontWeight="600"
+              >
                 Cookie Policy
               </ChakraLink>
-              , and{' '}
-              <ChakraLink href="#" textDecoration="underline" color="fg" fontWeight="600">
+              , and{" "}
+              <ChakraLink
+                href="#"
+                textDecoration="underline"
+                color="fg"
+                fontWeight="600"
+              >
                 Member Agreement
               </ChakraLink>
               .
@@ -264,13 +372,13 @@ export default function Signup() {
 
           {/* Login Link */}
           <Text fontSize="sm" color="fg.muted" textAlign="center">
-            Already have an account?{' '}
+            Already have an account?{" "}
             <ChakraLink
               href="/login"
               color="teal.600"
               fontWeight="600"
               textDecoration="underline"
-              _hover={{ color: 'teal.700' }}
+              _hover={{ color: "teal.700" }}
             >
               Log in
             </ChakraLink>
@@ -278,5 +386,5 @@ export default function Signup() {
         </VStack>
       </Container>
     </Box>
-  )
+  );
 }

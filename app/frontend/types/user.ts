@@ -3,7 +3,7 @@ export interface User {
   email: string | null;
   phone: string | null;
   username: string | null;
-  zipcode: string;
+  zipcode?: string | null;
   anonymous: boolean;
   created_at: string;
 }

@@ -19,6 +19,9 @@ gem "bcrypt", "~> 3.1.7"
 # JWT authentication [https://github.com/jwt/ruby-jwt]
 gem "jwt", "~> 3.1"
 
+# Verify Google ID tokens for OAuth sign-in
+gem "google-id-token"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

@@ -6,17 +6,17 @@ import {
   Button,
   Stack,
   HStack,
-  Center,
   Image,
-} from '@chakra-ui/react'
-import { useAuth } from '@/hooks/useAuth'
-import HowItWorks from '@/features/home/components/HowItWorks'
-import FindYourNeighborhood from '@/features/home/components/FindYourNeighborhood'
-import YourNeighborhood from '@/features/neighborhood/components/YourNeighborhood'
-import communityHeroImage from '@/assets/images/community-hero.svg'
+} from "@chakra-ui/react";
+import { useAuth } from "@/hooks/useAuth";
+import HowItWorks from "@/features/home/components/HowItWorks";
+import FindYourNeighborhood from "@/features/home/components/FindYourNeighborhood";
+import YourNeighborhood from "@/features/neighborhood/components/YourNeighborhood";
+import communityHeroImage from "@/assets/images/community-hero.svg";
 
 export default function Home() {
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated } = useAuth();
+  const needsZipcode = isAuthenticated && user?.zipcode === "00000";
 
   return (
     <Box>
@@ -28,6 +28,39 @@ export default function Home() {
         borderColor="border.subtle"
       >
         <Container maxW="7xl">
+          {needsZipcode && (
+            <Box
+              mb={6}
+              bg="orange.50"
+              border="1px"
+              borderColor="orange.200"
+              borderRadius="lg"
+              p={4}
+            >
+              <HStack
+                justify="space-between"
+                align="center"
+                flexWrap="wrap"
+                gap={3}
+              >
+                <Text color="orange.800" fontSize="sm" fontWeight="500">
+                  Finish setting up your account by adding your zipcode.
+                </Text>
+                <Button
+                  size="sm"
+                  bg="orange.500"
+                  color="white"
+                  _hover={{ bg: "orange.600" }}
+                  onClick={() => {
+                    window.location.href = "/profile";
+                  }}
+                >
+                  Add Zipcode
+                </Button>
+              </HStack>
+            </Box>
+          )}
+
           <Stack gap={8} align="center">
             {/* Hero Image */}
             <Box
@@ -57,12 +90,12 @@ export default function Home() {
               >
                 {isAuthenticated
                   ? `Welcome back, ${user?.username || user?.email}!`
-                  : 'Your Neighborhood, Connected'}
+                  : "Your Neighborhood, Connected"}
               </Heading>
               <Text fontSize="lg" color="fg.muted" lineHeight={1.6}>
                 {isAuthenticated
-                  ? 'Connect with neighbors to share resources, ask for help, and build community.'
-                  : 'Share resources, ask for help, and build genuine connections with neighbors near you.'}
+                  ? "Connect with neighbors to share resources, ask for help, and build community."
+                  : "Share resources, ask for help, and build genuine connections with neighbors near you."}
               </Text>
             </Stack>
           </Stack>
@@ -71,21 +104,25 @@ export default function Home() {
             <HStack gap={4} justify="center" pt={4}>
               <Button
                 onClick={() => {
-                  window.location.href = '/signup'
+                  window.location.href = "/signup";
                 }}
                 bg="teal.600"
                 color="white"
                 size="lg"
                 fontWeight="600"
                 borderRadius="md"
-                _hover={{ bg: 'teal.700', transform: 'translateY(-1px)', boxShadow: 'md' }}
+                _hover={{
+                  bg: "teal.700",
+                  transform: "translateY(-1px)",
+                  boxShadow: "md",
+                }}
                 transition="all 0.2s"
               >
                 Get Started
               </Button>
               <Button
                 onClick={() => {
-                  window.location.href = '/login'
+                  window.location.href = "/login";
                 }}
                 variant="outline"
                 size="lg"
@@ -93,7 +130,11 @@ export default function Home() {
                 borderRadius="md"
                 borderColor="border"
                 color="fg"
-                _hover={{ bg: 'bg.subtle', transform: 'translateY(-1px)', boxShadow: 'md' }}
+                _hover={{
+                  bg: "bg.subtle",
+                  transform: "translateY(-1px)",
+                  boxShadow: "md",
+                }}
                 transition="all 0.2s"
               >
                 Sign In
@@ -107,12 +148,12 @@ export default function Home() {
       {!isAuthenticated && <FindYourNeighborhood />}
 
       {/* Your Neighborhood Section - For Authenticated Users */}
-      {isAuthenticated && user && (
+      {isAuthenticated && user && user.username && user.email && (
         <YourNeighborhood
           user={{
             zipcode: user.zipcode ?? undefined,
-            username: user.username ?? undefined,
-            email: user.email ?? undefined,
+            username: user.username,
+            email: user.email,
           }}
         />
       )}
@@ -120,5 +161,5 @@ export default function Home() {
       {/* Features Section */}
       <HowItWorks />
     </Box>
-  )
+  );
 }

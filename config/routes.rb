@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       # Authentication routes
       post 'auth/signup', to: 'authentication#signup'
       post 'auth/login', to: 'authentication#login'
+      post 'auth/google', to: 'authentication#google'
       get 'auth/me', to: 'authentication#me'
 
       # User routes
