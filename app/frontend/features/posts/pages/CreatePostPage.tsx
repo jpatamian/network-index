@@ -1,25 +1,34 @@
-import { Box, Container, Heading, Text, Stack, Button, HStack, Icon } from '@chakra-ui/react'
-import { FaArrowLeft, FaPen } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
-import CreatePost from '@/features/posts/components/CreatePost'
-import { toaster } from '@/components/ui/toaster'
-import { Post } from '@/types/post'
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  Stack,
+  Button,
+  HStack,
+  Icon,
+} from "@chakra-ui/react";
+import { FaArrowLeft, FaPen } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { CreatePost } from "@/features/posts/components/CreatePost";
+import { toaster } from "@/components/ui/toaster";
+import { Post } from "@/types/post";
 
-export default function CreatePostPage() {
-  const navigate = useNavigate()
+export const CreatePostPage = () => {
+  const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate('/posts')
-  }
+    navigate("/posts");
+  };
 
   const handlePostCreated = (_post: Post) => {
     toaster.success({
-      title: 'Post published',
-      description: 'Your update is live in the community feed.',
-    })
+      title: "Post published",
+      description: "Your update is live in the community feed.",
+    });
 
-    navigate('/posts')
-  }
+    navigate("/posts");
+  };
 
   return (
     <Box bg="bg.subtle" minH="100vh" py={{ base: 10, md: 16 }}>
@@ -32,13 +41,20 @@ export default function CreatePostPage() {
             fontWeight="600"
             gap={2}
             w="fit-content"
-            _hover={{ bg: 'teal.50' }}
+            _hover={{ bg: "teal.50" }}
           >
             <Icon as={FaArrowLeft} />
             Back to feed
           </Button>
 
-          <Box bg="bg" borderRadius="lg" p={{ base: 6, md: 8 }} borderWidth="1px" borderColor="border.subtle" boxShadow="sm">
+          <Box
+            bg="bg"
+            borderRadius="lg"
+            p={{ base: 6, md: 8 }}
+            borderWidth="1px"
+            borderColor="border.subtle"
+            boxShadow="sm"
+          >
             <Stack gap={4}>
               <HStack gap={3}>
                 <Box color="teal.600" fontSize="2xl">
@@ -49,14 +65,20 @@ export default function CreatePostPage() {
                 </Heading>
               </HStack>
               <Text color="fg.muted" lineHeight="1.6">
-                Start a conversation, ask for support, or offer help to your neighborhood. Posts shared here will appear in the community feed.
+                Start a conversation, ask for support, or offer help to your
+                neighborhood. Posts shared here will appear in the community
+                feed.
               </Text>
             </Stack>
           </Box>
 
-          <CreatePost onPostCreated={handlePostCreated} forceExpanded onCancel={handleBack} />
+          <CreatePost
+            onPostCreated={handlePostCreated}
+            forceExpanded
+            onCancel={handleBack}
+          />
         </Stack>
       </Container>
     </Box>
-  )
-}
+  );
+};

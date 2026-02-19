@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from "react";
 import {
   Card,
   Box,
@@ -10,90 +10,104 @@ import {
   HStack,
   VStack,
   Icon,
-} from '@chakra-ui/react'
-import { FaUser, FaPen, FaInfoCircle, FaExclamationCircle } from 'react-icons/fa'
-import { useAuth } from '@/hooks/useAuth'
-import { postsApi } from '@/lib/api'
-import { Post } from '@/types/post'
-import { PostInput } from './PostInput'
+} from "@chakra-ui/react";
+import { FaPen, FaInfoCircle, FaExclamationCircle } from "react-icons/fa";
+import { useAuth } from "@/hooks/useAuth";
+import { postsApi } from "@/lib/api";
+import { Post } from "@/types/post";
+import { toErrorMessage } from "@/features/posts/lib/utils";
+import { PostInput } from "./PostInput";
 
 interface CreatePostProps {
-  onPostCreated: (post: Post) => void
-  forceExpanded?: boolean
-  onCancel?: () => void
+  onPostCreated: (post: Post) => void;
+  forceExpanded?: boolean;
+  onCancel?: () => void;
 }
 
-export default function CreatePost({
+const initialFormData = {
+  title: "",
+  content: "",
+  zipcode: "",
+};
+
+export const CreatePost = ({
   onPostCreated,
   forceExpanded = false,
   onCancel,
-}: CreatePostProps) {
-  const { token, isAuthenticated, user } = useAuth()
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+}: CreatePostProps) => {
+  const { token, isAuthenticated } = useAuth();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [formData, setFormData] = useState(initialFormData);
 
-  const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    zipcode: '',
-  })
-
-  const isFormVisible = forceExpanded || isExpanded
+  const isFormVisible = forceExpanded || isExpanded;
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!isAuthenticated && !formData.zipcode.trim()) {
-      setError('Zipcode is required for anonymous posts')
-      return
+      setError("Zipcode is required for anonymous posts");
+      return;
     }
 
-    setError('')
-    setLoading(true)
+    setError("");
+    setLoading(true);
 
     try {
       const postData: { title: string; content: string; zipcode?: string } = {
         title: formData.title,
         content: formData.content,
-      }
+      };
 
       if (!isAuthenticated) {
-        postData.zipcode = formData.zipcode
+        postData.zipcode = formData.zipcode;
       }
 
-      const response = await postsApi.create(postData, token)
-      onPostCreated(response)
-      setFormData({ title: '', content: '', zipcode: '' })
+      const response = await postsApi.create(postData, token);
+      onPostCreated(response);
+      setFormData(initialFormData);
       if (!forceExpanded) {
-        setIsExpanded(false)
+        setIsExpanded(false);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create post')
+      setError(toErrorMessage(err, "Failed to create post"));
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleCancel = () => {
-    setFormData({ title: '', content: '', zipcode: '' })
-    setError('')
+    setFormData(initialFormData);
+    setError("");
 
     if (forceExpanded) {
-      onCancel?.()
+      onCancel?.();
     } else {
-      setIsExpanded(false)
+      setIsExpanded(false);
     }
-  }
+  };
+
+  const handleFieldChange = (
+    field: "title" | "content" | "zipcode",
+    value: string,
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   if (!isFormVisible) {
-    return (
-      <PostInput setIsExpanded={setIsExpanded} />
-    )
+    return <PostInput setIsExpanded={setIsExpanded} />;
   }
 
   return (
-    <Card.Root borderRadius="lg" boxShadow="sm" mb={6} borderWidth="1px" borderColor="border.subtle" bg="bg">
+    <Card.Root
+      borderRadius="lg"
+      boxShadow="sm"
+      mb={6}
+      borderWidth="1px"
+      borderColor="border.subtle"
+      bg="bg"
+    >
       <Card.Body p={6}>
         <VStack align="stretch" gap={4}>
           {/* Header */}
@@ -102,7 +116,9 @@ export default function CreatePost({
               <Icon as={FaPen} />
             </Box>
             <Heading size="md" color="fg" fontWeight="700">
-              {isAuthenticated ? 'Share with Your Community' : 'Post Anonymously'}
+              {isAuthenticated
+                ? "Share with Your Community"
+                : "Post Anonymously"}
             </Heading>
           </HStack>
 
@@ -116,13 +132,19 @@ export default function CreatePost({
               borderLeft="4px"
               borderColor="blue.400"
             >
-              <Icon as={FaInfoCircle} color="blue.600" fontSize="lg" flexShrink={0} />
+              <Icon
+                as={FaInfoCircle}
+                color="blue.600"
+                fontSize="lg"
+                flexShrink={0}
+              />
               <Box>
                 <Heading size="xs" color="blue.800" mb={1} fontWeight="700">
                   Anonymous Post
                 </Heading>
                 <Box fontSize="sm" color="blue.700" lineHeight="1.4">
-                  Your zipcode will be associated with this post for community context.
+                  Your zipcode will be associated with this post for community
+                  context.
                 </Box>
               </Box>
             </HStack>
@@ -138,7 +160,12 @@ export default function CreatePost({
               borderLeft="4px"
               borderColor="red.400"
             >
-              <Icon as={FaExclamationCircle} color="red.600" fontSize="lg" flex="shrink: 0" />
+              <Icon
+                as={FaExclamationCircle}
+                color="red.600"
+                fontSize="lg"
+                flex="shrink: 0"
+              />
               <Box fontSize="sm" color="red.700">
                 {error}
               </Box>
@@ -146,7 +173,7 @@ export default function CreatePost({
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          <form onSubmit={handleSubmit} style={{ width: "100%" }}>
             <Stack gap={4}>
               {/* Zipcode Input */}
               {!isAuthenticated && (
@@ -154,10 +181,13 @@ export default function CreatePost({
                   type="text"
                   placeholder="Your zipcode *"
                   value={formData.zipcode}
-                  onChange={(e) => setFormData({ ...formData, zipcode: e.target.value })}
+                  onChange={(e) => handleFieldChange("zipcode", e.target.value)}
                   borderRadius="lg"
                   borderColor="border"
-                  _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
+                  _focus={{
+                    borderColor: "teal.500",
+                    boxShadow: "0 0 0 1px #14b8a6",
+                  }}
                   required
                 />
               )}
@@ -167,10 +197,13 @@ export default function CreatePost({
                 type="text"
                 placeholder="Post title"
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) => handleFieldChange("title", e.target.value)}
                 borderRadius="lg"
                 borderColor="gray.200"
-                _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
+                _focus={{
+                  borderColor: "teal.500",
+                  boxShadow: "0 0 0 1px #14b8a6",
+                }}
                 required
                 maxLength={200}
                 fontWeight="medium"
@@ -180,11 +213,14 @@ export default function CreatePost({
               <Textarea
                 placeholder="What's on your mind? Share what you need or offer..."
                 value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                onChange={(e) => handleFieldChange("content", e.target.value)}
                 borderRadius="lg"
                 borderColor="gray.200"
                 minH="120px"
-                _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px #14b8a6' }}
+                _focus={{
+                  borderColor: "teal.500",
+                  boxShadow: "0 0 0 1px #14b8a6",
+                }}
                 required
                 maxLength={5000}
                 resize="vertical"
@@ -197,7 +233,7 @@ export default function CreatePost({
                   onClick={handleCancel}
                   variant="outline"
                   borderRadius="lg"
-                  _hover={{ bg: 'bg.subtle' }}
+                  _hover={{ bg: "bg.subtle" }}
                 >
                   Cancel
                 </Button>
@@ -208,10 +244,18 @@ export default function CreatePost({
                   color="white"
                   borderRadius="lg"
                   fontWeight="600"
-                  _hover={{ bg: 'teal.700', transform: 'translateY(-1px)', boxShadow: 'md' }}
+                  _hover={{
+                    bg: "teal.700",
+                    transform: "translateY(-1px)",
+                    boxShadow: "md",
+                  }}
                   transition="all 0.2s"
                 >
-                  {loading ? 'Posting...' : isAuthenticated ? 'Share' : 'Post Anonymously'}
+                  {loading
+                    ? "Posting..."
+                    : isAuthenticated
+                      ? "Share"
+                      : "Post Anonymously"}
                 </Button>
               </HStack>
             </Stack>
@@ -219,5 +263,5 @@ export default function CreatePost({
         </VStack>
       </Card.Body>
     </Card.Root>
-  )
-}
+  );
+};

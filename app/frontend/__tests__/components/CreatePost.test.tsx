@@ -1,86 +1,85 @@
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import CreatePost from '../../features/posts/components/CreatePost'
-import { TestWrapper } from '../setup/test-wrapper'
+import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import { CreatePost } from "../../features/posts/components/CreatePost";
+import { TestWrapper } from "../setup/test-wrapper";
 
-jest.mock('../../hooks/useAuth', () => ({
+jest.mock("../../hooks/useAuth", () => ({
   useAuth: jest.fn(),
-}))
+}));
 
-jest.mock('../../lib/api', () => ({
+jest.mock("../../lib/api", () => ({
   postsApi: {
     create: jest.fn(),
   },
-}))
+}));
 
-import { useAuth } from '../../hooks/useAuth'
+import { useAuth } from "../../hooks/useAuth";
 
-describe('CreatePost Component', () => {
-  const mockOnPostCreated = jest.fn()
+describe("CreatePost Component", () => {
+  const mockOnPostCreated = jest.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    ;(useAuth as jest.Mock).mockReturnValue({
-      user: { id: 1, username: 'testuser', email: 'test@example.com' },
-      token: 'mock-token',
+    jest.clearAllMocks();
+    (useAuth as jest.Mock).mockReturnValue({
+      user: { id: 1, username: "testuser", email: "test@example.com" },
+      token: "mock-token",
       isAuthenticated: true,
-    })
-  })
+    });
+  });
 
-  it('renders create post component for authenticated users', () => {
+  it("renders create post component for authenticated users", () => {
     render(
       <TestWrapper>
         <CreatePost onPostCreated={mockOnPostCreated} />
-      </TestWrapper>
-    )
+      </TestWrapper>,
+    );
 
-    expect(document.body).toBeInTheDocument()
-  })
+    expect(document.body).toBeInTheDocument();
+  });
 
-  it('renders without crashing', () => {
+  it("renders without crashing", () => {
     expect(() => {
       render(
         <TestWrapper>
           <CreatePost onPostCreated={mockOnPostCreated} />
-        </TestWrapper>
-      )
-    }).not.toThrow()
-  })
+        </TestWrapper>,
+      );
+    }).not.toThrow();
+  });
 
-  it('shows heading for authenticated users', () => {
+  it("shows heading for authenticated users", () => {
     const { container } = render(
       <TestWrapper>
         <CreatePost onPostCreated={mockOnPostCreated} />
-      </TestWrapper>
-    )
+      </TestWrapper>,
+    );
 
-    expect(container).toBeInTheDocument()
-  })
+    expect(container).toBeInTheDocument();
+  });
 
-  it('renders for anonymous users', () => {
-    ;(useAuth as jest.Mock).mockReturnValue({
+  it("renders for anonymous users", () => {
+    (useAuth as jest.Mock).mockReturnValue({
       user: null,
       token: null,
       isAuthenticated: false,
-    })
+    });
 
     render(
       <TestWrapper>
         <CreatePost onPostCreated={mockOnPostCreated} />
-      </TestWrapper>
-    )
+      </TestWrapper>,
+    );
 
-    expect(document.body).toBeInTheDocument()
-  })
+    expect(document.body).toBeInTheDocument();
+  });
 
-  it('shows expanded form when forceExpanded is true', () => {
+  it("shows expanded form when forceExpanded is true", () => {
     render(
       <TestWrapper>
         <CreatePost onPostCreated={mockOnPostCreated} forceExpanded />
-      </TestWrapper>
-    )
+      </TestWrapper>,
+    );
 
-    expect(screen.getByPlaceholderText('Post title')).toBeInTheDocument()
-  })
-})
+    expect(screen.getByPlaceholderText("Post title")).toBeInTheDocument();
+  });
+});

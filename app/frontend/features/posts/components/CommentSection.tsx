@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from "react";
 import {
   Box,
   VStack,
@@ -10,76 +10,88 @@ import {
   Alert,
   Spinner,
   Flex,
-} from '@chakra-ui/react'
-import { useAuth } from '@/hooks/useAuth'
-import { commentsApi } from '@/lib/api'
-import { Comment } from '@/types/post'
-import { formatDate } from '@/lib/date'
+} from "@chakra-ui/react";
+import { useAuth } from "@/hooks/useAuth";
+import { commentsApi } from "@/lib/api";
+import { Comment } from "@/types/post";
+import { formatDate } from "@/lib/date";
+import { getInitial, toErrorMessage } from "@/features/posts/lib/utils";
 
 interface CommentSectionProps {
-  postId: number
-  commentCount: number
+  postId: number;
+  commentCount: number;
 }
 
-export default function CommentSection({ postId, commentCount }: CommentSectionProps) {
-  const { user, token, isAuthenticated } = useAuth()
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [comments, setComments] = useState<Comment[]>([])
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState('')
-  const [count, setCount] = useState(commentCount)
+export const CommentSection = ({
+  postId,
+  commentCount,
+}: CommentSectionProps) => {
+  const { user, token, isAuthenticated } = useAuth();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [count, setCount] = useState(commentCount);
 
   const loadComments = async () => {
-    setLoading(true)
+    setLoading(true);
+    setError("");
     try {
-      const data = await commentsApi.getByPost(postId)
-      setComments(data)
+      const data = await commentsApi.getByPost(postId);
+      setComments(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load comments')
+      setError(toErrorMessage(err, "Failed to load comments"));
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleExpand = () => {
-    if (!isExpanded) {
-      loadComments()
-    }
-    setIsExpanded(!isExpanded)
-  }
+    setIsExpanded((prev) => {
+      if (!prev) {
+        loadComments();
+      }
+      return !prev;
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!token || !message.trim()) return
+    e.preventDefault();
+    const trimmedMessage = message.trim();
+    if (!token || !trimmedMessage) return;
 
-    setSubmitting(true)
-    setError('')
+    setSubmitting(true);
+    setError("");
 
     try {
-      const newComment = await commentsApi.create(postId, message.trim(), token)
-      setComments([...comments, newComment])
-      setCount(count + 1)
-      setMessage('')
+      const newComment = await commentsApi.create(
+        postId,
+        trimmedMessage,
+        token,
+      );
+      setComments((prev) => [...prev, newComment]);
+      setCount((prev) => prev + 1);
+      setMessage("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add comment')
+      setError(toErrorMessage(err, "Failed to add comment"));
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   const handleDelete = async (commentId: number) => {
-    if (!token) return
+    if (!token) return;
 
     try {
-      await commentsApi.delete(postId, commentId, token)
-      setComments(comments.filter((c) => c.id !== commentId))
-      setCount(count - 1)
+      await commentsApi.delete(postId, commentId, token);
+      setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+      setCount((prev) => prev - 1);
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to delete comment')
+      alert(toErrorMessage(err, "Failed to delete comment"));
     }
-  }
+  };
 
   return (
     <Box borderTop="1px" borderColor="border" mt={4} pt={4}>
@@ -89,9 +101,9 @@ export default function CommentSection({ postId, commentCount }: CommentSectionP
         size="sm"
         fontWeight="600"
         color="fg.muted"
-        _hover={{ color: 'teal.600' }}
+        _hover={{ color: "teal.600" }}
       >
-        {isExpanded ? '▼ Hide Comments' : `▶ Comments (${count})`}
+        {isExpanded ? "▼ Hide Comments" : `▶ Comments (${count})`}
       </Button>
 
       {isExpanded && (
@@ -119,8 +131,12 @@ export default function CommentSection({ postId, commentCount }: CommentSectionP
               <HStack gap={3} align="flex-start">
                 <Avatar.Root size="sm">
                   <Avatar.Image />
-                  <Avatar.Fallback bg="teal.600" color="white" fontWeight="bold">
-                    {comment.author.name.charAt(0).toUpperCase()}
+                  <Avatar.Fallback
+                    bg="teal.600"
+                    color="white"
+                    fontWeight="bold"
+                  >
+                    {getInitial(comment.author.name)}
                   </Avatar.Fallback>
                 </Avatar.Root>
                 <Box flex={1} minW={0}>
@@ -131,10 +147,10 @@ export default function CommentSection({ postId, commentCount }: CommentSectionP
                       </Text>
                       <Text fontSize="xs" color="fg.subtle">
                         {formatDate(comment.created_at, {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
                         })}
                       </Text>
                     </Box>
@@ -145,7 +161,7 @@ export default function CommentSection({ postId, commentCount }: CommentSectionP
                         variant="ghost"
                         color="red.500"
                         fontWeight="500"
-                        _hover={{ bg: 'red.50' }}
+                        _hover={{ bg: "red.50" }}
                       >
                         Delete
                       </Button>
@@ -179,22 +195,28 @@ export default function CommentSection({ postId, commentCount }: CommentSectionP
                     bg="teal.600"
                     color="white"
                     fontWeight="600"
-                    _hover={{ bg: 'teal.700' }}
-                    _disabled={{ bg: 'gray.300', cursor: 'not-allowed' }}
+                    _hover={{ bg: "teal.700" }}
+                    _disabled={{ bg: "gray.300", cursor: "not-allowed" }}
                     minW="70px"
                   >
-                    {submitting ? <Spinner size="xs" /> : 'Post'}
+                    {submitting ? <Spinner size="xs" /> : "Post"}
                   </Button>
                 </HStack>
               </VStack>
             </Box>
           ) : (
-            <Text fontSize="xs" color="fg.subtle" fontStyle="italic" w="full" textAlign="center">
+            <Text
+              fontSize="xs"
+              color="fg.subtle"
+              fontStyle="italic"
+              w="full"
+              textAlign="center"
+            >
               Sign in to leave a comment
             </Text>
           )}
         </VStack>
       )}
     </Box>
-  )
-}
+  );
+};
