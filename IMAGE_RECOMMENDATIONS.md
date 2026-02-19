@@ -157,7 +157,7 @@ The current teal theme is friendly and approachable. Consider adding:
 ## Technical Notes
 
 ### Current Image Paths
-All images are in `/public/images/` directory and can be accessed via `/images/[filename]`
+All images are stored in `app/frontend/assets/images/` directory and imported using Vite asset imports (e.g., `import image from '@/assets/images/filename.svg'`)
 
 ### Recommended Image Formats
 - **Photos**: Use WebP format with JPG fallback (better compression)
@@ -173,10 +173,11 @@ When adding real photos:
 
 ### Code Changes Required
 To replace placeholder SVGs with photos:
-1. Add new image files to `/public/images/`
-2. Update the `src` attribute in each component
-3. Adjust `objectFit` and sizing as needed for photos vs SVG
-4. Test responsive behavior on all screen sizes
+1. Add new image files to `app/frontend/assets/images/`
+2. Import the image at the top of the component file (e.g., `import myImage from '@/assets/images/photo.jpg'`)
+3. Update the `src` attribute to use the imported variable (e.g., `src={myImage}`)
+4. Adjust `objectFit` and sizing as needed for photos vs SVG
+5. Test responsive behavior on all screen sizes
 
 ## Conclusion
 
