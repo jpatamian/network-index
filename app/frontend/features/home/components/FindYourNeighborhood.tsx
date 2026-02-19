@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Box, Container, Heading, Text, Button, VStack, Stack, Icon, Input, HStack } from '@chakra-ui/react'
+import { Box, Container, Heading, Text, Button, VStack, Stack, Icon, Input, HStack, Image } from '@chakra-ui/react'
 import { FaMapPin, FaSearch } from 'react-icons/fa'
 
 export default function FindYourNeighborhood() {
@@ -21,6 +21,18 @@ export default function FindYourNeighborhood() {
     <Box py={{ base: 12, md: 16 }} bg="bg" borderBottomWidth="1px" borderColor="border.subtle">
       <Container maxW="7xl">
         <VStack gap={8} align="center" textAlign="center">
+          {/* Neighborhood map image */}
+          <Box maxW="lg" w="100%">
+            <Image
+              src="/images/neighborhood-map.svg"
+              alt="Map of neighborhoods with location pins"
+              w="100%"
+              h="auto"
+              borderRadius="lg"
+              boxShadow="md"
+            />
+          </Box>
+          
           <Box color="teal.600" fontSize="4xl">
             <Icon as={FaMapPin} />
           </Box>

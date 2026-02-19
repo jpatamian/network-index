@@ -1,4 +1,4 @@
-import { Box, Container, Heading, Text, Button, VStack, HStack, Badge, Icon, SimpleGrid } from '@chakra-ui/react'
+import { Box, Container, Heading, Text, Button, VStack, HStack, Badge, Icon, SimpleGrid, Image } from '@chakra-ui/react'
 import { FaMapPin, FaMapMarkerAlt, FaPlus, FaSearch, FaHistory } from 'react-icons/fa'
 import { neighborhoodActions } from '@/features/neighborhood/lib/neighborhoodActions'
 
@@ -16,6 +16,18 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
     <Box py={{ base: 12, md: 16 }} bg="bg.subtle" borderTopWidth="1px" borderColor="border.subtle" borderBottomWidth="1px">
       <Container maxW="7xl">
         <VStack gap={8}>
+          {/* Community gathering image */}
+          <Box w="100%" maxW="3xl" mx="auto">
+            <Image
+              src="/images/community-gathering.svg"
+              alt="Community members gathering at a park"
+              w="100%"
+              h="auto"
+              borderRadius="lg"
+              boxShadow="md"
+            />
+          </Box>
+          
           <HStack gap={3} w="100%">
             <Box color="teal.600" fontSize="2xl">
               <Icon as={FaMapPin} />

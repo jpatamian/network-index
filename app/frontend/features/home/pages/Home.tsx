@@ -7,6 +7,7 @@ import {
   Stack,
   HStack,
   Center,
+  Image,
 } from '@chakra-ui/react'
 import { useAuth } from '@/hooks/useAuth'
 import HowItWorks from '@/features/home/components/HowItWorks'
@@ -26,26 +27,44 @@ export default function Home() {
         borderColor="border.subtle"
       >
         <Container maxW="7xl">
-          <Center mb={8}>
+          <Stack gap={8} align="center">
+            {/* Hero Image */}
+            <Box
+              w="100%"
+              maxW="4xl"
+              borderRadius="xl"
+              overflow="hidden"
+              boxShadow="lg"
+              bg="white"
+            >
+              <Image
+                src="/images/community-hero.svg"
+                alt="Friendly neighborhood community with houses and people"
+                w="100%"
+                h="auto"
+                objectFit="cover"
+              />
+            </Box>
+
             <Stack textAlign="center" maxW="2xl" gap={6}>
               <Heading
-                  as="h1"
-                  size="2xl"
-                  fontWeight="700"
-                  color="fg"
-                  lineHeight="1.2"
-                >
-                  {isAuthenticated
-                    ? `Welcome back, ${user?.username || user?.email}!`
-                    : 'Your Neighborhood, Connected'}
-                </Heading>
-                <Text fontSize="lg" color="fg.muted" lineHeight={1.6}>
-                  {isAuthenticated
-                    ? 'Connect with neighbors to share resources, ask for help, and build community.'
-                    : 'Share resources, ask for help, and build genuine connections with neighbors near you.'}
-                </Text>
-              </Stack>
-          </Center>
+                as="h1"
+                size="2xl"
+                fontWeight="700"
+                color="fg"
+                lineHeight="1.2"
+              >
+                {isAuthenticated
+                  ? `Welcome back, ${user?.username || user?.email}!`
+                  : 'Your Neighborhood, Connected'}
+              </Heading>
+              <Text fontSize="lg" color="fg.muted" lineHeight={1.6}>
+                {isAuthenticated
+                  ? 'Connect with neighbors to share resources, ask for help, and build community.'
+                  : 'Share resources, ask for help, and build genuine connections with neighbors near you.'}
+              </Text>
+            </Stack>
+          </Stack>
 
           {!isAuthenticated && (
             <HStack gap={4} justify="center" pt={4}>

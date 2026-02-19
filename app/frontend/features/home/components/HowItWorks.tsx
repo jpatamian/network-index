@@ -9,6 +9,7 @@ import {
   VStack,
   Icon,
   Center,
+  Image,
 } from '@chakra-ui/react'
 import { FaHandsHelping, FaUsers, FaMapMarkerAlt, FaShieldAlt } from 'react-icons/fa'
 
@@ -41,13 +42,23 @@ export default function HowItWorks() {
       <Container maxW="7xl">
         <Stack padding={4} gap={8}>
           <Center>
-            <Stack textAlign="center">
+            <Stack textAlign="center" gap={4}>
               <Heading size="lg" color="fg" fontWeight="700">
                 How It Works
               </Heading>
               <Text fontSize="md" color="fg.muted" maxW="2xl">
                 Connect with neighbors to share, help, and grow together
               </Text>
+              {/* Community helping image */}
+              <Box maxW="lg" mx="auto" mt={4}>
+                <Image
+                  src="/images/helping-hands.svg"
+                  alt="Community members helping each other"
+                  w="100%"
+                  h="auto"
+                  borderRadius="lg"
+                />
+              </Box>
             </Stack>
           </Center>
 
