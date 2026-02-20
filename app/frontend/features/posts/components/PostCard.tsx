@@ -31,6 +31,7 @@ import {
 } from "react-icons/fa";
 import type { IconType } from "react-icons";
 import { CommentSection } from "./CommentSection";
+import { FlagButton } from "./FlagButton";
 
 const POST_TYPE_LABELS: Record<Post["post_type"], string> = {
   other: "Other",
@@ -52,7 +53,7 @@ interface PostCardProps {
 }
 
 export const PostCard = ({ post, onDelete }: PostCardProps) => {
-  const { user, token } = useAuth();
+  const { user, token, isAuthenticated } = useAuth();
   const [deleting, setDeleting] = useState(false);
   const isAuthor = user?.id === post.author.id;
   const createdAt = formatDate(post.created_at, postCardDateFormat);
@@ -119,22 +120,24 @@ export const PostCard = ({ post, onDelete }: PostCardProps) => {
               </HStack>
             </VStack>
 
-            {/* Delete Button */}
-            {isAuthor && (
-              <Button
-                onClick={handleDelete}
-                disabled={deleting}
-                variant="ghost"
-                size="sm"
-                color="red.600"
-                gap={2}
-                fontWeight="500"
-                _hover={{ bg: "red.50" }}
-              >
-                <Icon as={FaTrash} fontSize="sm" />
-                {deleting ? "Deleting..." : "Delete"}
-              </Button>
-            )}
+            <HStack gap={2} align="center">
+              {!isAuthor && isAuthenticated && <FlagButton postId={post.id} />}
+              {isAuthor && (
+                <Button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  variant="ghost"
+                  size="sm"
+                  color="red.600"
+                  gap={2}
+                  fontWeight="500"
+                  _hover={{ bg: "red.50" }}
+                >
+                  <Icon as={FaTrash} fontSize="sm" />
+                  {deleting ? "Deleting..." : "Delete"}
+                </Button>
+              )}
+            </HStack>
           </HStack>
 
           {/* Content Section */}

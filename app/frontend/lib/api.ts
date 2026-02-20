@@ -159,6 +159,20 @@ export const commentsApi = {
   },
 };
 
+export const flagsApi = {
+  createForPost: (
+    postId: number,
+    flagData: { reason: string; description?: string },
+    token: string,
+  ) => {
+    return apiRequest(`/posts/${postId}/flags`, {
+      method: "POST",
+      body: JSON.stringify({ flag: flagData }),
+      token,
+    });
+  },
+};
+
 export const usersApi = {
   update: (
     userId: number,

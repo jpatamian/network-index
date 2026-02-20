@@ -25,6 +25,7 @@ Rails.application.routes.draw do
       resources :posts do
         get 'my_posts', on: :collection
         resources :comments, only: [:index, :create, :destroy]
+        resources :flags, only: [:create]
       end
     end
   end
