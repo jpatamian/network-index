@@ -61,18 +61,18 @@ class Api::V1::AuthenticationController < Api::BaseController
     user = User.find_by(email: email)
 
     if user.nil?
-      zipcode = normalized_google_params[:zipcode].presence || '00000'
-
       random_password = SecureRandom.hex(24)
-      user = User.new(
+      user_attributes = {
         email: email,
         display_name: payload['name'],
         username: nil,
-        zipcode: zipcode,
         anonymous: false,
         password: random_password,
         password_confirmation: random_password
-      )
+      }
+      zipcode = normalized_google_params[:zipcode].presence
+      user_attributes[:zipcode] = zipcode if zipcode
+      user = User.new(user_attributes)
 
       unless user.save
         render json: {

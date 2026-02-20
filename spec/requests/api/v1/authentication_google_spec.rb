@@ -59,7 +59,7 @@ RSpec.describe 'Api::V1::Authentication Google', type: :request do
       expect(JSON.parse(response.body)['error']).to eq('Google credential is required')
     end
 
-    it 'creates a new user with fallback zipcode when zipcode is missing for first-time signup' do
+    it 'creates a new user without zipcode when zipcode is missing for first-time signup' do
       allow(validator).to receive(:check).and_return(
         {
           'email' => 'firsttimer@example.com',
@@ -75,13 +75,13 @@ RSpec.describe 'Api::V1::Authentication Google', type: :request do
       expect(response).to have_http_status(:ok)
       body = JSON.parse(response.body)
       expect(body['token']).to be_present
-      expect(User.find(body.dig('user', 'id')).zipcode).to eq('00000')
+      expect(User.find(body.dig('user', 'id')).zipcode).to be_nil
     end
 
     it 'returns unauthorized when credential validation fails' do
       allow(validator).to receive(:check).and_raise(GoogleIDToken::ValidationError, 'invalid token')
 
-      post endpoint, params: { credential: 'bad_token', zipcode: '10001' }
+      post endpoint, params: { credential: 'bad_token' }
 
       expect(response).to have_http_status(:unauthorized)
       expect(JSON.parse(response.body)['error']).to eq('Invalid Google credential')

@@ -74,7 +74,7 @@ export default function Signup() {
     setGoogleLoading(true);
 
     try {
-      await loginWithGoogle(credential, formData.zipcode.trim() || undefined);
+      await loginWithGoogle(credential);
       navigate("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Google signup failed");
@@ -140,8 +140,7 @@ export default function Signup() {
               </Button>
             )}
             <Text fontSize="xs" color="fg.subtle" textAlign="center">
-              You can continue with Google now and add your zipcode later on
-              your profile.
+              You can continue with Google now and finish your profile later.
             </Text>
           </VStack>
 
@@ -219,10 +218,9 @@ export default function Signup() {
               <Input
                 name="zipcode"
                 type="text"
-                placeholder="Zipcode"
+                placeholder="Zipcode (optional)"
                 value={formData.zipcode}
                 onChange={handleChange}
-                required
                 h="56px"
                 fontSize="base"
                 borderColor="border"
@@ -233,6 +231,9 @@ export default function Signup() {
                   boxShadow: "0 0 0 1px #14b8a6",
                 }}
               />
+              <Text fontSize="xs" color="fg.subtle" textAlign="left">
+                Used to personalize your neighborhood feed.
+              </Text>
 
               {/* Password Input */}
               <Box position="relative">

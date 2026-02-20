@@ -38,7 +38,7 @@ export const authApi = {
     email?: string;
     phone?: string;
     username?: string;
-    zipcode: string;
+    zipcode?: string;
     password: string;
     password_confirmation: string;
   }) => {
@@ -55,10 +55,10 @@ export const authApi = {
     });
   },
 
-  googleLogin: (credential: string, zipcode?: string) => {
+  googleLogin: (credential: string) => {
     return apiRequest("/auth/google", {
       method: "POST",
-      body: JSON.stringify({ credential, zipcode }),
+      body: JSON.stringify({ credential }),
     });
   },
 

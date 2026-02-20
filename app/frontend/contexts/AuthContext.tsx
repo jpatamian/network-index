@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
-  loginWithGoogle: (credential: string, zipcode?: string) => Promise<void>;
+  loginWithGoogle: (credential: string) => Promise<void>;
   signup: (userData: SignupData) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
@@ -17,7 +17,7 @@ interface SignupData {
   email?: string;
   phone?: string;
   username?: string;
-  zipcode: string;
+  zipcode?: string;
   password: string;
   password_confirmation: string;
 }
@@ -61,8 +61,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("auth_token", data.token);
   };
 
-  const loginWithGoogle = async (credential: string, zipcode?: string) => {
-    const data = await authApi.googleLogin(credential, zipcode);
+  const loginWithGoogle = async (credential: string) => {
+    const data = await authApi.googleLogin(credential);
     setToken(data.token);
     setUser(data.user);
     localStorage.setItem("auth_token", data.token);

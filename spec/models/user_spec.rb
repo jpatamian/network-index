@@ -3,10 +3,8 @@ require 'rails_helper'
 RSpec.describe User, type: :model do
   describe 'validations' do
     context 'for all users' do
-      it { should validate_presence_of(:zipcode) }
-
-      it 'is valid with just a zipcode for anonymous users' do
-        user = build(:anonymous_user)
+      it 'is valid without a zipcode for anonymous users' do
+        user = build(:anonymous_user, zipcode: nil)
         expect(user).to be_valid
       end
     end

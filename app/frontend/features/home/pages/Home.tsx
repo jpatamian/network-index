@@ -18,7 +18,7 @@ import communityHeroImage from "@/assets/images/community-hero.svg";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
-  const needsZipcode = isAuthenticated && user?.zipcode === "00000";
+  const needsZipcode = isAuthenticated && user?.zipcode === null;
 
   return (
     <Box>
