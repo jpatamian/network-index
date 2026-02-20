@@ -30,6 +30,14 @@ export async function apiRequest(endpoint: string, options: ApiOptions = {}) {
     );
   }
 
+  // Handle 204 No Content responses (e.g., DELETE requests)
+  if (
+    response.status === 204 ||
+    response.headers.get("content-length") === "0"
+  ) {
+    return null;
+  }
+
   return response.json();
 }
 

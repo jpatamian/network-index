@@ -40,6 +40,9 @@ class Api::V1::PostsController < Api::BaseController
 
   # POST /api/v1/posts
   def create
+    # Manually check for authentication since we skip authorize_request
+    check_authentication_if_token_present
+    
     user = current_user || create_anonymous_user
 
     unless user
@@ -74,10 +77,25 @@ class Api::V1::PostsController < Api::BaseController
   # DELETE /api/v1/posts/:id
   def destroy
     @post.destroy
-    head :no_content
+    render json: { message: 'Post deleted successfully' }, status: :ok
   end
 
   private
+
+  def check_authentication_if_token_present
+    header = request.headers['Authorization']
+    return unless header
+    
+    token = header.split(' ').last
+
+    begin
+      decoded = JsonWebToken.decode(token)
+      @current_user = User.find(decoded[:user_id]) if decoded
+    rescue ActiveRecord::RecordNotFound, JWT::DecodeError
+      # Invalid token, treat as anonymous
+      @current_user = nil
+    end
+  end
 
   def set_post
     @post = Post.find(params[:id])

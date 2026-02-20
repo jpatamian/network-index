@@ -33,7 +33,7 @@ class Api::V1::CommentsController < Api::BaseController
   # DELETE /api/v1/posts/:post_id/comments/:id
   def destroy
     @comment.destroy
-    head :no_content
+    render json: { message: 'Comment deleted successfully' }, status: :ok
   end
 
   private
