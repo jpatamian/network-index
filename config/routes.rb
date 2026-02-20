@@ -22,7 +22,7 @@ Rails.application.routes.draw do
       resources :users, only: [:index, :show, :update]
 
       # Moderation routes
-      resources :flags, only: [:index]
+      resources :flags, only: [:index, :update]
 
       # Notification routes
       resources :notifications, only: [:index]

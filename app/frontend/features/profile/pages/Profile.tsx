@@ -81,8 +81,11 @@ export default function Profile() {
   const [notificationsLoading, setNotificationsLoading] = useState(false);
   const [notificationsError, setNotificationsError] = useState("");
   const [flagReviews, setFlagReviews] = useState<FlagReview[]>([]);
+  const [seenFlags, setSeenFlags] = useState<FlagReview[]>([]);
   const [flagLoading, setFlagLoading] = useState(false);
   const [flagError, setFlagError] = useState("");
+  const [seenLoading, setSeenLoading] = useState(false);
+  const [seenError, setSeenError] = useState("");
   const [formData, setFormData] = useState({
     username: user?.username || "",
     email: user?.email || "",
@@ -106,6 +109,25 @@ export default function Profile() {
     };
 
     loadFlags();
+  }, [token, user?.is_moderator]);
+
+  useEffect(() => {
+    const loadSeenFlags = async () => {
+      if (!user?.is_moderator || !token) return;
+      setSeenLoading(true);
+      setSeenError("");
+      try {
+        const data = await flagsApi.list(token, "seen");
+        setSeenFlags(data);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "";
+        setSeenError(message || "Unable to load seen flags.");
+      } finally {
+        setSeenLoading(false);
+      }
+    };
+
+    loadSeenFlags();
   }, [token, user?.is_moderator]);
 
   useEffect(() => {
@@ -180,6 +202,24 @@ export default function Profile() {
       });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleAcknowledge = async (flagId: number) => {
+    if (!token) return;
+    try {
+      await flagsApi.acknowledge(flagId, token);
+      setFlagReviews((prev) => prev.filter((flag) => flag.id !== flagId));
+      const seenFlag = flagReviews.find((flag) => flag.id === flagId);
+      if (seenFlag) {
+        setSeenFlags((prev) => [seenFlag, ...prev]);
+      }
+    } catch (error) {
+      toaster.error({
+        title: "Unable to acknowledge",
+        description:
+          error instanceof Error ? error.message : "Please try again",
+      });
     }
   };
 
@@ -435,6 +475,99 @@ export default function Profile() {
                         <Box
                           key={flag.id}
                           borderWidth="1px"
+                          borderColor="border.bold"
+                          borderRadius="md"
+                          p={3}
+                        >
+                          <HStack
+                            justify="space-between"
+                            align="flex-start"
+                            mb={2}
+                          >
+                            <Text fontWeight="600" fontSize="sm" color="fg">
+                              {flag.flaggable_type} flagged
+                            </Text>
+                            <Badge variant="subtle" colorPalette="red">
+                              {flag.reason}
+                            </Badge>
+                          </HStack>
+                          <Text fontSize="xs" color="fg.subtle" mb={2}>
+                            Other flags on this item: {flag.other_flags_count}
+                          </Text>
+                          {flag.flaggable_type === "Post" && (
+                            <Text fontSize="sm" color="fg">
+                              {flag.flaggable?.title}
+                            </Text>
+                          )}
+                          {flag.flaggable_type === "Comment" && (
+                            <Text fontSize="sm" color="fg">
+                              {flag.flaggable?.message}
+                            </Text>
+                          )}
+                          {flag.description && (
+                            <Text fontSize="xs" color="fg.subtle" mt={2}>
+                              {flag.description}
+                            </Text>
+                          )}
+                          <Text fontSize="xs" color="fg.subtle" mt={2}>
+                            Reported by {flag.flagger.name}
+                          </Text>
+                          <HStack justify="flex-end" mt={3}>
+                            <Button
+                              size="xs"
+                              variant="outline"
+                              colorPalette="teal"
+                              onClick={() => handleAcknowledge(flag.id)}
+                            >
+                              Acknowledge
+                            </Button>
+                          </HStack>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Box>
+                )}
+
+                {user.is_moderator && (
+                  <Box
+                    bg="bg"
+                    border="1px"
+                    borderColor="border.subtle"
+                    borderRadius="lg"
+                    p={5}
+                  >
+                    <HStack justify="space-between" align="center" mb={4}>
+                      <Heading size="md" color="fg">
+                        Seen flags
+                      </Heading>
+                      <Badge variant="subtle" colorPalette="gray">
+                        Seen
+                      </Badge>
+                    </HStack>
+
+                    {seenLoading && (
+                      <Text fontSize="sm" color="fg.muted">
+                        Loading seen flags...
+                      </Text>
+                    )}
+
+                    {seenError && (
+                      <Text fontSize="sm" color="red.500">
+                        {seenError}
+                      </Text>
+                    )}
+
+                    {!seenLoading && !seenError && seenFlags.length === 0 && (
+                      <Text fontSize="sm" color="fg.muted">
+                        No seen flags yet.
+                      </Text>
+                    )}
+
+                    <Stack gap={3}>
+                      {seenFlags.map((flag) => (
+                        <Box
+                          key={flag.id}
+                          borderWidth="1px"
                           borderColor="border.subtle"
                           borderRadius="md"
                           p={3}
@@ -447,6 +580,9 @@ export default function Profile() {
                               {flag.reason}
                             </Badge>
                           </HStack>
+                          <Text fontSize="xs" color="fg.subtle" mb={2}>
+                            Other flags on this item: {flag.other_flags_count}
+                          </Text>
                           {flag.flaggable_type === "Post" && (
                             <Text fontSize="sm" color="fg">
                               {flag.flaggable?.title}

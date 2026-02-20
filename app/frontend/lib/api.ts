@@ -192,6 +192,12 @@ export const flagsApi = {
     const url = query ? `/flags?${query}` : "/flags";
     return apiRequest(url, { token });
   },
+  acknowledge: (flagId: number, token: string) => {
+    return apiRequest(`/flags/${flagId}`, {
+      method: "PATCH",
+      token,
+    });
+  },
 };
 
 export const notificationsApi = {

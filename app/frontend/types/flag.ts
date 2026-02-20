@@ -7,6 +7,7 @@ export interface FlagReview {
   status: string;
   is_auto_flagged: boolean;
   created_at: string;
+  other_flags_count: number;
   flaggable_type: FlaggableType;
   flaggable_id: number;
   flagger: {
