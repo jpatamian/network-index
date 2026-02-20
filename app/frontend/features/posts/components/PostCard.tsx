@@ -84,8 +84,8 @@ export const PostCard = ({ post, onDelete }: PostCardProps) => {
       _hover={{ boxShadow: "md", transform: "translateY(-1px)" }}
       transition="all 0.2s"
     >
-      <Card.Body p={6}>
-        <VStack align="stretch" gap={5}>
+      <Card.Body p={4}>
+        <VStack align="stretch" gap={4}>
           {/* Header Section */}
           <HStack justify="space-between" align="flex-start">
             <VStack align="start" gap={2} flex={1}>

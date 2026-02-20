@@ -59,11 +59,11 @@ export const SearchAndFilter = ({ state, actions }: SearchAndFilterProps) => {
       borderWidth="1px"
       borderColor="border.subtle"
       borderRadius="lg"
-      p={6}
+      p={4}
       boxShadow="sm"
     >
       <chakra.form
-        gap={4}
+        gap={3}
         onSubmit={onSearchSubmit}
         display="flex"
         flexDirection="column"
@@ -78,7 +78,7 @@ export const SearchAndFilter = ({ state, actions }: SearchAndFilterProps) => {
           </Text>
         </Stack>
 
-        <Stack direction={{ base: "column", md: "row" }} gap={4}>
+        <Stack direction={{ base: "column", md: "row" }} gap={3}>
           <Fieldset.Root flex="1" gap={2}>
             <Fieldset.Legend fontSize="sm" color="fg.muted">
               Post type

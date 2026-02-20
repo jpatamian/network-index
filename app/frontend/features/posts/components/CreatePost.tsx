@@ -141,13 +141,13 @@ export const CreatePost = ({
     <Card.Root
       borderRadius="lg"
       boxShadow="sm"
-      mb={6}
+      mb={4}
       borderWidth="1px"
       borderColor="border.subtle"
       bg="bg"
     >
-      <Card.Body p={6}>
-        <VStack align="stretch" gap={4}>
+      <Card.Body p={4}>
+        <VStack align="stretch" gap={3}>
           {/* Header */}
           <HStack gap={3}>
             <Box fontSize="lg" color="teal.600">
@@ -164,7 +164,7 @@ export const CreatePost = ({
           {!isAuthenticated && (
             <HStack
               gap={3}
-              p={4}
+              p={3}
               borderRadius="lg"
               bg="blue.50"
               borderLeft="4px"
@@ -192,7 +192,7 @@ export const CreatePost = ({
           {error && (
             <HStack
               gap={3}
-              p={4}
+              p={3}
               borderRadius="lg"
               bg="red.50"
               borderLeft="4px"
@@ -212,58 +212,63 @@ export const CreatePost = ({
 
           {/* Form */}
           <form onSubmit={handleSubmit} style={{ width: "100%" }}>
-            <Stack gap={4}>
-              {/* Zipcode Input */}
-              {!isAuthenticated && (
-                <Input
-                  type="text"
-                  placeholder={postsText.anonymousZipPlaceholder}
-                  value={formData.zipcode}
-                  onChange={(e) => handleFieldChange("zipcode", e.target.value)}
-                  borderRadius="lg"
-                  borderColor="border"
-                  _focus={{
-                    borderColor: "teal.500",
-                    boxShadow: "0 0 0 1px #14b8a6",
-                  }}
-                  required
-                />
-              )}
+            <Stack gap={3}>
+              <Stack direction="row" gap={3}>
+                {/* Zipcode Input */}
+                {!isAuthenticated && (
+                  <Input
+                    type="text"
+                    placeholder={postsText.anonymousZipPlaceholder}
+                    value={formData.zipcode}
+                    onChange={(e) =>
+                      handleFieldChange("zipcode", e.target.value)
+                    }
+                    borderRadius="lg"
+                    borderColor="border"
+                    _focus={{
+                      borderColor: "teal.500",
+                      boxShadow: "0 0 0 1px #14b8a6",
+                    }}
+                    required
+                    flex={1}
+                  />
+                )}
 
-              {/* Title Input */}
-              <NativeSelect.Root>
-                <Box
-                  position="absolute"
-                  left={3}
-                  top="50%"
-                  transform="translateY(-50%)"
-                  color="fg.subtle"
-                  zIndex={1}
-                  pointerEvents="none"
-                >
-                  <Icon as={selectedPostTypeIcon} fontSize="sm" />
-                </Box>
-                <NativeSelect.Field
-                  value={formData.postType}
-                  onChange={(e) =>
-                    handleFieldChange("postType", e.target.value)
-                  }
-                  placeholder="Select post type"
-                  borderRadius="lg"
-                  borderColor="gray.200"
-                  pl={9}
-                  _focus={{
-                    borderColor: "teal.500",
-                    boxShadow: "0 0 0 1px #14b8a6",
-                  }}
-                >
-                  <option value="other">Other</option>
-                  <option value="childcare">Childcare</option>
-                  <option value="ride_share">Ride Share</option>
-                  <option value="food">Food</option>
-                </NativeSelect.Field>
-                <NativeSelect.Indicator />
-              </NativeSelect.Root>
+                <NativeSelect.Root flex={1}>
+                  <Box
+                    position="absolute"
+                    left={3}
+                    top="50%"
+                    transform="translateY(-50%)"
+                    color="fg.subtle"
+                    zIndex={1}
+                    pointerEvents="none"
+                  >
+                    <Icon as={selectedPostTypeIcon} fontSize="sm" />
+                  </Box>
+                  <NativeSelect.Field
+                    value={formData.postType}
+                    onChange={(e) =>
+                      handleFieldChange("postType", e.target.value)
+                    }
+                    placeholder="Select post type"
+                    borderRadius="lg"
+                    borderColor="gray.200"
+                    pl={9}
+                    _focus={{
+                      borderColor: "teal.500",
+                      boxShadow: "0 0 0 1px #14b8a6",
+                    }}
+                  >
+                    <option value="other">Other</option>
+                    <option value="childcare">Childcare</option>
+                    <option value="ride_share">Ride Share</option>
+                    <option value="food">Food</option>
+                  </NativeSelect.Field>
+                  <NativeSelect.Indicator />
+                </NativeSelect.Root>
+              </Stack>
+
               {/* Title Input */}
               <Input
                 type="text"

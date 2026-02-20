@@ -60,13 +60,13 @@ export const Posts = () => {
     <Box bg="bg.subtle" minH="100vh">
       <PostsHero meta={heroMeta} filter={heroFilter} />
 
-      <Box py={{ base: 10, md: 12 }}>
-        <Container maxW="3xl">
-          <Box py={{ base: 10, md: 12 }}>
+      <Box py={{ base: 6, md: 8 }}>
+        <Container maxW="2xl">
+          <Box py={{ base: 4, md: 6 }}>
             <CreatePost onPostCreated={handlePostCreated} />
           </Box>
 
-          <Stack gap={8}>
+          <Stack gap={5}>
             {!viewingMine && (
               <SearchAndFilter state={searchState} actions={searchActions} />
             )}

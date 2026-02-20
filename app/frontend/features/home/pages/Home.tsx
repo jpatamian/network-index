@@ -7,7 +7,9 @@ import {
   Stack,
   HStack,
   Image,
+  Icon,
 } from "@chakra-ui/react";
+import { FaPen } from "react-icons/fa";
 import { useAuth } from "@/hooks/useAuth";
 import HowItWorks from "@/features/home/components/HowItWorks";
 import FindYourNeighborhood from "@/features/home/components/FindYourNeighborhood";
@@ -56,6 +58,43 @@ export default function Home() {
                   }}
                 >
                   Add Zipcode
+                </Button>
+              </HStack>
+            </Box>
+          )}
+
+          {!isAuthenticated && (
+            <Box
+              mb={6}
+              bg="teal.50"
+              border="1px"
+              borderColor="teal.200"
+              borderRadius="lg"
+              p={4}
+            >
+              <HStack
+                justify="space-between"
+                align="center"
+                flexWrap="wrap"
+                gap={3}
+              >
+                <HStack gap={2.5} color="teal.800">
+                  <Icon as={FaPen} />
+                  <Text fontSize="sm" fontWeight="600">
+                    Need help or want to offer support? Post now — no account
+                    required.
+                  </Text>
+                </HStack>
+                <Button
+                  size="sm"
+                  bg="teal.600"
+                  color="white"
+                  _hover={{ bg: "teal.700" }}
+                  onClick={() => {
+                    window.location.href = "/posts/new";
+                  }}
+                >
+                  Create a Post
                 </Button>
               </HStack>
             </Box>
