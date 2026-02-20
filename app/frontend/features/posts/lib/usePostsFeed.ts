@@ -7,6 +7,7 @@ interface UsePostsFeedParams {
   viewingMine: boolean;
   zipcode: string | null;
   query: string | null;
+  postType: string | null;
   token: string | null;
   isAuthenticated: boolean;
   isAuthLoading: boolean;
@@ -16,6 +17,7 @@ export function usePostsFeed({
   viewingMine,
   zipcode,
   query,
+  postType,
   token,
   isAuthenticated,
   isAuthLoading,
@@ -38,7 +40,7 @@ export function usePostsFeed({
       try {
         const data = viewingMine
           ? await fetchMinePosts(isAuthenticated, token)
-          : await postsApi.getAll({ zipcode, query });
+          : await postsApi.getAll({ zipcode, query, postType });
 
         if (isMounted) {
           setPosts(data);
@@ -60,7 +62,15 @@ export function usePostsFeed({
     return () => {
       isMounted = false;
     };
-  }, [zipcode, query, viewingMine, token, isAuthenticated, isAuthLoading]);
+  }, [
+    zipcode,
+    query,
+    postType,
+    viewingMine,
+    token,
+    isAuthenticated,
+    isAuthLoading,
+  ]);
 
   const handlePostCreated = (newPost: Post) => {
     setPosts((prev) => [newPost, ...prev]);

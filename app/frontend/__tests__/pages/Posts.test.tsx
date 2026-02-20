@@ -91,6 +91,25 @@ describe("Posts Page", () => {
       expect(postsApi.getAll).toHaveBeenCalledWith({
         zipcode: "30301",
         query: "rides",
+        postType: null,
+      });
+    });
+  });
+
+  it("requests filtered posts when post_type is in the URL", async () => {
+    window.history.pushState({}, "", "/posts?post_type=food");
+
+    render(
+      <TestWrapper>
+        <Posts />
+      </TestWrapper>,
+    );
+
+    await waitFor(() => {
+      expect(postsApi.getAll).toHaveBeenCalledWith({
+        zipcode: null,
+        query: null,
+        postType: "food",
       });
     });
   });
@@ -124,6 +143,7 @@ describe("Posts Page", () => {
       expect(postsApi.getAll).toHaveBeenLastCalledWith({
         zipcode: "94110",
         query: "tool share",
+        postType: null,
       });
     });
   });

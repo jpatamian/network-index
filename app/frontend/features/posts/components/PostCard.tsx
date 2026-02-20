@@ -18,9 +18,33 @@ import {
   VStack,
   Button,
   Icon,
+  Badge,
 } from "@chakra-ui/react";
-import { FaUser, FaClock, FaTrash } from "react-icons/fa";
+import {
+  FaUser,
+  FaClock,
+  FaTrash,
+  FaHandsHelping,
+  FaCar,
+  FaUtensils,
+  FaTag,
+} from "react-icons/fa";
+import type { IconType } from "react-icons";
 import { CommentSection } from "./CommentSection";
+
+const POST_TYPE_LABELS: Record<Post["post_type"], string> = {
+  other: "Other",
+  childcare: "Childcare",
+  ride_share: "Ride Share",
+  food: "Food",
+};
+
+const POST_TYPE_ICONS: Record<Post["post_type"], IconType> = {
+  other: FaTag,
+  childcare: FaHandsHelping,
+  ride_share: FaCar,
+  food: FaUtensils,
+};
 
 interface PostCardProps {
   post: Post;
@@ -32,6 +56,7 @@ export const PostCard = ({ post, onDelete }: PostCardProps) => {
   const [deleting, setDeleting] = useState(false);
   const isAuthor = user?.id === post.author.id;
   const createdAt = formatDate(post.created_at, postCardDateFormat);
+  const postTypeIcon = POST_TYPE_ICONS[post.post_type];
 
   const handleDelete = async () => {
     if (!token || !confirm(postsText.deletePostConfirm)) {
@@ -59,8 +84,8 @@ export const PostCard = ({ post, onDelete }: PostCardProps) => {
       _hover={{ boxShadow: "md", transform: "translateY(-1px)" }}
       transition="all 0.2s"
     >
-      <Card.Body p={6}>
-        <VStack align="stretch" gap={5}>
+      <Card.Body p={4}>
+        <VStack align="stretch" gap={4}>
           {/* Header Section */}
           <HStack justify="space-between" align="flex-start">
             <VStack align="start" gap={2} flex={1}>
@@ -78,6 +103,19 @@ export const PostCard = ({ post, onDelete }: PostCardProps) => {
                   <Icon as={FaClock} color="teal.600" fontSize="xs" />
                   <Text>{createdAt}</Text>
                 </HStack>
+                <Badge
+                  colorPalette="teal"
+                  variant="subtle"
+                  borderRadius="full"
+                  px={2.5}
+                  py={0.5}
+                  fontSize="xs"
+                >
+                  <HStack as="span" gap={1} align="center">
+                    <Icon as={postTypeIcon} fontSize="2xs" />
+                    <Text as="span">{POST_TYPE_LABELS[post.post_type]}</Text>
+                  </HStack>
+                </Badge>
               </HStack>
             </VStack>
 

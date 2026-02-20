@@ -46,7 +46,7 @@ export const PostsList = ({ posts, error, onDelete }: PostsListProps) => {
   }
 
   return (
-    <Stack gap={6}>
+    <Stack gap={4}>
       {error && <PostsError error={error} />}
 
       {posts.map((post) => (

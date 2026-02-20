@@ -82,4 +82,15 @@ describe("CreatePost Component", () => {
 
     expect(screen.getByPlaceholderText("Post title")).toBeInTheDocument();
   });
+
+  it("defaults post type selector to other", () => {
+    render(
+      <TestWrapper>
+        <CreatePost onPostCreated={mockOnPostCreated} forceExpanded />
+      </TestWrapper>,
+    );
+
+    const postTypeSelect = screen.getByRole("combobox");
+    expect(postTypeSelect).toHaveValue("other");
+  });
 });

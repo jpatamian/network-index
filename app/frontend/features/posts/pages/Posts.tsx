@@ -13,13 +13,14 @@ export const Posts = () => {
   const { token, isAuthenticated, isLoading: isAuthLoading } = useAuth();
 
   const { params, state, actions } = usePostsSearchFilters();
-  const { zipcode, query, viewingMine } = params;
+  const { zipcode, query, postType, viewingMine } = params;
 
   const { posts, loading, error, handlePostCreated, handlePostDeleted } =
     usePostsFeed({
       viewingMine,
       zipcode,
       query,
+      postType,
       token,
       isAuthenticated,
       isAuthLoading,
@@ -40,11 +41,13 @@ export const Posts = () => {
   const searchState = {
     zipcodeInput: state.zipcodeInput,
     queryInput: state.queryInput,
+    postTypeInput: state.postTypeInput,
     canResetSearch: state.canResetSearch,
   };
   const searchActions = {
     onZipcodeInputChange: actions.setZipcodeInput,
     onQueryInputChange: actions.setQueryInput,
+    onPostTypeInputChange: actions.setPostTypeInput,
     onSearchSubmit: actions.handleSearchSubmit,
     onSearchReset: actions.handleSearchReset,
   };
@@ -57,13 +60,13 @@ export const Posts = () => {
     <Box bg="bg.subtle" minH="100vh">
       <PostsHero meta={heroMeta} filter={heroFilter} />
 
-      <Box py={{ base: 10, md: 12 }}>
-        <Container maxW="3xl">
-          <Box py={{ base: 10, md: 12 }}>
+      <Box py={{ base: 6, md: 8 }}>
+        <Container maxW="2xl">
+          <Box py={{ base: 4, md: 6 }}>
             <CreatePost onPostCreated={handlePostCreated} />
           </Box>
 
-          <Stack gap={8}>
+          <Stack gap={5}>
             {!viewingMine && (
               <SearchAndFilter state={searchState} actions={searchActions} />
             )}

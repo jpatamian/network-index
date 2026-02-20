@@ -15,7 +15,6 @@ class User < ApplicationRecord
   has_secure_password validations: false
 
   # Validations
-  validates :zipcode, presence: true
   validates :username, uniqueness: true, allow_nil: true
   validates :email, uniqueness: true, allow_nil: true
   validates :phone, uniqueness: true, allow_nil: true

@@ -9,19 +9,49 @@ import {
   Icon,
   Fieldset,
   chakra,
+  NativeSelect,
 } from "@chakra-ui/react";
-import { FaMapMarkerAlt, FaSearch } from "react-icons/fa";
-import { SearchAndFilterProps } from "@/types/post";
+import {
+  FaMapMarkerAlt,
+  FaSearch,
+  FaHandsHelping,
+  FaCar,
+  FaUtensils,
+  FaTag,
+  FaThList,
+} from "react-icons/fa";
+import { POST_TYPE_VALUES, SearchAndFilterProps } from "@/types/post";
 import { postsText } from "@/features/posts/lib/utils";
+import type { IconType } from "react-icons";
+
+const POST_TYPE_LABELS: Record<(typeof POST_TYPE_VALUES)[number], string> = {
+  other: "Other",
+  childcare: "Childcare",
+  ride_share: "Ride Share",
+  food: "Food",
+};
+
+const POST_TYPE_ICONS: Record<
+  "all" | (typeof POST_TYPE_VALUES)[number],
+  IconType
+> = {
+  all: FaThList,
+  other: FaTag,
+  childcare: FaHandsHelping,
+  ride_share: FaCar,
+  food: FaUtensils,
+};
 
 export const SearchAndFilter = ({ state, actions }: SearchAndFilterProps) => {
-  const { zipcodeInput, queryInput, canResetSearch } = state;
+  const { zipcodeInput, queryInput, postTypeInput, canResetSearch } = state;
   const {
     onZipcodeInputChange,
     onQueryInputChange,
+    onPostTypeInputChange,
     onSearchSubmit,
     onSearchReset,
   } = actions;
+  const selectedPostTypeIcon = POST_TYPE_ICONS[postTypeInput];
 
   return (
     <Box
@@ -29,11 +59,11 @@ export const SearchAndFilter = ({ state, actions }: SearchAndFilterProps) => {
       borderWidth="1px"
       borderColor="border.subtle"
       borderRadius="lg"
-      p={6}
+      p={4}
       boxShadow="sm"
     >
       <chakra.form
-        gap={4}
+        gap={3}
         onSubmit={onSearchSubmit}
         display="flex"
         flexDirection="column"
@@ -48,7 +78,48 @@ export const SearchAndFilter = ({ state, actions }: SearchAndFilterProps) => {
           </Text>
         </Stack>
 
-        <Stack direction={{ base: "column", md: "row" }} gap={4}>
+        <Stack direction={{ base: "column", md: "row" }} gap={3}>
+          <Fieldset.Root flex="1" gap={2}>
+            <Fieldset.Legend fontSize="sm" color="fg.muted">
+              Post type
+            </Fieldset.Legend>
+            <Fieldset.Content>
+              <NativeSelect.Root>
+                <Box
+                  position="absolute"
+                  left={3}
+                  top="50%"
+                  transform="translateY(-50%)"
+                  color="fg.subtle"
+                  zIndex={1}
+                  pointerEvents="none"
+                >
+                  <Icon as={selectedPostTypeIcon} fontSize="sm" />
+                </Box>
+                <NativeSelect.Field
+                  value={postTypeInput}
+                  onChange={(event) =>
+                    onPostTypeInputChange(
+                      event.target.value as typeof postTypeInput,
+                    )
+                  }
+                  borderRadius="md"
+                  bg="bg"
+                  borderColor="border"
+                  pl={9}
+                >
+                  <option value="all">All types</option>
+                  {POST_TYPE_VALUES.map((postType) => (
+                    <option key={postType} value={postType}>
+                      {POST_TYPE_LABELS[postType]}
+                    </option>
+                  ))}
+                </NativeSelect.Field>
+                <NativeSelect.Indicator />
+              </NativeSelect.Root>
+            </Fieldset.Content>
+          </Fieldset.Root>
+
           <Fieldset.Root flex="1" gap={2}>
             <Fieldset.Legend fontSize="sm" color="fg.muted">
               Zipcode

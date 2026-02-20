@@ -15,6 +15,12 @@ class Api::V1::PostsController < Api::BaseController
     # Filter by zipcode if provided
     posts = posts.by_zipcode(params[:zipcode]) if params[:zipcode].present?
 
+    # Filter by post type if provided
+    if params[:post_type].present?
+      normalized_post_type = params[:post_type].to_s.downcase
+      posts = posts.by_post_type(normalized_post_type)
+    end
+
     # Free-text search across title/content
     posts = posts.search_query(params[:q]) if params[:q].present?
     

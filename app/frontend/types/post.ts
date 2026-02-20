@@ -1,7 +1,19 @@
+export const POST_TYPE_VALUES = [
+  "other",
+  "childcare",
+  "ride_share",
+  "food",
+] as const;
+
+export type PostType = (typeof POST_TYPE_VALUES)[number];
+export type PostTypeFilter = PostType | "all";
+
 export interface Post {
   id: number;
   title: string;
   content: string;
+  post_type: PostType;
+  metadata: Record<string, string | number | boolean | null>;
   author: {
     id: number;
     name: string;
@@ -27,11 +39,16 @@ export interface Comment {
 export interface CreatePostData {
   title: string;
   content: string;
+  post_type: PostType;
+  metadata?: Record<string, string | number | boolean | null>;
+  zipcode?: string;
 }
 
 export interface UpdatePostData {
   title?: string;
   content?: string;
+  post_type?: PostType;
+  metadata?: Record<string, string | number | boolean | null>;
 }
 
 export interface PostInputProps {
@@ -56,12 +73,21 @@ export interface SearchAndFilterProps {
   state: {
     zipcodeInput: string;
     queryInput: string;
+    postTypeInput: PostTypeFilter;
     canResetSearch: boolean;
   };
   actions: {
     onZipcodeInputChange: (value: string) => void;
     onQueryInputChange: (value: string) => void;
+    onPostTypeInputChange: (value: PostTypeFilter) => void;
     onSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
     onSearchReset: () => void;
   };
 }
+
+export const PostTypeEnum = {
+  OTHER: "other",
+  CHILDCARE: "childcare",
+  RIDE_SHARE: "ride_share",
+  FOOD: "food",
+} as const;

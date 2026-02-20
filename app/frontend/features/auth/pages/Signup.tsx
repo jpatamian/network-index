@@ -60,7 +60,7 @@ export default function Signup() {
     setError("");
     setGoogleLoading(true);
     try {
-      await loginWithGoogle(credential, formData.zipcode.trim() || undefined);
+      await loginWithGoogle(credential);
       navigate("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Google signup failed");

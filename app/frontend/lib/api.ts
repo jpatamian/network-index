@@ -1,3 +1,5 @@
+import { CreatePostData, PostType, UpdatePostData } from "@/types/post";
+
 const API_BASE_URL = "/api/v1";
 
 interface ApiOptions extends RequestInit {
@@ -36,7 +38,7 @@ export const authApi = {
     email?: string;
     phone?: string;
     username?: string;
-    zipcode: string;
+    zipcode?: string;
     password: string;
     password_confirmation: string;
   }) => {
@@ -53,10 +55,10 @@ export const authApi = {
     });
   },
 
-  googleLogin: (credential: string, zipcode?: string) => {
+  googleLogin: (credential: string) => {
     return apiRequest("/auth/google", {
       method: "POST",
-      body: JSON.stringify({ credential, zipcode }),
+      body: JSON.stringify({ credential }),
     });
   },
 
@@ -70,6 +72,7 @@ export const authApi = {
 type PostsQuery = {
   zipcode?: string | null;
   query?: string | null;
+  postType?: PostType | "all" | null;
 };
 
 export const postsApi = {
@@ -82,6 +85,10 @@ export const postsApi = {
 
     if (filters.query) {
       params.set("q", filters.query);
+    }
+
+    if (filters.postType && filters.postType !== "all") {
+      params.set("post_type", filters.postType);
     }
 
     const queryString = params.toString();
@@ -99,10 +106,7 @@ export const postsApi = {
     return apiRequest(`/posts/${id}`);
   },
 
-  create: (
-    postData: { title: string; content: string; zipcode?: string },
-    token?: string | null,
-  ) => {
+  create: (postData: CreatePostData, token?: string | null) => {
     return apiRequest("/posts", {
       method: "POST",
       body: JSON.stringify({ post: postData }),
@@ -110,11 +114,7 @@ export const postsApi = {
     });
   },
 
-  update: (
-    id: number,
-    postData: { title?: string; content?: string },
-    token: string,
-  ) => {
+  update: (id: number, postData: UpdatePostData, token: string) => {
     return apiRequest(`/posts/${id}`, {
       method: "PATCH",
       body: JSON.stringify({ post: postData }),
