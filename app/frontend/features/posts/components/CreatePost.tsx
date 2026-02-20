@@ -213,7 +213,7 @@ export const CreatePost = ({
           {/* Form */}
           <form onSubmit={handleSubmit} style={{ width: "100%" }}>
             <Stack gap={3}>
-              <Stack direction="row" gap={3}>
+              <Stack direction={{ base: "column", sm: "row" }} gap={3}>
                 {/* Zipcode Input */}
                 {!isAuthenticated && (
                   <Input

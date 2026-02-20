@@ -171,7 +171,14 @@ export default function Home() {
           </Stack>
 
           {!isAuthenticated && (
-            <HStack gap={4} justify="center" pt={4}>
+            <Stack
+              direction={{ base: "column", sm: "row" }}
+              gap={4}
+              justify="center"
+              align="center"
+              pt={4}
+              w="100%"
+            >
               <Button
                 onClick={() => {
                   navigate("/signup");
@@ -181,6 +188,7 @@ export default function Home() {
                 size="lg"
                 fontWeight="600"
                 borderRadius="md"
+                w={{ base: "full", sm: "auto" }}
                 _hover={{
                   bg: "teal.700",
                   transform: "translateY(-1px)",
@@ -200,6 +208,7 @@ export default function Home() {
                 borderRadius="md"
                 borderColor="border"
                 color="fg"
+                w={{ base: "full", sm: "auto" }}
                 _hover={{
                   bg: "bg.subtle",
                   transform: "translateY(-1px)",
@@ -209,7 +218,7 @@ export default function Home() {
               >
                 Sign In
               </Button>
-            </HStack>
+            </Stack>
           )}
         </Container>
       </Box>

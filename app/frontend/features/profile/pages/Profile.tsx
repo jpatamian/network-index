@@ -215,7 +215,12 @@ export default function Profile() {
                   </Box>
                 )}
 
-                <HStack justify="space-between" align="center">
+                <Stack
+                  direction={{ base: "column", sm: "row" }}
+                  justify="space-between"
+                  align={{ base: "stretch", sm: "center" }}
+                  gap={3}
+                >
                   <HStack gap={3}>
                     <Box color="teal.600" fontSize="xl">
                       <Icon as={FaUserCheck} />
@@ -279,7 +284,7 @@ export default function Profile() {
                       </>
                     )}
                   </HStack>
-                </HStack>
+                </Stack>
 
                 <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={6}>
                   <ProfileField
