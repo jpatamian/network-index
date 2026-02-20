@@ -1,5 +1,10 @@
 class Post < ApplicationRecord
-  POST_TYPES = %w[childcare ride_share food other].freeze
+  POST_TYPES = {
+    childcare: 'childcare',
+    ride_share: 'ride_share',
+    food: 'food',
+    other: 'other'
+  }.freeze
   TYPE_METADATA_REQUIREMENTS = {
     'childcare' => %w[needed_by children_count],
     'ride_share' => %w[from to departure_time],
@@ -14,9 +19,11 @@ class Post < ApplicationRecord
   has_many :ratings, dependent: :nullify
   has_many :flags, as: :flaggable, dependent: :destroy
 
+  enum :post_type, POST_TYPES, prefix: true, validate: true
+
   validates :title, presence: true, length: { maximum: 200 }
   validates :content, presence: true, length: { maximum: 5000 }
-  validates :post_type, inclusion: { in: POST_TYPES }, allow_blank: true
+  validates :post_type, inclusion: { in: POST_TYPES.values }, allow_blank: true
   validate :metadata_must_be_a_hash
   validate :metadata_requirements_for_post_type
 
@@ -30,6 +37,7 @@ class Post < ApplicationRecord
   scope :open, -> { where(status: 'open') }
   scope :fulfilled, -> { where(status: 'fulfilled') }
   scope :visible, -> { where(is_hidden: false) }
+  scope :by_post_type, ->(post_type) { where(post_type: post_type) }
 
   before_validation :normalize_post_type
 

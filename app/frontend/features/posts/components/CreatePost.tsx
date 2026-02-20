@@ -10,8 +10,18 @@ import {
   HStack,
   VStack,
   Icon,
+  NativeSelect,
 } from "@chakra-ui/react";
-import { FaPen, FaInfoCircle, FaExclamationCircle } from "react-icons/fa";
+import {
+  FaPen,
+  FaInfoCircle,
+  FaExclamationCircle,
+  FaHandsHelping,
+  FaCar,
+  FaUtensils,
+  FaTag,
+} from "react-icons/fa";
+import type { IconType } from "react-icons";
 import { useAuth } from "@/hooks/useAuth";
 import { postsApi } from "@/lib/api";
 import { Post } from "@/types/post";
@@ -32,6 +42,17 @@ const initialFormData = {
   title: "",
   content: "",
   zipcode: "",
+  postType: "other",
+};
+
+const POST_TYPE_ICONS: Record<
+  "other" | "childcare" | "ride_share" | "food",
+  IconType
+> = {
+  other: FaTag,
+  childcare: FaHandsHelping,
+  ride_share: FaCar,
+  food: FaUtensils,
 };
 
 export const CreatePost = ({
@@ -44,6 +65,9 @@ export const CreatePost = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState(initialFormData);
+  const selectedPostType =
+    (formData.postType || "other") as keyof typeof POST_TYPE_ICONS;
+  const selectedPostTypeIcon = POST_TYPE_ICONS[selectedPostType];
 
   const isFormVisible = forceExpanded || isExpanded;
 
@@ -59,9 +83,19 @@ export const CreatePost = ({
     setLoading(true);
 
     try {
-      const postData: { title: string; content: string; zipcode?: string } = {
+      const postData: {
+        title: string;
+        content: string;
+        post_type: "other" | "childcare" | "ride_share" | "food";
+        zipcode?: string;
+      } = {
         title: formData.title,
         content: formData.content,
+        post_type: (formData.postType || "other") as
+          | "other"
+          | "childcare"
+          | "ride_share"
+          | "food",
       };
 
       if (!isAuthenticated) {
@@ -93,7 +127,7 @@ export const CreatePost = ({
   };
 
   const handleFieldChange = (
-    field: "title" | "content" | "zipcode",
+    field: "title" | "content" | "zipcode" | "postType",
     value: string,
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -196,6 +230,40 @@ export const CreatePost = ({
                 />
               )}
 
+              {/* Title Input */}
+              <NativeSelect.Root>
+                <Box
+                  position="absolute"
+                  left={3}
+                  top="50%"
+                  transform="translateY(-50%)"
+                  color="fg.subtle"
+                  zIndex={1}
+                  pointerEvents="none"
+                >
+                  <Icon as={selectedPostTypeIcon} fontSize="sm" />
+                </Box>
+                <NativeSelect.Field
+                  value={formData.postType}
+                  onChange={(e) =>
+                    handleFieldChange("postType", e.target.value)
+                  }
+                  placeholder="Select post type"
+                  borderRadius="lg"
+                  borderColor="gray.200"
+                  pl={9}
+                  _focus={{
+                    borderColor: "teal.500",
+                    boxShadow: "0 0 0 1px #14b8a6",
+                  }}
+                >
+                  <option value="other">Other</option>
+                  <option value="childcare">Childcare</option>
+                  <option value="ride_share">Ride Share</option>
+                  <option value="food">Food</option>
+                </NativeSelect.Field>
+                <NativeSelect.Indicator />
+              </NativeSelect.Root>
               {/* Title Input */}
               <Input
                 type="text"
