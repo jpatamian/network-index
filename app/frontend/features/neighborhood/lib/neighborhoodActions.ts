@@ -2,33 +2,33 @@
  * Neighborhood navigation utilities
  * Handles user navigation for neighborhood-related actions
  */
-import { NeighborhoodUser } from '@/types/user'
+import { NavigateFunction } from "react-router-dom";
+import { NeighborhoodUser } from "@/types/user";
 
 export const neighborhoodActions = {
-  browseFeed: (user: NeighborhoodUser) => {
+  browseFeed: (navigate: NavigateFunction, user: NeighborhoodUser) => {
     if (user.zipcode) {
-      window.location.href = `/posts?zipcode=${encodeURIComponent(user.zipcode)}`
+      navigate(`/posts?zipcode=${encodeURIComponent(user.zipcode)}`);
     } else {
-      window.location.href = '/posts'
+      navigate("/posts");
     }
   },
 
-  createPost: () => {
-    window.location.href = '/posts/new'
+  createPost: (navigate: NavigateFunction) => {
+    navigate("/posts/new");
   },
 
-  searchNeighborhood: (user: NeighborhoodUser) => {
+  searchNeighborhood: (navigate: NavigateFunction, user: NeighborhoodUser) => {
     if (user.zipcode) {
-      window.location.href = `/posts?zipcode=${encodeURIComponent(user.zipcode)}`
+      navigate(`/posts?zipcode=${encodeURIComponent(user.zipcode)}`);
     }
   },
 
-  viewMyPosts: () => {
-    window.location.href = '/posts?filter=mine'
+  viewMyPosts: (navigate: NavigateFunction) => {
+    navigate("/posts?filter=mine");
   },
 
-
-  updateProfile: () => {
-    window.location.href = '/profile'
+  updateProfile: (navigate: NavigateFunction) => {
+    navigate("/profile");
   },
-}
+};

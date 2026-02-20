@@ -13,7 +13,6 @@ import {
   Input,
 } from "@chakra-ui/react";
 import {
-  FaHeart,
   FaMapPin,
   FaUserCheck,
   FaUser,
@@ -21,12 +20,72 @@ import {
   FaArrowLeft,
 } from "react-icons/fa";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { usersApi } from "@/lib/api";
 import { toaster } from "@/components/ui/toaster";
+import type { IconType } from "react-icons";
+
+interface ProfileFieldProps {
+  icon: IconType;
+  label: string;
+  display: string;
+  field?: keyof typeof emptyForm;
+  inputType?: string;
+  isEditing: boolean;
+  value: string;
+  onChange: (field: string, value: string) => void;
+  readOnly?: boolean;
+}
+
+const emptyForm = { username: "", email: "", zipcode: "" };
+
+function ProfileField({
+  icon,
+  label,
+  display,
+  field,
+  inputType = "text",
+  isEditing,
+  value,
+  onChange,
+  readOnly,
+}: ProfileFieldProps) {
+  return (
+    <Box
+      bg="bg"
+      border="1px"
+      borderColor="border.subtle"
+      p={4}
+      borderRadius="lg"
+    >
+      <HStack gap={3} mb={3}>
+        <Icon as={icon} color="teal.600" fontSize="lg" />
+        <Text fontWeight="600" color="fg" fontSize="sm">
+          {label}
+        </Text>
+      </HStack>
+      {isEditing && !readOnly && field ? (
+        <Input
+          value={value}
+          onChange={(e) => onChange(field, e.target.value)}
+          type={inputType}
+          placeholder={label}
+          size="sm"
+          borderRadius="md"
+        />
+      ) : (
+        <Text fontWeight="600" color="fg" fontSize="sm">
+          {display}
+        </Text>
+      )}
+    </Box>
+  );
+}
 
 export default function Profile() {
   const { user, token } = useAuth();
+  const navigate = useNavigate();
   const needsZipcode = user?.zipcode === "00000";
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -36,15 +95,8 @@ export default function Profile() {
     zipcode: user?.zipcode || "",
   });
 
-  const handleBack = () => {
-    window.location.href = "/";
-  };
-
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleCancel = () => {
@@ -58,7 +110,6 @@ export default function Profile() {
 
   const handleSave = async () => {
     if (!user || !token) return;
-
     setIsSaving(true);
     try {
       const updateData: {
@@ -66,16 +117,11 @@ export default function Profile() {
         email?: string;
         zipcode?: string;
       } = {};
-
-      if (formData.username !== user.username) {
+      if (formData.username !== user.username)
         updateData.username = formData.username;
-      }
-      if (formData.email !== user.email) {
-        updateData.email = formData.email;
-      }
-      if (formData.zipcode !== user.zipcode) {
+      if (formData.email !== user.email) updateData.email = formData.email;
+      if (formData.zipcode !== user.zipcode)
         updateData.zipcode = formData.zipcode;
-      }
 
       if (Object.keys(updateData).length === 0) {
         toaster.create({
@@ -88,14 +134,11 @@ export default function Profile() {
       }
 
       await usersApi.update(user.id, updateData, token);
-
       toaster.success({
         title: "Profile updated",
         description: "Your profile has been updated successfully",
       });
-
       setIsEditing(false);
-      // Refresh the page to update the auth context
       window.location.reload();
     } catch (error) {
       toaster.error({
@@ -111,11 +154,12 @@ export default function Profile() {
   return (
     <ProtectedRoute>
       <Box minH="100vh" bg="bg.subtle">
-        {/* Back Button */}
         <Box py={6} bg="bg" borderBottomWidth="1px" borderColor="border.subtle">
           <Container maxW="7xl">
             <Button
-              onClick={handleBack}
+              onClick={() => {
+                navigate("/");
+              }}
               variant="ghost"
               color="teal.600"
               fontWeight="600"
@@ -129,7 +173,6 @@ export default function Profile() {
           </Container>
         </Box>
 
-        {/* Profile Section */}
         {user && (
           <Box
             py={{ base: 12, md: 16 }}
@@ -239,116 +282,43 @@ export default function Profile() {
                 </HStack>
 
                 <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={6}>
-                  <Box
-                    bg="bg"
-                    border="1px"
-                    borderColor="border.subtle"
-                    p={4}
-                    borderRadius="lg"
-                  >
-                    <HStack gap={3} mb={3}>
-                      <Icon as={FaEnvelope} color="teal.600" fontSize="lg" />
-                      <Text fontWeight="600" color="fg" fontSize="sm">
-                        Email
-                      </Text>
-                    </HStack>
-                    {isEditing ? (
-                      <Input
-                        value={formData.email}
-                        onChange={(e) =>
-                          handleInputChange("email", e.target.value)
-                        }
-                        type="email"
-                        placeholder="Email"
-                        size="sm"
-                        borderRadius="md"
-                      />
-                    ) : (
-                      <Text fontWeight="600" color="fg" fontSize="sm">
-                        {user.email || "Not set"}
-                      </Text>
-                    )}
-                  </Box>
-
-                  <Box
-                    bg="bg"
-                    border="1px"
-                    borderColor="border.subtle"
-                    p={4}
-                    borderRadius="lg"
-                  >
-                    <HStack gap={3} mb={3}>
-                      <Icon as={FaUser} color="teal.600" fontSize="lg" />
-                      <Text fontWeight="600" color="fg" fontSize="sm">
-                        Username
-                      </Text>
-                    </HStack>
-                    {isEditing ? (
-                      <Input
-                        value={formData.username}
-                        onChange={(e) =>
-                          handleInputChange("username", e.target.value)
-                        }
-                        type="text"
-                        placeholder="Username"
-                        size="sm"
-                        borderRadius="md"
-                      />
-                    ) : (
-                      <Text fontWeight="600" color="fg" fontSize="sm">
-                        {user.username || "Not set"}
-                      </Text>
-                    )}
-                  </Box>
-
-                  <Box
-                    bg="bg"
-                    border="1px"
-                    borderColor="border.subtle"
-                    p={4}
-                    borderRadius="lg"
-                  >
-                    <HStack gap={3} mb={3}>
-                      <Icon as={FaMapPin} color="teal.600" fontSize="lg" />
-                      <Text fontWeight="600" color="fg" fontSize="sm">
-                        Zipcode
-                      </Text>
-                    </HStack>
-                    {isEditing ? (
-                      <Input
-                        value={formData.zipcode}
-                        onChange={(e) =>
-                          handleInputChange("zipcode", e.target.value)
-                        }
-                        type="text"
-                        placeholder="Zipcode"
-                        size="sm"
-                        borderRadius="md"
-                      />
-                    ) : (
-                      <Text fontWeight="600" color="fg" fontSize="sm">
-                        {user.zipcode}
-                      </Text>
-                    )}
-                  </Box>
-
-                  <Box
-                    bg="bg"
-                    border="1px"
-                    borderColor="border.subtle"
-                    p={4}
-                    borderRadius="lg"
-                  >
-                    <HStack gap={3} mb={3}>
-                      <Icon as={FaHeart} color="teal.600" fontSize="lg" />
-                      <Text fontWeight="600" color="fg" fontSize="sm">
-                        Type
-                      </Text>
-                    </HStack>
-                    <Text fontWeight="600" color="gray.900" fontSize="sm">
-                      {user.anonymous ? "Anonymous" : "Verified"}
-                    </Text>
-                  </Box>
+                  <ProfileField
+                    icon={FaEnvelope}
+                    label="Email"
+                    display={user.email || "Not set"}
+                    field="email"
+                    inputType="email"
+                    isEditing={isEditing}
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
+                  <ProfileField
+                    icon={FaUser}
+                    label="Username"
+                    display={user.username || "Not set"}
+                    field="username"
+                    isEditing={isEditing}
+                    value={formData.username}
+                    onChange={handleInputChange}
+                  />
+                  <ProfileField
+                    icon={FaMapPin}
+                    label="Zipcode"
+                    display={user.zipcode || "Not set"}
+                    field="zipcode"
+                    isEditing={isEditing}
+                    value={formData.zipcode}
+                    onChange={handleInputChange}
+                  />
+                  <ProfileField
+                    icon={FaUser}
+                    label="User Type"
+                    display={user.anonymous ? "Anonymous" : "Verified"}
+                    isEditing={isEditing}
+                    value=""
+                    onChange={handleInputChange}
+                    readOnly
+                  />
                 </SimpleGrid>
               </Stack>
             </Container>

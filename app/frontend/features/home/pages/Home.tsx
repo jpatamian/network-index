@@ -10,6 +10,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { FaPen } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import HowItWorks from "@/features/home/components/HowItWorks";
 import FindYourNeighborhood from "@/features/home/components/FindYourNeighborhood";
@@ -18,6 +19,7 @@ import communityHeroImage from "@/assets/images/community-hero.svg";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const needsZipcode = isAuthenticated && user?.zipcode === null;
 
   return (
@@ -54,7 +56,7 @@ export default function Home() {
                   color="white"
                   _hover={{ bg: "orange.600" }}
                   onClick={() => {
-                    window.location.href = "/profile";
+                    navigate("/profile");
                   }}
                 >
                   Add Zipcode
@@ -91,7 +93,7 @@ export default function Home() {
                   color="white"
                   _hover={{ bg: "teal.700" }}
                   onClick={() => {
-                    window.location.href = "/posts/new";
+                    navigate("/posts/new");
                   }}
                 >
                   Create a Post
@@ -143,7 +145,7 @@ export default function Home() {
             <HStack gap={4} justify="center" pt={4}>
               <Button
                 onClick={() => {
-                  window.location.href = "/signup";
+                  navigate("/signup");
                 }}
                 bg="teal.600"
                 color="white"
@@ -161,7 +163,7 @@ export default function Home() {
               </Button>
               <Button
                 onClick={() => {
-                  window.location.href = "/login";
+                  navigate("/login");
                 }}
                 variant="outline"
                 size="lg"
