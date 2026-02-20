@@ -13,7 +13,6 @@ import {
   Input,
 } from "@chakra-ui/react";
 import {
-  FaHeart,
   FaMapPin,
   FaUserCheck,
   FaUser,
@@ -305,15 +304,15 @@ export default function Profile() {
                   <ProfileField
                     icon={FaMapPin}
                     label="Zipcode"
-                    display={user.zipcode}
+                    display={user.zipcode || "Not set"}
                     field="zipcode"
                     isEditing={isEditing}
                     value={formData.zipcode}
                     onChange={handleInputChange}
                   />
                   <ProfileField
-                    icon={FaHeart}
-                    label="Type"
+                    icon={FaUser}
+                    label="User Type"
                     display={user.anonymous ? "Anonymous" : "Verified"}
                     isEditing={isEditing}
                     value=""
