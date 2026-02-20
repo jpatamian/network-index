@@ -72,26 +72,6 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
 
           {user.zipcode ? (
             <VStack gap={6} align="stretch">
-              <VStack gap={3} align="stretch">
-                <Button
-                  onClick={() => neighborhoodActions.browseFeed(navigate, user)}
-                  bg="teal.600"
-                  color="white"
-                  size="lg"
-                  fontWeight="600"
-                  borderRadius="md"
-                  _hover={{
-                    bg: "teal.700",
-                    transform: "translateY(-1px)",
-                    boxShadow: "md",
-                  }}
-                  transition="all 0.2s"
-                  w="fit-content"
-                >
-                  Browse Community Feed
-                </Button>
-              </VStack>
-
               {/* Quick Actions */}
               <Box>
                 <Text color="fg" fontSize="sm" fontWeight="600" mb={3}>

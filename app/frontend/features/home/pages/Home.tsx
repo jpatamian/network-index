@@ -8,8 +8,10 @@ import {
   HStack,
   Image,
   Icon,
+  IconButton,
 } from "@chakra-ui/react";
-import { FaPen } from "react-icons/fa";
+import { FaPen, FaTimes } from "react-icons/fa";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import HowItWorks from "@/features/home/components/HowItWorks";
@@ -21,6 +23,16 @@ export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const needsZipcode = isAuthenticated && user?.zipcode === null;
+  const [showSupportBanner, setShowSupportBanner] = useState(true);
+
+  useEffect(() => {
+    const storedValue = window.localStorage.getItem(
+      "home-support-banner-dismissed",
+    );
+    if (storedValue === "true") {
+      setShowSupportBanner(false);
+    }
+  }, []);
 
   return (
     <Box>
@@ -65,7 +77,7 @@ export default function Home() {
             </Box>
           )}
 
-          {!isAuthenticated && (
+          {!isAuthenticated && showSupportBanner && (
             <Box
               mb={6}
               bg="teal.50"
@@ -87,17 +99,34 @@ export default function Home() {
                     required.
                   </Text>
                 </HStack>
-                <Button
-                  size="sm"
-                  bg="teal.600"
-                  color="white"
-                  _hover={{ bg: "teal.700" }}
-                  onClick={() => {
-                    navigate("/posts/new");
-                  }}
-                >
-                  Create a Post
-                </Button>
+                <HStack gap={2} align="center">
+                  <Button
+                    size="sm"
+                    bg="teal.600"
+                    color="white"
+                    _hover={{ bg: "teal.700" }}
+                    onClick={() => {
+                      navigate("/posts/new");
+                    }}
+                  >
+                    Create a Post
+                  </Button>
+                  <IconButton
+                    aria-label="Dismiss banner"
+                    size="sm"
+                    variant="ghost"
+                    color="teal.800"
+                    onClick={() => {
+                      window.localStorage.setItem(
+                        "home-support-banner-dismissed",
+                        "true",
+                      );
+                      setShowSupportBanner(false);
+                    }}
+                  >
+                    <Icon as={FaTimes} boxSize={3} />
+                  </IconButton>
+                </HStack>
               </HStack>
             </Box>
           )}
