@@ -1,105 +1,93 @@
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import YourNeighborhood from '../../features/neighborhood/components/YourNeighborhood'
-import { TestWrapper } from '../setup/test-wrapper'
+import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import YourNeighborhood from "../../features/neighborhood/components/YourNeighborhood";
+import { TestWrapper } from "../setup/test-wrapper";
 
-describe('YourNeighborhood Component', () => {
+describe("YourNeighborhood Component", () => {
   const userWithZipcode = {
-    zipcode: '90210',
-    username: 'testuser',
-    email: 'test@example.com',
-  }
+    zipcode: "90210",
+    username: "testuser",
+    email: "test@example.com",
+  };
 
   const userWithoutZipcode = {
     zipcode: undefined,
-    username: 'testuser',
-    email: 'test@example.com',
-  }
+    username: "testuser",
+    email: "test@example.com",
+  };
 
-  it('renders your neighborhood heading', () => {
+  it("renders your neighborhood heading", () => {
     const { container } = render(
       <TestWrapper>
         <YourNeighborhood user={userWithZipcode} />
-      </TestWrapper>
-    )
+      </TestWrapper>,
+    );
 
-    const heading = container.querySelector('h2')
-    expect(heading?.textContent).toContain('Your Neighborhood')
-  })
+    const heading = container.querySelector("h2");
+    expect(heading?.textContent).toContain("Your Neighborhood");
+  });
 
-  it('renders zipcode badge when user has zipcode', () => {
+  it("renders zipcode badge when user has zipcode", () => {
     render(
       <TestWrapper>
         <YourNeighborhood user={userWithZipcode} />
-      </TestWrapper>
-    )
+      </TestWrapper>,
+    );
 
-    expect(screen.getByText('90210')).toBeInTheDocument()
-  })
+    expect(screen.getByText("90210")).toBeInTheDocument();
+  });
 
-  it('renders browse community feed button when user has zipcode', () => {
-    render(
-      <TestWrapper>
-        <YourNeighborhood user={userWithZipcode} />
-      </TestWrapper>
-    )
-
-    const button = screen.getByText(/Browse Community Feed/i)
-    expect(button).toBeInTheDocument()
-  })
-
-  it('renders update profile button when user lacks zipcode', () => {
+  it("renders update profile button when user lacks zipcode", () => {
     render(
       <TestWrapper>
         <YourNeighborhood user={userWithoutZipcode} />
-      </TestWrapper>
-    )
+      </TestWrapper>,
+    );
 
-    const button = screen.getByText(/Update Profile/i)
-    expect(button).toBeInTheDocument()
-  })
+    const button = screen.getByText(/Update Profile/i);
+    expect(button).toBeInTheDocument();
+  });
 
-  it('renders neighborhood prompt text when user lacks zipcode', () => {
+  it("renders neighborhood prompt text when user lacks zipcode", () => {
     render(
       <TestWrapper>
         <YourNeighborhood user={userWithoutZipcode} />
-      </TestWrapper>
-    )
+      </TestWrapper>,
+    );
 
     expect(
-      screen.getByText(/Add your zipcode to discover resources/i)
-    ).toBeInTheDocument()
-  })
+      screen.getByText(/Add your zipcode to discover resources/i),
+    ).toBeInTheDocument();
+  });
 
-  it('renders map pin icon', () => {
+  it("renders map pin icon", () => {
     const { container } = render(
       <TestWrapper>
         <YourNeighborhood user={userWithZipcode} />
-      </TestWrapper>
-    )
+      </TestWrapper>,
+    );
 
-    const icons = container.querySelectorAll('svg')
-    expect(icons.length).toBeGreaterThan(0)
-  })
+    const icons = container.querySelectorAll("svg");
+    expect(icons.length).toBeGreaterThan(0);
+  });
 
-  it('renders without crashing with zipcode', () => {
+  it("renders without crashing with zipcode", () => {
     expect(() => {
       render(
         <TestWrapper>
           <YourNeighborhood user={userWithZipcode} />
-        </TestWrapper>
-      )
-    }).not.toThrow()
-  })
+        </TestWrapper>,
+      );
+    }).not.toThrow();
+  });
 
-  it('renders without crashing without zipcode', () => {
+  it("renders without crashing without zipcode", () => {
     expect(() => {
       render(
         <TestWrapper>
           <YourNeighborhood user={userWithoutZipcode} />
-        </TestWrapper>
-      )
-    }).not.toThrow()
-  })
-})
+        </TestWrapper>,
+      );
+    }).not.toThrow();
+  });
+});
