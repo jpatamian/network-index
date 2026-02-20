@@ -16,13 +16,15 @@ module ResponseSerializable
     }
   end
 
-  def post_response(post)
+  def post_response(post, current_user = nil)
     {
       id: post.id,
       title: post.title,
       content: post.content,
       post_type: post.post_type,
       metadata: post.metadata,
+      likes_count: post.likes_count || 0,
+      liked_by_current_user: current_user ? post.post_likes.exists?(user_id: current_user.id) : false,
       author: {
         id: post.user.id,
         name: post.author_name,

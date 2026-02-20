@@ -34,6 +34,7 @@ Rails.application.routes.draw do
           resources :flags, only: [:create]
         end
         resources :flags, only: [:create]
+        resource :likes, only: [:create, :destroy], controller: 'post_likes'
       end
     end
   end

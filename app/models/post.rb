@@ -19,6 +19,7 @@ class Post < ApplicationRecord
   has_many :ratings, dependent: :nullify
   has_many :flags, as: :flaggable, dependent: :destroy
   has_many :notifications, dependent: :destroy
+  has_many :post_likes, dependent: :destroy
 
   enum :post_type, POST_TYPES, prefix: true, validate: true
 

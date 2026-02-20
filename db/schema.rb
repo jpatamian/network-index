@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_02_20_090000) do
+ActiveRecord::Schema[7.1].define(version: 2026_02_20_094500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -73,7 +73,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_20_090000) do
     t.bigint "user_id", null: false
     t.bigint "actor_user_id"
     t.bigint "post_id", null: false
-    t.bigint "comment_id", null: false
+    t.bigint "comment_id"
     t.string "notification_type", default: "comment", null: false
     t.text "message", null: false
     t.datetime "read_at"
@@ -84,6 +84,15 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_20_090000) do
     t.index ["post_id"], name: "index_notifications_on_post_id"
     t.index ["read_at"], name: "index_notifications_on_read_at"
     t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
+  create_table "post_likes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "post_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["post_id"], name: "index_post_likes_on_post_id"
+    t.index ["user_id", "post_id"], name: "index_post_likes_on_user_id_and_post_id", unique: true
   end
 
   create_table "posts", force: :cascade do |t|
@@ -98,6 +107,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_20_090000) do
     t.boolean "is_hidden", default: false
     t.string "post_type", default: "other", null: false
     t.jsonb "metadata", default: {}, null: false
+    t.integer "likes_count", default: 0, null: false
     t.index ["post_type"], name: "index_posts_on_post_type"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
@@ -166,6 +176,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_20_090000) do
   add_foreign_key "notifications", "posts"
   add_foreign_key "notifications", "users"
   add_foreign_key "notifications", "users", column: "actor_user_id"
+  add_foreign_key "post_likes", "posts"
+  add_foreign_key "post_likes", "users"
   add_foreign_key "posts", "users"
   add_foreign_key "ratings", "posts"
   add_foreign_key "ratings", "users", column: "rated_user_id"

@@ -1,6 +1,6 @@
 import { Post } from "@/types/post";
 import { useAuth } from "@/hooks/useAuth";
-import { postsApi } from "@/lib/api";
+import { likesApi, postsApi } from "@/lib/api";
 import { formatDate } from "@/lib/date";
 import {
   postCardDateFormat,
@@ -19,11 +19,13 @@ import {
   Button,
   Icon,
   Badge,
+  IconButton,
 } from "@chakra-ui/react";
 import {
   FaUser,
   FaClock,
   FaTrash,
+  FaHeart,
   FaHandsHelping,
   FaCar,
   FaUtensils,
@@ -32,6 +34,7 @@ import {
 import type { IconType } from "react-icons";
 import { CommentSection } from "./CommentSection";
 import { FlagButton } from "./FlagButton";
+import { toaster } from "@/components/ui/toaster";
 
 const POST_TYPE_LABELS: Record<Post["post_type"], string> = {
   other: "Other",
@@ -55,6 +58,9 @@ interface PostCardProps {
 export const PostCard = ({ post, onDelete }: PostCardProps) => {
   const { user, token, isAuthenticated } = useAuth();
   const [deleting, setDeleting] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.likes_count || 0);
+  const [liked, setLiked] = useState(!!post.liked_by_current_user);
+  const [liking, setLiking] = useState(false);
   const isAuthor = user?.id === post.author.id;
   const createdAt = formatDate(post.created_at, postCardDateFormat);
   const postTypeIcon = POST_TYPE_ICONS[post.post_type];
@@ -72,6 +78,35 @@ export const PostCard = ({ post, onDelete }: PostCardProps) => {
       alert(toErrorMessage(error, postsErrorMessages.deletePostFailed));
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const handleLikeToggle = async () => {
+    if (!token || liking) {
+      if (!token) {
+        toaster.create({
+          title: "Sign in to like posts",
+          type: "info",
+        });
+      }
+      return;
+    }
+
+    setLiking(true);
+    try {
+      const response = liked
+        ? await likesApi.unlike(post.id, token)
+        : await likesApi.like(post.id, token);
+      setLikesCount(response.likes_count);
+      setLiked(response.liked_by_current_user);
+    } catch (error) {
+      toaster.error({
+        title: "Unable to update like",
+        description:
+          error instanceof Error ? error.message : "Please try again",
+      });
+    } finally {
+      setLiking(false);
     }
   };
 
@@ -156,6 +191,22 @@ export const PostCard = ({ post, onDelete }: PostCardProps) => {
           >
             {post.content}
           </Text>
+
+          <HStack gap={2} align="center">
+            <IconButton
+              aria-label={liked ? "Unlike post" : "Like post"}
+              size="sm"
+              variant="ghost"
+              color={liked ? "red.500" : "fg.muted"}
+              onClick={handleLikeToggle}
+              disabled={liking}
+            >
+              <Icon as={FaHeart} boxSize={4} />
+            </IconButton>
+            <Text fontSize="sm" color="fg.subtle">
+              {likesCount}
+            </Text>
+          </HStack>
 
           {/* Comment Section */}
           <Box pt={2} borderTopWidth="1px" borderColor="border.subtle" w="100%">

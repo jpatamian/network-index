@@ -348,9 +348,6 @@ export default function Profile() {
                     <Heading size="md" color="fg">
                       Notifications
                     </Heading>
-                    <Badge colorPalette="teal" variant="subtle">
-                      New
-                    </Badge>
                   </HStack>
 
                   {notificationsLoading && (

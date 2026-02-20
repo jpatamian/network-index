@@ -200,6 +200,21 @@ export const notificationsApi = {
   },
 };
 
+export const likesApi = {
+  like: (postId: number, token: string) => {
+    return apiRequest(`/posts/${postId}/likes`, {
+      method: "POST",
+      token,
+    });
+  },
+  unlike: (postId: number, token: string) => {
+    return apiRequest(`/posts/${postId}/likes`, {
+      method: "DELETE",
+      token,
+    });
+  },
+};
+
 export const usersApi = {
   update: (
     userId: number,
