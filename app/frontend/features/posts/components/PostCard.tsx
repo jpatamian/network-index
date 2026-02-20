@@ -121,7 +121,13 @@ export const PostCard = ({ post, onDelete }: PostCardProps) => {
             </VStack>
 
             <HStack gap={2} align="center">
-              {!isAuthor && isAuthenticated && <FlagButton postId={post.id} />}
+              {!isAuthor && isAuthenticated && (
+                <FlagButton
+                  target="post"
+                  postId={post.id}
+                  ariaLabel="Report post"
+                />
+              )}
               {isAuthor && (
                 <Button
                   onClick={handleDelete}

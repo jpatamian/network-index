@@ -11,6 +11,7 @@ module ResponseSerializable
       username: user.username,
       zipcode: user.zipcode,
       anonymous: user.anonymous,
+      is_moderator: user.is_moderator,
       created_at: user.created_at
     }
   end

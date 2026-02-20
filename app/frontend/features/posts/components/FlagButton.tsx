@@ -13,6 +13,8 @@ import {
 import { FaFlag } from "react-icons/fa";
 import { flagsApi } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import { toaster } from "@/components/ui/toaster";
+import { FlagButtonProps } from "@/types/flag";
 
 const FLAG_REASONS = [
   { value: "spam", label: "Spam" },
@@ -23,12 +25,11 @@ const FLAG_REASONS = [
   { value: "other", label: "Other" },
 ];
 
-interface FlagButtonProps {
-  postId: number;
-  isDisabled?: boolean;
-}
-
-export const FlagButton = ({ postId, isDisabled }: FlagButtonProps) => {
+export const FlagButton = ({
+  isDisabled,
+  ariaLabel,
+  ...target
+}: FlagButtonProps) => {
   const { token } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [reason, setReason] = useState("spam");
@@ -50,16 +51,27 @@ export const FlagButton = ({ postId, isDisabled }: FlagButtonProps) => {
     setError("");
 
     try {
-      await flagsApi.createForPost(
-        postId,
-        {
-          reason,
-          description: trimmedDescription || undefined,
-        },
-        token,
-      );
+      const payload = {
+        reason,
+        description: trimmedDescription || undefined,
+      };
+
+      if (target.target === "post") {
+        await flagsApi.createForPost(target.postId, payload, token);
+      } else {
+        await flagsApi.createForComment(
+          target.postId,
+          target.commentId,
+          payload,
+          token,
+        );
+      }
       setSubmitted(true);
       setIsOpen(false);
+      toaster.success({
+        title: "Thanks for reporting",
+        description: "We'll review this soon.",
+      });
     } catch (err) {
       const message = err instanceof Error ? err.message : "";
       setError(message || "Failed to submit report.");
@@ -71,7 +83,7 @@ export const FlagButton = ({ postId, isDisabled }: FlagButtonProps) => {
   return (
     <Box position="relative">
       <IconButton
-        aria-label="Report post"
+        aria-label={ariaLabel || "Report content"}
         size="xs"
         variant="ghost"
         color={submitted ? "orange.600" : "fg.muted"}

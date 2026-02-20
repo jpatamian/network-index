@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { commentsApi } from "@/lib/api";
 import { Comment } from "@/types/post";
 import { formatDate } from "@/lib/date";
+import { FlagButton } from "./FlagButton";
 import {
   commentDateFormat,
   getInitial,
@@ -155,18 +156,28 @@ export const CommentSection = ({
                         {formatDate(comment.created_at, commentDateFormat)}
                       </Text>
                     </Box>
-                    {user?.id === comment.author.id && (
-                      <Button
-                        onClick={() => handleDelete(comment.id)}
-                        size="xs"
-                        variant="ghost"
-                        color="red.500"
-                        fontWeight="500"
-                        _hover={{ bg: "red.50" }}
-                      >
-                        Delete
-                      </Button>
-                    )}
+                    <HStack gap={2} align="center">
+                      {isAuthenticated && user?.id !== comment.author.id && (
+                        <FlagButton
+                          target="comment"
+                          postId={postId}
+                          commentId={comment.id}
+                          ariaLabel="Report comment"
+                        />
+                      )}
+                      {user?.id === comment.author.id && (
+                        <Button
+                          onClick={() => handleDelete(comment.id)}
+                          size="xs"
+                          variant="ghost"
+                          color="red.500"
+                          fontWeight="500"
+                          _hover={{ bg: "red.50" }}
+                        >
+                          Delete
+                        </Button>
+                      )}
+                    </HStack>
                   </Flex>
                   <Text fontSize="sm" color="fg" mt={2}>
                     {comment.message}

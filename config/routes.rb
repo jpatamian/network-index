@@ -21,10 +21,15 @@ Rails.application.routes.draw do
       # User routes
       resources :users, only: [:index, :show, :update]
 
+      # Moderation routes
+      resources :flags, only: [:index]
+
       # Post routes
       resources :posts do
         get 'my_posts', on: :collection
-        resources :comments, only: [:index, :create, :destroy]
+        resources :comments, only: [:index, :create, :destroy] do
+          resources :flags, only: [:create]
+        end
         resources :flags, only: [:create]
       end
     end

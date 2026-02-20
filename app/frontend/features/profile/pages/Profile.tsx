@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Container,
@@ -22,23 +22,10 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { usersApi } from "@/lib/api";
+import { flagsApi, usersApi } from "@/lib/api";
 import { toaster } from "@/components/ui/toaster";
-import type { IconType } from "react-icons";
-
-interface ProfileFieldProps {
-  icon: IconType;
-  label: string;
-  display: string;
-  field?: keyof typeof emptyForm;
-  inputType?: string;
-  isEditing: boolean;
-  value: string;
-  onChange: (field: string, value: string) => void;
-  readOnly?: boolean;
-}
-
-const emptyForm = { username: "", email: "", zipcode: "" };
+import { FlagReview } from "@/types/flag";
+import { ProfileFieldProps } from "@/types/user";
 
 function ProfileField({
   icon,
@@ -68,7 +55,7 @@ function ProfileField({
       {isEditing && !readOnly && field ? (
         <Input
           value={value}
-          onChange={(e) => onChange(field, e.target.value)}
+          onChange={(e) => onChange(field as string, e.target.value)}
           type={inputType}
           placeholder={label}
           size="sm"
@@ -89,11 +76,33 @@ export default function Profile() {
   const needsZipcode = user?.zipcode === "00000";
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [flagReviews, setFlagReviews] = useState<FlagReview[]>([]);
+  const [flagLoading, setFlagLoading] = useState(false);
+  const [flagError, setFlagError] = useState("");
   const [formData, setFormData] = useState({
     username: user?.username || "",
     email: user?.email || "",
     zipcode: user?.zipcode || "",
   });
+
+  useEffect(() => {
+    const loadFlags = async () => {
+      if (!user?.is_moderator || !token) return;
+      setFlagLoading(true);
+      setFlagError("");
+      try {
+        const data = await flagsApi.list(token, "pending");
+        setFlagReviews(data);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "";
+        setFlagError(message || "Unable to load flags.");
+      } finally {
+        setFlagLoading(false);
+      }
+    };
+
+    loadFlags();
+  }, [token, user?.is_moderator]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -173,7 +182,7 @@ export default function Profile() {
           </Container>
         </Box>
 
-        {user && (
+        {user?.is_moderator && (
           <Box
             py={{ base: 12, md: 16 }}
             bg="bg"
@@ -315,16 +324,83 @@ export default function Profile() {
                     value={formData.zipcode}
                     onChange={handleInputChange}
                   />
-                  <ProfileField
-                    icon={FaUser}
-                    label="User Type"
-                    display={user.anonymous ? "Anonymous" : "Verified"}
-                    isEditing={isEditing}
-                    value=""
-                    onChange={handleInputChange}
-                    readOnly
-                  />
                 </SimpleGrid>
+
+                {true && (
+                  <Box
+                    bg="bg"
+                    border="1px"
+                    borderColor="border.subtle"
+                    borderRadius="lg"
+                    p={5}
+                  >
+                    <HStack justify="space-between" align="center" mb={4}>
+                      <Heading size="md" color="fg">
+                        Moderation queue
+                      </Heading>
+                      <Badge colorPalette="green" variant="subtle">
+                        Pending
+                      </Badge>
+                    </HStack>
+
+                    {flagLoading && (
+                      <Text fontSize="sm" color="fg.muted">
+                        Loading flags...
+                      </Text>
+                    )}
+
+                    {flagError && (
+                      <Text fontSize="sm" color="red.500">
+                        {flagError}
+                      </Text>
+                    )}
+
+                    {!flagLoading && !flagError && flagReviews.length === 0 && (
+                      <Text fontSize="sm" color="fg.muted">
+                        No pending flags right now.
+                      </Text>
+                    )}
+
+                    <Stack gap={3}>
+                      {flagReviews.map((flag) => (
+                        <Box
+                          key={flag.id}
+                          borderWidth="1px"
+                          borderColor="border.subtle"
+                          borderRadius="md"
+                          p={3}
+                        >
+                          <HStack justify="space-between" align="center" mb={2}>
+                            <Text fontWeight="600" fontSize="sm" color="fg">
+                              {flag.flaggable_type} flagged
+                            </Text>
+                            <Badge variant="subtle" colorPalette="red">
+                              {flag.reason}
+                            </Badge>
+                          </HStack>
+                          {flag.flaggable_type === "Post" && (
+                            <Text fontSize="sm" color="fg">
+                              {flag.flaggable?.title}
+                            </Text>
+                          )}
+                          {flag.flaggable_type === "Comment" && (
+                            <Text fontSize="sm" color="fg">
+                              {flag.flaggable?.message}
+                            </Text>
+                          )}
+                          {flag.description && (
+                            <Text fontSize="xs" color="fg.subtle" mt={2}>
+                              {flag.description}
+                            </Text>
+                          )}
+                          <Text fontSize="xs" color="fg.subtle" mt={2}>
+                            Reported by {flag.flagger.name}
+                          </Text>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Box>
+                )}
               </Stack>
             </Container>
           </Box>

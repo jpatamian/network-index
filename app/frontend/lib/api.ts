@@ -171,6 +171,27 @@ export const flagsApi = {
       token,
     });
   },
+  createForComment: (
+    postId: number,
+    commentId: number,
+    flagData: { reason: string; description?: string },
+    token: string,
+  ) => {
+    return apiRequest(`/posts/${postId}/comments/${commentId}/flags`, {
+      method: "POST",
+      body: JSON.stringify({ flag: flagData }),
+      token,
+    });
+  },
+  list: (token: string, status: string = "pending") => {
+    const params = new URLSearchParams();
+    if (status) {
+      params.set("status", status);
+    }
+    const query = params.toString();
+    const url = query ? `/flags?${query}` : "/flags";
+    return apiRequest(url, { token });
+  },
 };
 
 export const usersApi = {
