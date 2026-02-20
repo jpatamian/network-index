@@ -17,6 +17,7 @@ import {
   FaSearch,
   FaHistory,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { neighborhoodActions } from "@/features/neighborhood/lib/neighborhoodActions";
 
 interface YourNeighborhoodProps {
@@ -28,6 +29,8 @@ interface YourNeighborhoodProps {
 }
 
 export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
+  const navigate = useNavigate();
+
   return (
     <Box
       py={{ base: 12, md: 16 }}
@@ -71,7 +74,7 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
             <VStack gap={6} align="stretch">
               <VStack gap={3} align="stretch">
                 <Button
-                  onClick={() => neighborhoodActions.browseFeed(user)}
+                  onClick={() => neighborhoodActions.browseFeed(navigate, user)}
                   bg="teal.600"
                   color="white"
                   size="lg"
@@ -96,7 +99,7 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
                 </Text>
                 <SimpleGrid columns={{ base: 3, sm: 3 }} gap={3}>
                   <Button
-                    onClick={() => neighborhoodActions.createPost()}
+                    onClick={() => neighborhoodActions.createPost(navigate)}
                     variant="outline"
                     borderColor="teal.200"
                     color="teal.600"
@@ -114,7 +117,9 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
                   </Button>
 
                   <Button
-                    onClick={() => neighborhoodActions.searchNeighborhood(user)}
+                    onClick={() =>
+                      neighborhoodActions.searchNeighborhood(navigate, user)
+                    }
                     variant="outline"
                     borderColor="teal.200"
                     color="teal.600"
@@ -132,7 +137,7 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
                   </Button>
 
                   <Button
-                    onClick={() => neighborhoodActions.viewMyPosts()}
+                    onClick={() => neighborhoodActions.viewMyPosts(navigate)}
                     variant="outline"
                     borderColor="teal.200"
                     color="teal.600"
@@ -167,7 +172,7 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
                 neighbors in your area.
               </Text>
               <Button
-                onClick={() => neighborhoodActions.updateProfile()}
+                onClick={() => neighborhoodActions.updateProfile(navigate)}
                 variant="outline"
                 borderColor="teal.600"
                 color="teal.600"

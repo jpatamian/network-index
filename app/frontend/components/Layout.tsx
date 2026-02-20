@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from "react-router-dom";
 import {
   Box,
   Flex,
@@ -9,33 +9,54 @@ import {
   Center,
   Icon,
   Heading,
-} from '@chakra-ui/react'
-import { FaHome } from 'react-icons/fa'
-import { useAuth } from '@/hooks/useAuth'
-import { GiEyeShield } from "react-icons/gi"
-import { Toaster } from '@/components/ui/toaster'
+} from "@chakra-ui/react";
+import { FaHome } from "react-icons/fa";
+import { useAuth } from "@/hooks/useAuth";
+import { GiEyeShield } from "react-icons/gi";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function Layout() {
-  const { user, logout, isLoading, isAuthenticated } = useAuth()
+  const { user, logout, isLoading, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const handleNavigation = (url: string) => {
-    window.location.href = url
-  }
+    navigate(url);
+  };
 
   return (
     <Flex direction="column" minH="100vh">
       {/* Navigation */}
-      <Box as="nav" bg="bg" boxShadow="sm" borderBottomWidth="1px" borderColor="border.subtle">
+      <Box
+        as="nav"
+        bg="bg"
+        boxShadow="sm"
+        borderBottomWidth="1px"
+        borderColor="border.subtle"
+      >
         <Container maxW="7xl">
           <Flex justify="space-between" align="center" h={16}>
             {/* Logo */}
-            <Box as="button" onClick={() => handleNavigation('/')} _hover={{ opacity: 0.8 }} transition="all 0.2s" bg="none" border="none" cursor="pointer" p={0}>
+            <Box
+              as="button"
+              onClick={() => handleNavigation("/")}
+              _hover={{ opacity: 0.8 }}
+              transition="all 0.2s"
+              bg="none"
+              border="none"
+              cursor="pointer"
+              p={0}
+            >
               <HStack gap={3}>
                 <Box display="flex" gap={1} fontSize="2xl" color="teal.600">
                   <Icon as={FaHome} />
                   <Icon as={GiEyeShield} />
                 </Box>
-                <Heading color="fg" size="lg" fontWeight="700" letterSpacing="tight">
+                <Heading
+                  color="fg"
+                  size="lg"
+                  fontWeight="700"
+                  letterSpacing="tight"
+                >
                   Mutual Aid Club
                 </Heading>
               </HStack>
@@ -43,10 +64,22 @@ export default function Layout() {
 
             {/* Navigation Links */}
             <HStack gap={6}>
-              <Button onClick={() => handleNavigation('/')} variant="ghost" color="fg" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
+              <Button
+                onClick={() => handleNavigation("/")}
+                variant="ghost"
+                color="fg"
+                fontWeight="500"
+                _hover={{ color: "teal.600", bg: "transparent" }}
+              >
                 Home
               </Button>
-              <Button onClick={() => handleNavigation('/posts')} variant="ghost" color="fg" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
+              <Button
+                onClick={() => handleNavigation("/posts")}
+                variant="ghost"
+                color="fg"
+                fontWeight="500"
+                _hover={{ color: "teal.600", bg: "transparent" }}
+              >
                 Posts
               </Button>
 
@@ -54,26 +87,47 @@ export default function Layout() {
                 <>
                   {isAuthenticated ? (
                     <>
-                      <Button onClick={() => handleNavigation('/profile')} variant="ghost" color="gray.700" size="sm" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
-                      {user?.username || user?.email || 'User'}
+                      <Button
+                        onClick={() => handleNavigation("/profile")}
+                        variant="ghost"
+                        color="gray.700"
+                        size="sm"
+                        fontWeight="500"
+                        _hover={{ color: "teal.600", bg: "transparent" }}
+                      >
+                        {user?.username || user?.email || "User"}
                       </Button>
-                      <Button onClick={logout} variant="ghost" color="gray.700" size="sm" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
+                      <Button
+                        onClick={logout}
+                        variant="ghost"
+                        color="gray.700"
+                        size="sm"
+                        fontWeight="500"
+                        _hover={{ color: "teal.600", bg: "transparent" }}
+                      >
                         Logout
                       </Button>
                     </>
                   ) : (
                     <>
-                      <Button onClick={() => handleNavigation('/login')} variant="ghost" color="gray.700" size="sm" fontWeight="500" _hover={{ color: 'teal.600', bg: 'transparent' }}>
+                      <Button
+                        onClick={() => handleNavigation("/login")}
+                        variant="ghost"
+                        color="gray.700"
+                        size="sm"
+                        fontWeight="500"
+                        _hover={{ color: "teal.600", bg: "transparent" }}
+                      >
                         Log In
                       </Button>
                       <Button
-                        onClick={() => handleNavigation('/signup')}
+                        onClick={() => handleNavigation("/signup")}
                         bg="teal.600"
                         color="white"
                         size="sm"
                         fontWeight="600"
                         borderRadius="md"
-                        _hover={{ bg: 'teal.700' }}
+                        _hover={{ bg: "teal.700" }}
                       >
                         Sign Up
                       </Button>
@@ -96,7 +150,8 @@ export default function Layout() {
         <Container maxW="7xl" py={6}>
           <Center>
             <Text fontSize="sm" color="fg.subtle" textAlign="center">
-              © 2026 Mutual Aid Club. Built by the community, for the community. All rights reserved.
+              © 2026 Mutual Aid Club. Built by the community, for the community.
+              All rights reserved.
             </Text>
           </Center>
         </Container>
@@ -105,5 +160,5 @@ export default function Layout() {
       {/* Global Toast Notifications */}
       <Toaster />
     </Flex>
-  )
+  );
 }

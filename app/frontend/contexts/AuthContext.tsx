@@ -41,10 +41,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .then((data) => {
           setUser(data.user);
         })
-        .catch(() => {
-          // Token invalid, clear it
-          localStorage.removeItem("auth_token");
-          setToken(null);
+        .catch((error) => {
+          const message = error instanceof Error ? error.message : "";
+          const isAuthError = /invalid token|unauthorized|user not found/i.test(
+            message,
+          );
+
+          if (isAuthError) {
+            // Token is invalid, clear it
+            localStorage.removeItem("auth_token");
+            setToken(null);
+            setUser(null);
+          }
         })
         .finally(() => {
           setIsLoading(false);
