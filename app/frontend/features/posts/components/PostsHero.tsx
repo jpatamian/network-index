@@ -6,14 +6,12 @@ import {
   Stack,
   HStack,
   Badge,
-  Button,
 } from "@chakra-ui/react";
 
 import { PostsHeroProps } from "@/types/post";
 
-export const PostsHero = ({ meta, filter }: PostsHeroProps) => {
-  const { pageTitle, subtitle, viewingMine, zipcode } = meta;
-  const { hasFilter, clearFilterLabel, onClearFilter } = filter;
+export const PostsHero = ({ meta }: PostsHeroProps) => {
+  const { pageTitle, viewingMine, zipcode } = meta;
 
   return (
     <Box
@@ -60,25 +58,6 @@ export const PostsHero = ({ meta, filter }: PostsHeroProps) => {
               )
             )}
           </HStack>
-
-          <Stack gap={3}>
-            <Text fontSize="lg" color="fg.muted" lineHeight="1.6">
-              {subtitle}
-            </Text>
-            {hasFilter && (
-              <Button
-                onClick={onClearFilter}
-                variant="ghost"
-                color="teal.600"
-                fontSize="sm"
-                fontWeight="600"
-                w="fit-content"
-                _hover={{ bg: "teal.50" }}
-              >
-                {clearFilterLabel}
-              </Button>
-            )}
-          </Stack>
         </Stack>
       </Container>
     </Box>

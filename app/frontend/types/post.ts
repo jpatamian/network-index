@@ -62,11 +62,6 @@ export interface PostsHeroProps {
     viewingMine: boolean;
     zipcode: string | null;
   };
-  filter: {
-    hasFilter: boolean;
-    clearFilterLabel: string;
-    onClearFilter: () => void;
-  };
 }
 
 export interface SearchAndFilterProps {

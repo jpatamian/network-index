@@ -48,6 +48,7 @@ posts_created = 0
     user: user,
     title: REQUESTS[i][:title],
     content: REQUESTS[i][:content],
+    post_type: 'request',
     status: 'open',
     created_at: rand(1..60).days.ago
   )
@@ -62,6 +63,7 @@ remaining_requests = REQUESTS[@anonymous_users.length..-1] || []
     user: user,
     title: remaining_requests[i][:title],
     content: remaining_requests[i][:content],
+    post_type: 'request',
     status: status,
     created_at: rand(1..60).days.ago
   )
@@ -80,6 +82,7 @@ offers_created = 0
     user: user,
     title: OFFERS[i][:title],
     content: OFFERS[i][:content],
+    post_type: 'offer',
     status: status,
     created_at: rand(1..60).days.ago
   )
@@ -93,6 +96,7 @@ remaining_offers = OFFERS[@verified_helpers.length..-1] || []
     user: user,
     title: remaining_offers[i][:title],
     content: remaining_offers[i][:content],
+    post_type: 'offer',
     status: status,
     created_at: rand(1..60).days.ago
   )
@@ -106,6 +110,7 @@ flagged_post = Post.create!(
   user: @active_members.last,
   title: 'This post contains inappropriate content',
   content: 'This is a test post that should be flagged. Contains some problematic language for testing moderation.',
+  post_type: 'other',
   status: 'open',
   created_at: rand(1..14).days.ago
 )

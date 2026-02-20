@@ -1,4 +1,4 @@
-import { Box, Container, Stack } from "@chakra-ui/react";
+import { Box, Container, Stack, Grid, GridItem } from "@chakra-ui/react";
 import { useAuth } from "@/hooks/useAuth";
 import { CreatePost } from "@/features/posts/components/CreatePost";
 import { LoadingState } from "@/features/posts/components/LoadingState";
@@ -61,22 +61,44 @@ export const Posts = () => {
       <PostsHero meta={heroMeta} filter={heroFilter} />
 
       <Box py={{ base: 6, md: 8 }}>
-        <Container maxW="2xl">
-          <Box py={{ base: 4, md: 6 }}>
-            <CreatePost onPostCreated={handlePostCreated} />
-          </Box>
-
-          <Stack gap={5}>
+        <Container maxW="7xl">
+          <Grid
+            templateColumns={{
+              base: "1fr",
+              lg: !viewingMine ? "350px 1fr" : "1fr",
+            }}
+            gap={6}
+          >
+            {/* Sidebar */}
             {!viewingMine && (
-              <SearchAndFilter state={searchState} actions={searchActions} />
+              <GridItem>
+                <Box
+                  position={{ base: "relative", lg: "sticky" }}
+                  top={{ lg: "24px" }}
+                >
+                  <SearchAndFilter
+                    state={searchState}
+                    actions={searchActions}
+                  />
+                </Box>
+              </GridItem>
             )}
 
-            <PostsList
-              posts={posts}
-              error={error}
-              onDelete={handlePostDeleted}
-            />
-          </Stack>
+            {/* Main Content */}
+            <GridItem>
+              <Stack gap={5}>
+                <Box>
+                  <CreatePost onPostCreated={handlePostCreated} />
+                </Box>
+
+                <PostsList
+                  posts={posts}
+                  error={error}
+                  onDelete={handlePostDeleted}
+                />
+              </Stack>
+            </GridItem>
+          </Grid>
         </Container>
       </Box>
     </Box>

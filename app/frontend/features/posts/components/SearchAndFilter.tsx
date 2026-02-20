@@ -5,24 +5,12 @@ import {
   Stack,
   HStack,
   Button,
-  Input,
-  Icon,
-  Fieldset,
   chakra,
-  NativeSelect,
 } from "@chakra-ui/react";
-import {
-  FaMapMarkerAlt,
-  FaSearch,
-  FaHandsHelping,
-  FaCar,
-  FaUtensils,
-  FaTag,
-  FaThList,
-} from "react-icons/fa";
+import { FaMapMarkerAlt, FaSearch, FaThList } from "react-icons/fa";
 import { POST_TYPE_VALUES, SearchAndFilterProps } from "@/types/post";
 import { postsText } from "@/features/posts/lib/utils";
-import type { IconType } from "react-icons";
+import { FilterField } from "./FilterField";
 
 const POST_TYPE_LABELS: Record<(typeof POST_TYPE_VALUES)[number], string> = {
   other: "Other",
@@ -31,16 +19,13 @@ const POST_TYPE_LABELS: Record<(typeof POST_TYPE_VALUES)[number], string> = {
   food: "Food",
 };
 
-const POST_TYPE_ICONS: Record<
-  "all" | (typeof POST_TYPE_VALUES)[number],
-  IconType
-> = {
-  all: FaThList,
-  other: FaTag,
-  childcare: FaHandsHelping,
-  ride_share: FaCar,
-  food: FaUtensils,
-};
+const POST_TYPE_OPTIONS = [
+  { value: "all", label: "All types" },
+  ...POST_TYPE_VALUES.map((postType) => ({
+    value: postType,
+    label: POST_TYPE_LABELS[postType],
+  })),
+];
 
 export const SearchAndFilter = ({ state, actions }: SearchAndFilterProps) => {
   const { zipcodeInput, queryInput, postTypeInput, canResetSearch } = state;
@@ -51,7 +36,6 @@ export const SearchAndFilter = ({ state, actions }: SearchAndFilterProps) => {
     onSearchSubmit,
     onSearchReset,
   } = actions;
-  const selectedPostTypeIcon = POST_TYPE_ICONS[postTypeInput];
 
   return (
     <Box
@@ -78,105 +62,33 @@ export const SearchAndFilter = ({ state, actions }: SearchAndFilterProps) => {
           </Text>
         </Stack>
 
-        <Stack direction={{ base: "column", md: "row" }} gap={3}>
-          <Fieldset.Root flex="1" gap={2}>
-            <Fieldset.Legend fontSize="sm" color="fg.muted">
-              Post type
-            </Fieldset.Legend>
-            <Fieldset.Content>
-              <NativeSelect.Root>
-                <Box
-                  position="absolute"
-                  left={3}
-                  top="50%"
-                  transform="translateY(-50%)"
-                  color="fg.subtle"
-                  zIndex={1}
-                  pointerEvents="none"
-                >
-                  <Icon as={selectedPostTypeIcon} fontSize="sm" />
-                </Box>
-                <NativeSelect.Field
-                  value={postTypeInput}
-                  onChange={(event) =>
-                    onPostTypeInputChange(
-                      event.target.value as typeof postTypeInput,
-                    )
-                  }
-                  borderRadius="md"
-                  bg="bg"
-                  borderColor="border"
-                  pl={9}
-                >
-                  <option value="all">All types</option>
-                  {POST_TYPE_VALUES.map((postType) => (
-                    <option key={postType} value={postType}>
-                      {POST_TYPE_LABELS[postType]}
-                    </option>
-                  ))}
-                </NativeSelect.Field>
-                <NativeSelect.Indicator />
-              </NativeSelect.Root>
-            </Fieldset.Content>
-          </Fieldset.Root>
+        <Stack direction="column" gap={3}>
+          <FilterField
+            type="select"
+            label="Post type"
+            icon={FaThList}
+            value={postTypeInput}
+            onChange={(value) => onPostTypeInputChange(value as any)}
+            options={POST_TYPE_OPTIONS}
+          />
 
-          <Fieldset.Root flex="1" gap={2}>
-            <Fieldset.Legend fontSize="sm" color="fg.muted">
-              Zipcode
-            </Fieldset.Legend>
-            <Fieldset.Content>
-              <Box position="relative">
-                <Icon
-                  as={FaMapMarkerAlt}
-                  color="fg.subtle"
-                  fontSize="sm"
-                  position="absolute"
-                  left={3}
-                  top="50%"
-                  transform="translateY(-50%)"
-                  pointerEvents="none"
-                />
-                <Input
-                  value={zipcodeInput}
-                  onChange={(e) => onZipcodeInputChange(e.target.value)}
-                  placeholder={postsText.searchZipPlaceholder}
-                  borderRadius="md"
-                  bg="bg"
-                  borderColor="border"
-                  pl={9}
-                />
-              </Box>
-            </Fieldset.Content>
-          </Fieldset.Root>
+          <FilterField
+            type="input"
+            label="Zipcode"
+            icon={FaMapMarkerAlt}
+            value={zipcodeInput}
+            onChange={onZipcodeInputChange}
+            placeholder={postsText.searchZipPlaceholder}
+          />
 
-          <Fieldset.Root flex="1" gap={2}>
-            <Fieldset.Legend fontSize="sm" color="fg.muted">
-              Search text
-            </Fieldset.Legend>
-            <Fieldset.Content>
-              <Box position="relative">
-                <Icon
-                  as={FaSearch}
-                  color="fg.subtle"
-                  fontSize="sm"
-                  position="absolute"
-                  left={3}
-                  top="50%"
-                  transform="translateY(-50%)"
-                  pointerEvents="none"
-                />
-                <Input
-                  value={queryInput}
-                  onChange={(e) => onQueryInputChange(e.target.value)}
-                  placeholder={postsText.searchQueryPlaceholder}
-                  borderRadius="md"
-                  bg="bg"
-                  borderColor="border"
-                  pl={9}
-                />
-              </Box>
-            </Fieldset.Content>
-          </Fieldset.Root>
+          <FilterField
+            type="input"
+            label="Search text"
+            icon={FaSearch}
+            value={queryInput}
+            onChange={onQueryInputChange}
+            placeholder={postsText.searchQueryPlaceholder}
+          />
         </Stack>
 
         <HStack justify="flex-end" gap={3}>
