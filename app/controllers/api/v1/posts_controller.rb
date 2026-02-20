@@ -87,11 +87,12 @@ class Api::V1::PostsController < Api::BaseController
     return unless header
     
     token = header.split(' ').last
+    return if token.blank?
 
     begin
       decoded = JsonWebToken.decode(token)
       @current_user = User.find(decoded[:user_id]) if decoded
-    rescue ActiveRecord::RecordNotFound, JWT::DecodeError
+    rescue ActiveRecord::RecordNotFound, JWT::DecodeError, JWT::ExpiredSignature, JWT::ImmatureSignature, JWT::VerificationError
       # Invalid token, treat as anonymous
       @current_user = nil
     end

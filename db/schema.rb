@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_02_19_130000) do
+ActiveRecord::Schema[7.1].define(version: 2026_02_20_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -67,6 +67,23 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_19_130000) do
     t.index ["flaggable_type", "flaggable_id"], name: "index_flags_on_flaggable_type_and_flaggable_id"
     t.index ["flagger_user_id"], name: "index_flags_on_flagger_user_id"
     t.index ["reviewed_by_user_id"], name: "index_flags_on_reviewed_by_user_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "actor_user_id"
+    t.bigint "post_id", null: false
+    t.bigint "comment_id", null: false
+    t.string "notification_type", default: "comment", null: false
+    t.text "message", null: false
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_user_id"], name: "index_notifications_on_actor_user_id"
+    t.index ["comment_id"], name: "index_notifications_on_comment_id"
+    t.index ["post_id"], name: "index_notifications_on_post_id"
+    t.index ["read_at"], name: "index_notifications_on_read_at"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "posts", force: :cascade do |t|
@@ -145,6 +162,10 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_19_130000) do
   add_foreign_key "direct_messages", "users", column: "sender_id"
   add_foreign_key "flags", "users", column: "flagger_user_id"
   add_foreign_key "flags", "users", column: "reviewed_by_user_id"
+  add_foreign_key "notifications", "comments"
+  add_foreign_key "notifications", "posts"
+  add_foreign_key "notifications", "users"
+  add_foreign_key "notifications", "users", column: "actor_user_id"
   add_foreign_key "posts", "users"
   add_foreign_key "ratings", "posts"
   add_foreign_key "ratings", "users", column: "rated_user_id"

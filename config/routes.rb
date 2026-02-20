@@ -24,6 +24,9 @@ Rails.application.routes.draw do
       # Moderation routes
       resources :flags, only: [:index]
 
+      # Notification routes
+      resources :notifications, only: [:index]
+
       # Post routes
       resources :posts do
         get 'my_posts', on: :collection

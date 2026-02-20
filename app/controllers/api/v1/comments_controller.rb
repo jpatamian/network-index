@@ -21,6 +21,17 @@ class Api::V1::CommentsController < Api::BaseController
     comment.user = current_user
 
     if comment.save
+      if @post.user_id != current_user.id
+        actor_name = current_user.username || current_user.email || 'Someone'
+        Notification.create(
+          user_id: @post.user_id,
+          actor_user: current_user,
+          post: @post,
+          comment: comment,
+          notification_type: 'comment',
+          message: "#{actor_name} commented on your post"
+        )
+      end
       render json: comment_response(comment), status: :created
     else
       render json: {

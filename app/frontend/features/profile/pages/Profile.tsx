@@ -22,10 +22,11 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { flagsApi, usersApi } from "@/lib/api";
+import { flagsApi, notificationsApi, usersApi } from "@/lib/api";
 import { toaster } from "@/components/ui/toaster";
 import { FlagReview } from "@/types/flag";
 import { ProfileFieldProps } from "@/types/user";
+import { NotificationItem } from "@/types/notification";
 
 function ProfileField({
   icon,
@@ -76,6 +77,9 @@ export default function Profile() {
   const needsZipcode = user?.zipcode === "00000";
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [notificationsError, setNotificationsError] = useState("");
   const [flagReviews, setFlagReviews] = useState<FlagReview[]>([]);
   const [flagLoading, setFlagLoading] = useState(false);
   const [flagError, setFlagError] = useState("");
@@ -103,6 +107,25 @@ export default function Profile() {
 
     loadFlags();
   }, [token, user?.is_moderator]);
+
+  useEffect(() => {
+    const loadNotifications = async () => {
+      if (!token) return;
+      setNotificationsLoading(true);
+      setNotificationsError("");
+      try {
+        const data = await notificationsApi.list(token);
+        setNotifications(data);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "";
+        setNotificationsError(message || "Unable to load notifications.");
+      } finally {
+        setNotificationsLoading(false);
+      }
+    };
+
+    loadNotifications();
+  }, [token]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -182,7 +205,7 @@ export default function Profile() {
           </Container>
         </Box>
 
-        {user?.is_moderator && (
+        {user && (
           <Box
             py={{ base: 12, md: 16 }}
             bg="bg"
@@ -278,24 +301,12 @@ export default function Profile() {
                         >
                           Edit Profile
                         </Button>
-                        <Badge
-                          bg="teal.50"
-                          color="teal.700"
-                          fontWeight="600"
-                          px={3}
-                          py={1}
-                          borderRadius="full"
-                        >
-                          <Text>
-                            {user.anonymous ? "Anonymous" : "Verified"}
-                          </Text>
-                        </Badge>
                       </>
                     )}
                   </HStack>
                 </Stack>
 
-                <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={6}>
+                <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} gap={6}>
                   <ProfileField
                     icon={FaEnvelope}
                     label="Email"
@@ -326,7 +337,68 @@ export default function Profile() {
                   />
                 </SimpleGrid>
 
-                {true && (
+                <Box
+                  bg="bg"
+                  border="1px"
+                  borderColor="border.subtle"
+                  borderRadius="lg"
+                  p={5}
+                >
+                  <HStack justify="space-between" align="center" mb={4}>
+                    <Heading size="md" color="fg">
+                      Notifications
+                    </Heading>
+                    <Badge colorPalette="teal" variant="subtle">
+                      New
+                    </Badge>
+                  </HStack>
+
+                  {notificationsLoading && (
+                    <Text fontSize="sm" color="fg.muted">
+                      Loading notifications...
+                    </Text>
+                  )}
+
+                  {notificationsError && (
+                    <Text fontSize="sm" color="red.500">
+                      {notificationsError}
+                    </Text>
+                  )}
+
+                  {!notificationsLoading &&
+                    !notificationsError &&
+                    notifications.length === 0 && (
+                      <Text fontSize="sm" color="fg.muted">
+                        No notifications yet.
+                      </Text>
+                    )}
+
+                  <Stack gap={3}>
+                    {notifications.map((notification) => (
+                      <Box
+                        key={notification.id}
+                        borderWidth="1px"
+                        borderColor="border.subtle"
+                        borderRadius="md"
+                        p={3}
+                      >
+                        <Text fontWeight="600" fontSize="sm" color="fg">
+                          {notification.message}
+                        </Text>
+                        {notification.post_title && (
+                          <Text fontSize="sm" color="fg.subtle" mt={1}>
+                            {notification.post_title}
+                          </Text>
+                        )}
+                        <Text fontSize="xs" color="fg.subtle" mt={2}>
+                          {new Date(notification.created_at).toLocaleString()}
+                        </Text>
+                      </Box>
+                    ))}
+                  </Stack>
+                </Box>
+
+                {user.is_moderator && (
                   <Box
                     bg="bg"
                     border="1px"

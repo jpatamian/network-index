@@ -194,6 +194,12 @@ export const flagsApi = {
   },
 };
 
+export const notificationsApi = {
+  list: (token: string) => {
+    return apiRequest("/notifications", { token });
+  },
+};
+
 export const usersApi = {
   update: (
     userId: number,

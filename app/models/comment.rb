@@ -4,6 +4,7 @@ class Comment < ApplicationRecord
 
   has_many :comment_histories, dependent: :destroy
   has_many :flags, as: :flaggable, dependent: :destroy
+  has_many :notifications, dependent: :destroy
 
   validates :message, presence: true
 end

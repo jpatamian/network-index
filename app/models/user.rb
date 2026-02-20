@@ -10,6 +10,8 @@ class User < ApplicationRecord
   has_many :reported_safety_reports, class_name: 'UserSafetyReport', foreign_key: :reporter_user_id, dependent: :destroy
   has_many :received_safety_reports, class_name: 'UserSafetyReport', foreign_key: :reported_user_id, dependent: :destroy
   has_many :comment_histories, foreign_key: :edited_by_user_id, dependent: :destroy
+  has_many :notifications, dependent: :destroy
+  has_many :sent_notifications, class_name: 'Notification', foreign_key: :actor_user_id, dependent: :nullify
 
   # BCrypt password authentication - allow_nil for anonymous users
   has_secure_password validations: false
