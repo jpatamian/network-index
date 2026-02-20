@@ -13,6 +13,74 @@ RSpec.describe Post, type: :model do
     it { should validate_presence_of(:title) }
     it { should validate_presence_of(:content) }
 
+    it 'validates allowed post types' do
+      user = create(:user)
+      post = build(:post, user: user, post_type: 'invalid_type')
+
+      expect(post).not_to be_valid
+      expect(post.errors[:post_type]).to include('is not included in the list')
+    end
+
+    it 'normalizes post_type to lowercase' do
+      user = create(:user)
+      post = build(:post, user: user, post_type: 'CHILDCARE', metadata: {
+        'needed_by' => 1.day.from_now.iso8601,
+        'children_count' => 1
+      })
+
+      post.validate
+
+      expect(post.post_type).to eq('childcare')
+    end
+
+    it 'allows post_type to be omitted and defaults to other' do
+      user = create(:user)
+      post = build(:post, user: user, post_type: nil)
+
+      expect(post).to be_valid
+      expect(post.post_type).to eq('other')
+    end
+
+    it 'requires childcare metadata fields' do
+      user = create(:user)
+      post = build(:post, user: user, post_type: 'childcare', metadata: {
+        'needed_by' => 1.day.from_now.iso8601
+      })
+
+      expect(post).not_to be_valid
+      expect(post.errors[:metadata].first).to include('children_count')
+    end
+
+    it 'requires ride share metadata fields' do
+      user = create(:user)
+      post = build(:post, user: user, post_type: 'ride_share', metadata: {
+        'from' => 'Downtown',
+        'to' => 'Airport'
+      })
+
+      expect(post).not_to be_valid
+      expect(post.errors[:metadata].first).to include('departure_time')
+    end
+
+    it 'requires food metadata fields' do
+      user = create(:user)
+      post = build(:post, user: user, post_type: 'food', metadata: {})
+
+      expect(post).not_to be_valid
+      expect(post.errors[:metadata].first).to include('pickup_window')
+    end
+
+    it 'accepts valid metadata for supported post types' do
+      user = create(:user)
+      childcare_post = build(:post, :childcare, user: user)
+      rideshare_post = build(:post, :ride_share, user: user)
+      food_post = build(:post, :food, user: user)
+
+      expect(childcare_post).to be_valid
+      expect(rideshare_post).to be_valid
+      expect(food_post).to be_valid
+    end
+
     it 'is valid with valid attributes' do
       user = create(:user)
       post = build(:post, user: user)

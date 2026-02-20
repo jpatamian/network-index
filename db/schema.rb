@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_02_17_215752) do
+ActiveRecord::Schema[7.1].define(version: 2026_02_19_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -79,6 +79,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_17_215752) do
     t.integer "flag_count", default: 0
     t.boolean "is_flagged", default: false
     t.boolean "is_hidden", default: false
+    t.string "post_type", default: "other", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["post_type"], name: "index_posts_on_post_type"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 

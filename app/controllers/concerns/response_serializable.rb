@@ -20,6 +20,8 @@ module ResponseSerializable
       id: post.id,
       title: post.title,
       content: post.content,
+      post_type: post.post_type,
+      metadata: post.metadata,
       author: {
         id: post.user.id,
         name: post.author_name,

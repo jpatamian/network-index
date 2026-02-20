@@ -1,4 +1,12 @@
 class Post < ApplicationRecord
+  POST_TYPES = %w[childcare ride_share food other].freeze
+  TYPE_METADATA_REQUIREMENTS = {
+    'childcare' => %w[needed_by children_count],
+    'ride_share' => %w[from to departure_time],
+    'food' => %w[pickup_window],
+    'other' => []
+  }.freeze
+
   belongs_to :user
 
   has_many :comments, dependent: :destroy
@@ -8,6 +16,9 @@ class Post < ApplicationRecord
 
   validates :title, presence: true, length: { maximum: 200 }
   validates :content, presence: true, length: { maximum: 5000 }
+  validates :post_type, inclusion: { in: POST_TYPES }, allow_blank: true
+  validate :metadata_must_be_a_hash
+  validate :metadata_requirements_for_post_type
 
   scope :recent, -> { order(created_at: :desc) }
   scope :by_user, ->(user_id) { where(user_id: user_id) }
@@ -20,7 +31,32 @@ class Post < ApplicationRecord
   scope :fulfilled, -> { where(status: 'fulfilled') }
   scope :visible, -> { where(is_hidden: false) }
 
+  before_validation :normalize_post_type
+
   def author_name
     user.username || user.email || "Anonymous User"
+  end
+
+  private
+
+  def normalize_post_type
+    self.post_type = post_type.to_s.downcase.presence || 'other'
+  end
+
+  def metadata_must_be_a_hash
+    return if metadata.is_a?(Hash)
+
+    errors.add(:metadata, 'must be an object')
+  end
+
+  def metadata_requirements_for_post_type
+    return unless metadata.is_a?(Hash)
+
+    required_fields = TYPE_METADATA_REQUIREMENTS.fetch(post_type, [])
+    missing_fields = required_fields.select { |field| metadata[field].blank? }
+
+    return if missing_fields.empty?
+
+    errors.add(:metadata, "is missing required fields for #{post_type}: #{missing_fields.join(', ')}")
   end
 end

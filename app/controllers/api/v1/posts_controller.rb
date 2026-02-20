@@ -91,6 +91,6 @@ class Api::V1::PostsController < Api::BaseController
   end
 
   def post_params
-    params.require(:post).permit(:title, :content)
+    params.require(:post).permit(:title, :content, :post_type, metadata: {})
   end
 end
