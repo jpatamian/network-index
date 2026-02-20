@@ -92,7 +92,7 @@ export const PostCard = ({ post, onDelete }: PostCardProps) => {
               <Heading size="lg" fontWeight="700" color="fg">
                 {post.title}
               </Heading>
-              <HStack gap={4} fontSize="sm" color="fg.subtle">
+              <HStack gap={2} fontSize="sm" color="fg.subtle" flexWrap="wrap">
                 <HStack gap={1.5}>
                   <Icon as={FaUser} color="teal.600" fontSize="xs" />
                   <Text fontWeight="500" color="fg">

@@ -5,22 +5,27 @@ import {
   Container,
   Button,
   HStack,
+  VStack,
   Text,
   Center,
   Icon,
   Heading,
+  IconButton,
 } from "@chakra-ui/react";
-import { FaHome } from "react-icons/fa";
+import { FaHome, FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "@/hooks/useAuth";
 import { GiEyeShield } from "react-icons/gi";
 import { Toaster } from "@/components/ui/toaster";
+import { useState } from "react";
 
 export default function Layout() {
   const { user, logout, isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleNavigation = (url: string) => {
     navigate(url);
+    setMobileMenuOpen(false);
   };
 
   return (
@@ -62,8 +67,8 @@ export default function Layout() {
               </HStack>
             </Box>
 
-            {/* Navigation Links */}
-            <HStack gap={6}>
+            {/* Desktop Navigation Links */}
+            <HStack gap={6} display={{ base: "none", md: "flex" }}>
               <Button
                 onClick={() => handleNavigation("/")}
                 variant="ghost"
@@ -136,8 +141,106 @@ export default function Layout() {
                 </>
               )}
             </HStack>
+
+            {/* Mobile Hamburger Button */}
+            <IconButton
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              variant="ghost"
+              color="fg"
+              display={{ base: "flex", md: "none" }}
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+            >
+              <Icon as={mobileMenuOpen ? FaTimes : FaBars} fontSize="xl" />
+            </IconButton>
           </Flex>
         </Container>
+
+        {/* Mobile Menu Dropdown */}
+        {mobileMenuOpen && (
+          <Box
+            display={{ base: "block", md: "none" }}
+            bg="bg"
+            borderTopWidth="1px"
+            borderColor="border.subtle"
+            px={4}
+            py={4}
+          >
+            <VStack align="stretch" gap={2}>
+              <Button
+                onClick={() => handleNavigation("/")}
+                variant="ghost"
+                color="fg"
+                fontWeight="500"
+                justifyContent="flex-start"
+                _hover={{ color: "teal.600", bg: "bg.subtle" }}
+              >
+                Home
+              </Button>
+              <Button
+                onClick={() => handleNavigation("/posts")}
+                variant="ghost"
+                color="fg"
+                fontWeight="500"
+                justifyContent="flex-start"
+                _hover={{ color: "teal.600", bg: "bg.subtle" }}
+              >
+                Posts
+              </Button>
+
+              {!isLoading && (
+                <>
+                  {isAuthenticated ? (
+                    <>
+                      <Button
+                        onClick={() => handleNavigation("/profile")}
+                        variant="ghost"
+                        color="gray.700"
+                        fontWeight="500"
+                        justifyContent="flex-start"
+                        _hover={{ color: "teal.600", bg: "bg.subtle" }}
+                      >
+                        {user?.username || user?.email || "User"}
+                      </Button>
+                      <Button
+                        onClick={() => { logout(); setMobileMenuOpen(false); }}
+                        variant="ghost"
+                        color="gray.700"
+                        fontWeight="500"
+                        justifyContent="flex-start"
+                        _hover={{ color: "teal.600", bg: "bg.subtle" }}
+                      >
+                        Logout
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        onClick={() => handleNavigation("/login")}
+                        variant="ghost"
+                        color="gray.700"
+                        fontWeight="500"
+                        justifyContent="flex-start"
+                        _hover={{ color: "teal.600", bg: "bg.subtle" }}
+                      >
+                        Log In
+                      </Button>
+                      <Button
+                        onClick={() => handleNavigation("/signup")}
+                        bg="teal.600"
+                        color="white"
+                        fontWeight="600"
+                        borderRadius="md"
+                        _hover={{ bg: "teal.700" }}
+                      >
+                        Sign Up
+                      </Button>
+                    </>
+                  )}
+                </>
+              )}
+            </VStack>
+          </Box>
+        )}
       </Box>
 
       {/* Main Content */}

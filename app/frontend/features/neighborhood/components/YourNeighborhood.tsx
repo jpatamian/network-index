@@ -41,7 +41,7 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
     >
       <Container maxW="7xl">
         <VStack gap={8}>
-          <HStack gap={3}>
+          <HStack gap={3} flexWrap="wrap" justify="center">
             <Box color="teal.600" fontSize="2xl">
               <Icon as={FaMapPin} />
             </Box>
@@ -77,7 +77,7 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
                 <Text color="fg" fontSize="sm" fontWeight="600" mb={3}>
                   Quick Actions
                 </Text>
-                <SimpleGrid columns={{ base: 3, sm: 3 }} gap={3}>
+                <SimpleGrid columns={{ base: 1, sm: 3 }} gap={3}>
                   <Button
                     onClick={() => neighborhoodActions.createPost(navigate)}
                     variant="outline"

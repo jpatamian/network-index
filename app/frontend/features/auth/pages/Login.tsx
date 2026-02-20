@@ -82,7 +82,7 @@ export default function Login() {
                 />
               </Box>
             ) : (
-              <Button disabled w="100%" h="56px" bg="bg.muted" color="fg.subtle" fontSize="md" fontWeight="600" borderRadius="full">
+              <Button disabled w="100%" h={{ base: "48px", md: "56px" }} bg="bg.muted" color="fg.subtle" fontSize="md" fontWeight="600" borderRadius="full">
                 Google OAuth not configured
               </Button>
             )}
@@ -100,7 +100,7 @@ export default function Login() {
                 type="submit"
                 disabled={loading}
                 w="100%"
-                h="56px"
+                h={{ base: "48px", md: "56px" }}
                 bg="teal.600"
                 color="white"
                 fontSize="lg"
