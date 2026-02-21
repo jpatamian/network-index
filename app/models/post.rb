@@ -5,6 +5,10 @@ class Post < ApplicationRecord
     food: 'food',
     other: 'other'
   }.freeze
+  STATUSES = {
+    open: 'open',
+    fulfilled: 'fulfilled'
+  }.freeze
   TYPE_METADATA_REQUIREMENTS = {
     'childcare' => %w[needed_by children_count],
     'ride_share' => %w[from to departure_time],
@@ -21,6 +25,7 @@ class Post < ApplicationRecord
   has_many :notifications, dependent: :destroy
 
   enum :post_type, POST_TYPES, prefix: true, validate: true
+  enum :status, STATUSES, validate: true
 
   validates :title, presence: true, length: { maximum: 200 }
   validates :content, presence: true, length: { maximum: 5000 }
@@ -35,15 +40,15 @@ class Post < ApplicationRecord
     sanitized = ActiveRecord::Base.sanitize_sql_like(query.to_s.downcase)
     where('LOWER(posts.title) LIKE :q OR LOWER(posts.content) LIKE :q', q: "%#{sanitized}%")
   }
-  scope :open, -> { where(status: 'open') }
-  scope :fulfilled, -> { where(status: 'fulfilled') }
+  scope :open, -> { where(status: STATUSES[:open]) }
+  scope :fulfilled, -> { where(status: STATUSES[:fulfilled]) }
   scope :visible, -> { where(is_hidden: false) }
   scope :by_post_type, ->(post_type) { where(post_type: post_type) }
 
   before_validation :normalize_post_type
 
   def author_name
-    user.username || user.email || "Anonymous User"
+    user.display_name
   end
 
   private

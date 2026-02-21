@@ -30,10 +30,15 @@ class User < ApplicationRecord
   # Scopes
   scope :anonymous, -> { where(anonymous: true) }
   scope :authenticated, -> { where(anonymous: false) }
+  scope :moderators, -> { where(is_moderator: true) }
 
   # Instance methods
   def authenticated?
     !anonymous
+  end
+
+  def display_name
+    username || email || 'Anonymous User'
   end
 
   private
