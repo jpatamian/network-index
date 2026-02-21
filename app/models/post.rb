@@ -1,3 +1,5 @@
+require_dependency 'post_like'
+
 class Post < ApplicationRecord
   POST_TYPES = {
     childcare: 'childcare',

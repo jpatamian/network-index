@@ -35,21 +35,21 @@ RSpec.describe UserSafetyReport, type: :model do
     it 'accepts harassment reason' do
       reporter = create(:user)
       reported_user = create(:user)
-      report = build(:user_safety_report, reporter_user: reporter, reported_user: reported_user, incident_type: 'Harassment')
+      report = build(:user_safety_report, reporter_user: reporter, reported_user: reported_user, incident_type: 'harassment')
       expect(report).to be_valid
     end
 
     it 'accepts scam reason' do
       reporter = create(:user)
       reported_user = create(:user)
-      report = build(:user_safety_report, reporter_user: reporter, reported_user: reported_user, incident_type: 'Scam')
+      report = build(:user_safety_report, reporter_user: reporter, reported_user: reported_user, incident_type: 'scam')
       expect(report).to be_valid
     end
 
-    it 'accepts threatening behavior reason' do
+    it 'accepts other reason' do
       reporter = create(:user)
       reported_user = create(:user)
-      report = build(:user_safety_report, reporter_user: reporter, reported_user: reported_user, incident_type: 'Threatening Behavior')
+      report = build(:user_safety_report, reporter_user: reporter, reported_user: reported_user, incident_type: 'other')
       expect(report).to be_valid
     end
   end

@@ -4,7 +4,7 @@ FactoryBot.define do
     association :reported_user, factory: :user
     association :post, factory: :post
     reviewed_by_user { nil }
-    incident_type { Faker::Lorem.sentence }
+    incident_type { 'harassment' }
     description { Faker::Lorem.paragraphs(number: 2).join(' ') }
     status { 'pending' }
 
@@ -17,30 +17,30 @@ FactoryBot.define do
     # Trait for rejected reports
     trait :rejected do
       association :reviewed_by_user, factory: :user
-      status { 'rejected' }
+      status { 'dismissed' }
     end
 
     # Trait for harassment reports
     trait :harassment do
-      incident_type { 'Harassment' }
+      incident_type { 'harassment' }
       description { 'User is harassing me in messages and comments' }
     end
 
     # Trait for threatening behavior
     trait :threatening do
-      incident_type { 'Threatening behavior' }
+      incident_type { 'other' }
       description { 'User made threatening comments' }
     end
 
     # Trait for inappropriate behavior
     trait :inappropriate do
-      incident_type { 'Inappropriate behavior' }
+      incident_type { 'inappropriate_content' }
       description { 'User is behaving inappropriately' }
     end
 
     # Trait for scam/fraud reports
     trait :scam do
-      incident_type { 'Scam/Fraud' }
+      incident_type { 'scam' }
       description { 'User is attempting to scam community members' }
     end
 
