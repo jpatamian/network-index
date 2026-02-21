@@ -12,8 +12,13 @@ export async function apiRequest(endpoint: string, options: ApiOptions = {}) {
   const headers = new Headers(fetchOptions.headers);
   headers.set("Content-Type", "application/json");
 
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
+  const normalizedToken = token?.trim();
+  if (
+    normalizedToken &&
+    normalizedToken !== "null" &&
+    normalizedToken !== "undefined"
+  ) {
+    headers.set("Authorization", `Bearer ${normalizedToken}`);
   }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {

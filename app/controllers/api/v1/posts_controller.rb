@@ -12,19 +12,9 @@ class Api::V1::PostsController < Api::BaseController
   def index
     check_authentication_if_token_present
     posts = Post.includes(:user, :comments).recent
-
-    # Filter by zipcode if provided
     posts = posts.by_zipcode(params[:zipcode]) if params[:zipcode].present?
-
-    # Filter by post type if provided
-    if params[:post_type].present?
-      normalized_post_type = params[:post_type].to_s.downcase
-      posts = posts.by_post_type(normalized_post_type)
-    end
-
-    # Free-text search across title/content
+    posts = posts.by_post_type(params[:post_type].to_s.downcase) if params[:post_type].present?
     posts = posts.search_query(params[:q]) if params[:q].present?
-
     posts = posts.limit(50)
     render json: posts.map { |post| post_response(post, current_user) }
   end
@@ -35,6 +25,7 @@ class Api::V1::PostsController < Api::BaseController
     render json: post_response(@post, current_user)
   end
 
+  # GET /api/v1/posts/my_posts
   def my_posts
     posts = current_user.posts.includes(:user, :comments).recent.limit(50)
     render json: posts.map { |post| post_response(post, current_user) }
@@ -42,14 +33,12 @@ class Api::V1::PostsController < Api::BaseController
 
   # POST /api/v1/posts
   def create
-    # Manually check for authentication since we skip authorize_request
     check_authentication_if_token_present
 
-    user = current_user || create_anonymous_user
+    user = current_user || AnonymousUserCreator.create(zipcode: params.dig(:post, :zipcode))
 
     unless user
-      render json: { error: "Zipcode is required for anonymous posts" }, status: :unprocessable_entity
-      return
+      return render json: { error: "Zipcode is required for anonymous posts" }, status: :unprocessable_entity
     end
 
     post = user.posts.build(post_params)
@@ -57,10 +46,7 @@ class Api::V1::PostsController < Api::BaseController
     if post.save
       render json: post_response(post, current_user), status: :created
     else
-      render json: {
-        error: "Failed to create post",
-        details: post.errors.full_messages
-      }, status: :unprocessable_entity
+      render_errors(post, message: "Failed to create post")
     end
   end
 
@@ -69,10 +55,7 @@ class Api::V1::PostsController < Api::BaseController
     if @post.update(post_params)
       render json: post_response(@post, current_user)
     else
-      render json: {
-        error: "Failed to update post",
-        details: @post.errors.full_messages
-      }, status: :unprocessable_entity
+      render_errors(@post, message: "Failed to update post")
     end
   end
 
@@ -91,13 +74,10 @@ class Api::V1::PostsController < Api::BaseController
     token = header.split(" ").last
     return if token.blank?
 
-    begin
-      decoded = JsonWebToken.decode(token)
-      @current_user = User.find(decoded[:user_id]) if decoded
-    rescue ActiveRecord::RecordNotFound, JWT::DecodeError, JWT::ExpiredSignature, JWT::ImmatureSignature, JWT::VerificationError
-      # Invalid token, treat as anonymous
-      @current_user = nil
-    end
+    decoded = JsonWebToken.decode(token)
+    @current_user = User.find(decoded[:user_id]) if decoded
+  rescue ActiveRecord::RecordNotFound, JWT::DecodeError, JWT::ExpiredSignature, JWT::ImmatureSignature, JWT::VerificationError
+    @current_user = nil
   end
 
   def set_post
@@ -105,16 +85,7 @@ class Api::V1::PostsController < Api::BaseController
   end
 
   def authorize_post_owner!
-    unless @post.user_id == current_user.id
-      render json: { error: "Unauthorized" }, status: :forbidden
-    end
-  end
-
-  def create_anonymous_user
-    zipcode = params.dig(:post, :zipcode)
-    return nil if zipcode.blank?
-
-    User.create(zipcode: zipcode, anonymous: true)
+    render_forbidden unless @post.user_id == current_user.id
   end
 
   def post_params

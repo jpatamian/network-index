@@ -43,10 +43,58 @@ module ResponseSerializable
       message: comment.message,
       author: {
         id: comment.user.id,
-        name: comment.user.username || comment.user.email || "Anonymous User",
+        name: comment.user.display_name,
         username: comment.user.username
       },
       created_at: comment.created_at
+    }
+  end
+
+  def flag_response(flag)
+    base = {
+      id: flag.id,
+      reason: flag.reason,
+      description: flag.description,
+      status: flag.status,
+      is_auto_flagged: flag.is_auto_flagged,
+      created_at: flag.created_at,
+      flaggable_type: flag.flaggable_type,
+      flaggable_id: flag.flaggable_id,
+      flagger: {
+        id: flag.flagger_user&.id,
+        name: flag.flagger_user&.display_name || "Anonymous User"
+      }
+    }
+
+    if flag.flaggable.is_a?(Post)
+      base[:flaggable] = {
+        title: flag.flaggable.title,
+        content: flag.flaggable.content
+      }
+    elsif flag.flaggable.is_a?(Comment)
+      base[:flaggable] = {
+        message: flag.flaggable.message,
+        post_id: flag.flaggable.post_id
+      }
+    end
+
+    base
+  end
+
+  def notification_response(notification)
+    {
+      id: notification.id,
+      message: notification.message,
+      notification_type: notification.notification_type,
+      created_at: notification.created_at,
+      read_at: notification.read_at,
+      post_id: notification.post_id,
+      comment_id: notification.comment_id,
+      post_title: notification.post&.title,
+      actor: {
+        id: notification.actor_user&.id,
+        name: notification.actor_user&.display_name || "Anonymous User"
+      }
     }
   end
 end

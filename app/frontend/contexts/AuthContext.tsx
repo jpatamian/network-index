@@ -33,11 +33,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Load token and user from localStorage on mount
   useEffect(() => {
-    const storedToken = localStorage.getItem("auth_token");
-    if (storedToken) {
-      setToken(storedToken);
+    const storedToken = localStorage.getItem("auth_token")?.trim();
+    const normalizedToken =
+      storedToken && storedToken !== "null" && storedToken !== "undefined"
+        ? storedToken
+        : null;
+
+    if (normalizedToken) {
+      setToken(normalizedToken);
       authApi
-        .getCurrentUser(storedToken)
+        .getCurrentUser(normalizedToken)
         .then((data) => {
           setUser(data.user);
         })
@@ -89,6 +94,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("auth_token");
   };
 
+  const isAuthenticated = !!token && token !== "null" && token !== "undefined";
+
   const value = {
     user,
     token,
@@ -97,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signup,
     logout,
     isLoading,
-    isAuthenticated: !!token,
+    isAuthenticated,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

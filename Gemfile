@@ -57,6 +57,8 @@ group :development, :test do
   gem "shoulda-matchers", "~> 7.0"
   # Clean database between tests
   gem "database_cleaner-active_record", "~> 2.1"
+
+  gem "pry", "~> 0.14"
 end
 
 group :development do
