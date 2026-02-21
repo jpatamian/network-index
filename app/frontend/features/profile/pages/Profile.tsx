@@ -3,7 +3,7 @@ import { Box, Container, Stack } from "@chakra-ui/react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { flagsApi, notificationsApi, usersApi } from "@/lib/api";
+import { flagsApi, notificationsApi, usersApi, postsApi } from "@/lib/api";
 import { toaster } from "@/components/ui/toaster";
 import { FlagReview } from "@/types/flag";
 import { NotificationItem } from "@/types/notification";
@@ -172,6 +172,37 @@ export default function Profile() {
     }
   };
 
+  const handleDeletePost = async (postId: number, flagId: number) => {
+    if (
+      !token ||
+      !confirm(
+        "Are you sure you want to delete this post? This action cannot be undone.",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await postsApi.delete(postId, token);
+      await flagsApi.acknowledge(flagId, token);
+      setFlagReviews((prev) => prev.filter((flag) => flag.id !== flagId));
+      const seenFlag = flagReviews.find((flag) => flag.id === flagId);
+      if (seenFlag) {
+        setSeenFlags((prev) => [seenFlag, ...prev]);
+      }
+      toaster.success({
+        title: "Post deleted",
+        description: "The flagged post has been deleted",
+      });
+    } catch (error) {
+      toaster.error({
+        title: "Unable to delete post",
+        description:
+          error instanceof Error ? error.message : "Please try again",
+      });
+    }
+  };
+
   return (
     <ProtectedRoute>
       <Box minH="100vh" bgGradient="linear(to-b, #f6f2ee, #ffffff)">
@@ -221,6 +252,7 @@ export default function Profile() {
                         isLoading={flagLoading}
                         error={flagError}
                         onAcknowledge={handleAcknowledge}
+                        onDelete={handleDeletePost}
                       />
                     )}
 

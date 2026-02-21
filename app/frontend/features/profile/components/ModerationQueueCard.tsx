@@ -9,12 +9,14 @@ import {
 } from "@chakra-ui/react";
 import { FlagReview } from "@/types/flag";
 import { PROFILE_TEXT } from "@/features/profile/lib/constants";
+import { useNavigate } from "react-router-dom";
 
 interface ModerationQueueCardProps {
   flags: FlagReview[];
   isLoading: boolean;
   error: string;
   onAcknowledge: (flagId: number) => void;
+  onDelete: (postId: number, flagId: number) => void;
 }
 
 export const ModerationQueueCard = ({
@@ -22,7 +24,9 @@ export const ModerationQueueCard = ({
   isLoading,
   error,
   onAcknowledge,
+  onDelete,
 }: ModerationQueueCardProps) => {
+  const navigate = useNavigate();
   return (
     <Box
       bg="bg"
@@ -96,7 +100,27 @@ export const ModerationQueueCard = ({
             <Text fontSize="xs" color="fg.subtle" mt={2}>
               Reported by {flag.flagger.name}
             </Text>
-            <HStack justify="flex-end" mt={3}>
+            <HStack justify="flex-end" gap={2} mt={3}>
+              {flag.flaggable_type === "Post" && (
+                <>
+                  <Button
+                    size="xs"
+                    variant="outline"
+                    colorPalette="gray"
+                    onClick={() => navigate(`/posts/${flag.flaggable_id}`)}
+                  >
+                    View Post
+                  </Button>
+                  <Button
+                    size="xs"
+                    variant="outline"
+                    colorPalette="red"
+                    onClick={() => onDelete(flag.flaggable_id, flag.id)}
+                  >
+                    Delete Post
+                  </Button>
+                </>
+              )}
               <Button
                 size="xs"
                 variant="outline"

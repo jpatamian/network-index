@@ -5,6 +5,7 @@ import Home from "./features/home/pages/Home";
 import Login from "./features/auth/pages/Login";
 import Signup from "./features/auth/pages/Signup";
 import { Posts } from "./features/posts/pages/Posts";
+import { PostShow } from "./features/posts/pages/PostShow";
 import { CreatePostPage } from "./features/posts/pages/CreatePostPage";
 import Profile from "./features/profile/pages/Profile";
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="signup" element={<Signup />} />
           <Route path="posts" element={<Posts />} />
           <Route path="posts/new" element={<CreatePostPage />} />
+          <Route path="posts/:id" element={<PostShow />} />
           <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>

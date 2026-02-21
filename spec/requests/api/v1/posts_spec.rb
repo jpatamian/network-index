@@ -284,6 +284,19 @@ RSpec.describe 'Api::V1::Posts', type: :request do
 
       expect(response).to have_http_status(:forbidden)
     end
+
+    it 'allows moderators to delete any post' do
+      moderator = create(:user, is_moderator: true)
+      moderator_token = JsonWebToken.encode(user_id: moderator.id)
+      moderator_headers = { 'Authorization' => "Bearer #{moderator_token}" }
+      other_user = create(:user)
+      other_post = create(:post, user: other_user)
+
+      delete "/api/v1/posts/#{other_post.id}", headers: moderator_headers
+
+      expect(response).to have_http_status(:ok)
+      expect(Post.exists?(other_post.id)).to be false
+    end
   end
 
   describe 'GET /api/v1/posts/my_posts' do

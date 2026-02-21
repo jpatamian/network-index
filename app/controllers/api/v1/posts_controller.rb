@@ -6,7 +6,7 @@ class Api::V1::PostsController < Api::BaseController
   skip_before_action :authorize_request, only: [ :index, :show, :create ]
   before_action :require_authentication!, only: [ :update, :destroy, :my_posts ]
   before_action :set_post, only: [ :show, :update, :destroy ]
-  before_action :authorize_post_owner!, only: [ :update, :destroy ]
+  before_action :authorize_post_action!, only: [ :update, :destroy ]
 
   # GET /api/v1/posts
   def index
@@ -88,8 +88,11 @@ class Api::V1::PostsController < Api::BaseController
     @post = Post.find(params[:id])
   end
 
-  def authorize_post_owner!
-    render_forbidden unless @post.user_id == current_user.id
+  def authorize_post_action!
+    # Allow post owner or moderators to update/delete
+    unless @post.user_id == current_user.id || current_user.is_moderator?
+      render_forbidden
+    end
   end
 
   def post_params
