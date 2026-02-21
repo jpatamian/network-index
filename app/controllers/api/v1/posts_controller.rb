@@ -10,23 +10,25 @@ class Api::V1::PostsController < Api::BaseController
 
   # GET /api/v1/posts
   def index
+    check_authentication_if_token_present
     posts = Post.includes(:user, :comments).recent
     posts = posts.by_zipcode(params[:zipcode]) if params[:zipcode].present?
     posts = posts.by_post_type(params[:post_type].to_s.downcase) if params[:post_type].present?
     posts = posts.search_query(params[:q]) if params[:q].present?
     posts = posts.limit(50)
-    render json: posts.map { |post| post_response(post) }
+    render json: posts.map { |post| post_response(post, current_user) }
   end
 
   # GET /api/v1/posts/:id
   def show
-    render json: post_response(@post)
+    check_authentication_if_token_present
+    render json: post_response(@post, current_user)
   end
 
   # GET /api/v1/posts/my_posts
   def my_posts
     posts = current_user.posts.includes(:user, :comments).recent.limit(50)
-    render json: posts.map { |post| post_response(post) }
+    render json: posts.map { |post| post_response(post, current_user) }
   end
 
   # POST /api/v1/posts
@@ -42,7 +44,7 @@ class Api::V1::PostsController < Api::BaseController
     post = user.posts.build(post_params)
 
     if post.save
-      render json: post_response(post), status: :created
+      render json: post_response(post, current_user), status: :created
     else
       render_errors(post, message: 'Failed to create post')
     end
@@ -51,7 +53,7 @@ class Api::V1::PostsController < Api::BaseController
   # PATCH/PUT /api/v1/posts/:id
   def update
     if @post.update(post_params)
-      render json: post_response(@post)
+      render json: post_response(@post, current_user)
     else
       render_errors(@post, message: 'Failed to update post')
     end

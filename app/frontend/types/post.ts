@@ -14,6 +14,8 @@ export interface Post {
   content: string;
   post_type: PostType;
   metadata: Record<string, string | number | boolean | null>;
+  likes_count: number;
+  liked_by_current_user: boolean;
   author: {
     id: number;
     name: string;

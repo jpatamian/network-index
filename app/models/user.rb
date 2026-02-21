@@ -12,6 +12,8 @@ class User < ApplicationRecord
   has_many :comment_histories, foreign_key: :edited_by_user_id, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :sent_notifications, class_name: 'Notification', foreign_key: :actor_user_id, dependent: :nullify
+  has_many :post_likes, dependent: :destroy
+  has_many :liked_posts, through: :post_likes, source: :post
 
   # BCrypt password authentication - allow_nil for anonymous users
   has_secure_password validations: false

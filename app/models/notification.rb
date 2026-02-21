@@ -9,7 +9,7 @@ class Notification < ApplicationRecord
   belongs_to :user
   belongs_to :actor_user, class_name: 'User', foreign_key: :actor_user_id, optional: true
   belongs_to :post
-  belongs_to :comment
+  belongs_to :comment, optional: true
 
   enum :notification_type, TYPES, validate: true
 

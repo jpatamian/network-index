@@ -6,6 +6,7 @@ class Api::V1::FlagsController < Api::BaseController
   before_action :require_authentication!
   before_action :set_post, only: [:create]
   before_action :set_comment, only: [:create], if: -> { params[:comment_id].present? }
+  before_action :set_flag, only: [:update]
 
   # GET /api/v1/flags
   def index
@@ -45,6 +46,23 @@ class Api::V1::FlagsController < Api::BaseController
     end
   end
 
+  # PATCH /api/v1/flags/:id
+  def update
+    unless current_user.is_moderator?
+      render json: { error: 'Unauthorized' }, status: :forbidden
+      return
+    end
+
+    if @flag.update(status: 'seen', reviewed_at: Time.current, reviewed_by_user_id: current_user.id)
+      render json: flag_response(@flag), status: :ok
+    else
+      render json: {
+        error: 'Failed to acknowledge flag',
+        details: @flag.errors.full_messages
+      }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_post
@@ -53,6 +71,10 @@ class Api::V1::FlagsController < Api::BaseController
 
   def set_comment
     @comment = @post.comments.find(params[:comment_id])
+  end
+
+  def set_flag
+    @flag = Flag.find(params[:id])
   end
 
   def flag_params
