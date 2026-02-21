@@ -39,7 +39,7 @@ export default function Layout() {
         borderColor="border.subtle"
       >
         <Container maxW="7xl">
-          <Flex justify="space-between" align="center" h={8}>
+          <Flex justify="space-between" align="center" h={14}>
             {/* Logo */}
             <Box
               as="button"
@@ -85,7 +85,7 @@ export default function Layout() {
                 fontWeight="500"
                 _hover={{ color: "teal.600", bg: "transparent" }}
               >
-                Posts
+                Feed
               </Button>
 
               {!isLoading && (
@@ -184,7 +184,7 @@ export default function Layout() {
                 justifyContent="flex-start"
                 _hover={{ color: "teal.600", bg: "bg.subtle" }}
               >
-                Posts
+                Feed
               </Button>
 
               {!isLoading && (
