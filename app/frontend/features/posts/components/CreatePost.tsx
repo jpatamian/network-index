@@ -43,6 +43,8 @@ const initialFormData = {
   content: "",
   zipcode: "",
   postType: "other",
+  notificationEmail: "",
+  notificationPhone: "",
 };
 
 const POST_TYPE_ICONS: Record<
@@ -65,8 +67,8 @@ export const CreatePost = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState(initialFormData);
-  const selectedPostType =
-    (formData.postType || "other") as keyof typeof POST_TYPE_ICONS;
+  const selectedPostType = (formData.postType ||
+    "other") as keyof typeof POST_TYPE_ICONS;
   const selectedPostTypeIcon = POST_TYPE_ICONS[selectedPostType];
 
   const isFormVisible = forceExpanded || isExpanded;
@@ -83,11 +85,22 @@ export const CreatePost = ({
     setLoading(true);
 
     try {
+      const metadata: Record<string, string> = {};
+      if (!isAuthenticated) {
+        if (formData.notificationEmail.trim()) {
+          metadata.notification_email = formData.notificationEmail.trim();
+        }
+        if (formData.notificationPhone.trim()) {
+          metadata.notification_phone = formData.notificationPhone.trim();
+        }
+      }
+
       const postData: {
         title: string;
         content: string;
         post_type: "other" | "childcare" | "ride_share" | "food";
         zipcode?: string;
+        metadata?: Record<string, string>;
       } = {
         title: formData.title,
         content: formData.content,
@@ -100,6 +113,9 @@ export const CreatePost = ({
 
       if (!isAuthenticated) {
         postData.zipcode = formData.zipcode;
+        if (Object.keys(metadata).length > 0) {
+          postData.metadata = metadata;
+        }
       }
 
       const response = await postsApi.create(postData, token);
@@ -127,7 +143,13 @@ export const CreatePost = ({
   };
 
   const handleFieldChange = (
-    field: "title" | "content" | "zipcode" | "postType",
+    field:
+      | "title"
+      | "content"
+      | "zipcode"
+      | "postType"
+      | "notificationEmail"
+      | "notificationPhone",
     value: string,
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -302,6 +324,47 @@ export const CreatePost = ({
                 maxLength={5000}
                 resize="vertical"
               />
+
+              {/* Notification Contact (anonymous only) */}
+              {!isAuthenticated && (
+                <Stack gap={2}>
+                  <Box fontSize="xs" color="fg.muted">
+                    Optional: get notified about replies (never shown publicly)
+                  </Box>
+                  <Stack direction={{ base: "column", sm: "row" }} gap={3}>
+                    <Input
+                      type="email"
+                      placeholder="Email for notifications"
+                      value={formData.notificationEmail}
+                      onChange={(e) =>
+                        handleFieldChange("notificationEmail", e.target.value)
+                      }
+                      borderRadius="lg"
+                      borderColor="border"
+                      _focus={{
+                        borderColor: "teal.500",
+                        boxShadow: "0 0 0 1px #14b8a6",
+                      }}
+                      flex={1}
+                    />
+                    <Input
+                      type="tel"
+                      placeholder="Phone for notifications"
+                      value={formData.notificationPhone}
+                      onChange={(e) =>
+                        handleFieldChange("notificationPhone", e.target.value)
+                      }
+                      borderRadius="lg"
+                      borderColor="border"
+                      _focus={{
+                        borderColor: "teal.500",
+                        boxShadow: "0 0 0 1px #14b8a6",
+                      }}
+                      flex={1}
+                    />
+                  </Stack>
+                </Stack>
+              )}
 
               {/* Action Buttons */}
               <HStack justify="flex-end" gap={3}>

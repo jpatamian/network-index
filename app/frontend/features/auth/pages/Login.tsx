@@ -7,7 +7,6 @@ import {
   VStack,
   Button,
   Link as ChakraLink,
-  HStack,
 } from "@chakra-ui/react";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "@/hooks/useAuth";
@@ -158,31 +157,6 @@ export default function Login() {
           </form>
 
           <VStack gap={4} align="center" w="100%">
-            <HStack gap={1} justify="center" flexWrap="wrap">
-              <Text fontSize="sm" color="fg.muted">
-                Have a business?
-              </Text>
-              <ChakraLink
-                href="#"
-                fontSize="sm"
-                color="fg"
-                fontWeight="600"
-                textDecoration="underline"
-                _hover={{ color: "teal.600" }}
-              >
-                Get started
-              </ChakraLink>
-            </HStack>
-            <ChakraLink
-              href="#"
-              fontSize="sm"
-              color="fg"
-              fontWeight="600"
-              textDecoration="underline"
-              _hover={{ color: "teal.600" }}
-            >
-              Have an invite code?
-            </ChakraLink>
             <Text
               fontSize="xs"
               color="fg.subtle"
