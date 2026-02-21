@@ -19,7 +19,7 @@ RSpec.describe 'Api::V1::Flags', type: :request do
   describe 'GET /api/v1/flags' do
     before do
       create(:flag, :for_post, status: 'pending')
-      create(:flag, :for_post, status: 'seen')
+      create(:flag, :for_post, status: 'archived')
     end
 
     it 'returns pending flags by default for a moderator' do
@@ -32,10 +32,10 @@ RSpec.describe 'Api::V1::Flags', type: :request do
     end
 
     it 'returns flags filtered by status param' do
-      get '/api/v1/flags', params: { status: 'seen' }, headers: moderator_headers
+      get '/api/v1/flags', params: { status: 'archived' }, headers: moderator_headers
 
       body = JSON.parse(response.body)
-      expect(body).to all(include('status' => 'seen'))
+      expect(body).to all(include('status' => 'archived'))
     end
 
     it 'returns at most 50 flags' do
@@ -167,7 +167,7 @@ RSpec.describe 'Api::V1::Flags', type: :request do
       patch "/api/v1/flags/#{flag.id}", headers: moderator_headers
 
       expect(response).to have_http_status(:ok)
-      expect(flag.reload.status).to eq('seen')
+      expect(flag.reload.status).to eq('archived')
     end
 
     it 'records the reviewer and reviewed_at timestamp' do
@@ -182,7 +182,7 @@ RSpec.describe 'Api::V1::Flags', type: :request do
       patch "/api/v1/flags/#{flag.id}", headers: moderator_headers
 
       body = JSON.parse(response.body)
-      expect(body['status']).to eq('seen')
+      expect(body['status']).to eq('archived')
       expect(body['id']).to eq(flag.id)
     end
 

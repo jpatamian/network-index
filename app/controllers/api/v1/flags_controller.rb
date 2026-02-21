@@ -53,7 +53,7 @@ class Api::V1::FlagsController < Api::BaseController
       return
     end
 
-    if @flag.update(status: "seen", reviewed_at: Time.current, reviewed_by_user_id: current_user.id)
+    if @flag.update(status: "archived", reviewed_at: Time.current, reviewed_by_user_id: current_user.id)
       render json: flag_response(@flag), status: :ok
     else
       render json: {

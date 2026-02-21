@@ -24,7 +24,9 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const googleClientIdConfigured = Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID);
+  const googleClientIdConfigured = Boolean(
+    import.meta.env.VITE_GOOGLE_CLIENT_ID,
+  );
 
   const { formData, handleChange } = useFormData({ email: "", password: "" });
 
@@ -61,18 +63,37 @@ export default function Login() {
   };
 
   return (
-    <Box minH="100vh" bg="white" display="flex" alignItems="center" justifyContent="center" py={12} px={4}>
+    <Box
+      minH="100vh"
+      bg="bg.subtle"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      py={12}
+      px={4}
+    >
       <Container maxW="sm">
         <VStack gap={8} align="stretch">
           <VStack align="center" gap={2}>
-            <Heading as="h1" size="2xl" color="fg" fontWeight="700" textAlign="center">
+            <Heading
+              as="h1"
+              size="2xl"
+              color="fg"
+              fontWeight="700"
+              textAlign="center"
+            >
               Discover your neighborhood
             </Heading>
           </VStack>
 
           <VStack gap={3} w="100%">
             {googleClientIdConfigured ? (
-              <Box w="100%" display="flex" justifyContent="center" opacity={googleLoading ? 0.6 : 1}>
+              <Box
+                w="100%"
+                display="flex"
+                justifyContent="center"
+                opacity={googleLoading ? 0.6 : 1}
+              >
                 <GoogleLogin
                   onSuccess={handleGoogleLogin}
                   onError={() => setError("Google authentication failed")}
@@ -82,7 +103,16 @@ export default function Login() {
                 />
               </Box>
             ) : (
-              <Button disabled w="100%" h={{ base: "48px", md: "56px" }} bg="bg.muted" color="fg.subtle" fontSize="md" fontWeight="600" borderRadius="full">
+              <Button
+                disabled
+                w="100%"
+                h={{ base: "48px", md: "56px" }}
+                bg="bg.muted"
+                color="fg.subtle"
+                fontSize="md"
+                fontWeight="600"
+                borderRadius="full"
+              >
                 Google OAuth not configured
               </Button>
             )}
@@ -94,8 +124,21 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} style={{ width: "100%" }}>
             <VStack gap={4}>
-              <FormInput name="email" type="email" placeholder="Email address" value={formData.email} onChange={handleChange} required />
-              <PasswordInput name="password" placeholder="Create a password" value={formData.password} onChange={handleChange} required />
+              <FormInput
+                name="email"
+                type="email"
+                placeholder="Email address"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+              <PasswordInput
+                name="password"
+                placeholder="Create a password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
               <Button
                 type="submit"
                 disabled={loading}
@@ -116,25 +159,76 @@ export default function Login() {
 
           <VStack gap={4} align="center" w="100%">
             <HStack gap={1} justify="center" flexWrap="wrap">
-              <Text fontSize="sm" color="fg.muted">Have a business?</Text>
-              <ChakraLink href="#" fontSize="sm" color="fg" fontWeight="600" textDecoration="underline" _hover={{ color: "teal.600" }}>
+              <Text fontSize="sm" color="fg.muted">
+                Have a business?
+              </Text>
+              <ChakraLink
+                href="#"
+                fontSize="sm"
+                color="fg"
+                fontWeight="600"
+                textDecoration="underline"
+                _hover={{ color: "teal.600" }}
+              >
                 Get started
               </ChakraLink>
             </HStack>
-            <ChakraLink href="#" fontSize="sm" color="fg" fontWeight="600" textDecoration="underline" _hover={{ color: "teal.600" }}>
+            <ChakraLink
+              href="#"
+              fontSize="sm"
+              color="fg"
+              fontWeight="600"
+              textDecoration="underline"
+              _hover={{ color: "teal.600" }}
+            >
               Have an invite code?
             </ChakraLink>
-            <Text fontSize="xs" color="fg.subtle" textAlign="center" lineHeight={1.4}>
+            <Text
+              fontSize="xs"
+              color="fg.subtle"
+              textAlign="center"
+              lineHeight={1.4}
+            >
               By continuing with sign up, you agree to our{" "}
-              <ChakraLink href="#" textDecoration="underline" color="fg" fontWeight="600">Privacy Policy</ChakraLink>,{" "}
-              <ChakraLink href="#" textDecoration="underline" color="fg" fontWeight="600">Cookie Policy</ChakraLink>, and{" "}
-              <ChakraLink href="#" textDecoration="underline" color="fg" fontWeight="600">Member Agreement</ChakraLink>.
+              <ChakraLink
+                href="#"
+                textDecoration="underline"
+                color="fg"
+                fontWeight="600"
+              >
+                Privacy Policy
+              </ChakraLink>
+              ,{" "}
+              <ChakraLink
+                href="#"
+                textDecoration="underline"
+                color="fg"
+                fontWeight="600"
+              >
+                Cookie Policy
+              </ChakraLink>
+              , and{" "}
+              <ChakraLink
+                href="#"
+                textDecoration="underline"
+                color="fg"
+                fontWeight="600"
+              >
+                Member Agreement
+              </ChakraLink>
+              .
             </Text>
           </VStack>
 
           <Text fontSize="sm" color="fg.muted" textAlign="center">
             Don't have an account?{" "}
-            <ChakraLink href="/signup" color="teal.600" fontWeight="600" textDecoration="underline" _hover={{ color: "teal.700" }}>
+            <ChakraLink
+              href="/signup"
+              color="teal.600"
+              fontWeight="600"
+              textDecoration="underline"
+              _hover={{ color: "teal.700" }}
+            >
               Sign up
             </ChakraLink>
           </Text>
