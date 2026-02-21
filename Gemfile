@@ -54,7 +54,7 @@ group :development, :test do
   # Realistic fake data
   gem "faker", "~> 3.2"
   # RSpec matchers for Rails
-  gem "shoulda-matchers", "~> 6.0"
+  gem "shoulda-matchers", "~> 7.0"
   # Clean database between tests
   gem "database_cleaner-active_record", "~> 2.1"
 end
