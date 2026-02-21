@@ -74,9 +74,6 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
             <VStack gap={6} align="stretch">
               {/* Quick Actions */}
               <Box>
-                <Text color="fg" fontSize="sm" fontWeight="600" mb={3}>
-                  Quick Actions
-                </Text>
                 <SimpleGrid columns={{ base: 1, sm: 3 }} gap={3}>
                   <Button
                     onClick={() => neighborhoodActions.createPost(navigate)}
