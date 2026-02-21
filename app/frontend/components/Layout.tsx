@@ -39,7 +39,7 @@ export default function Layout() {
         borderColor="border.subtle"
       >
         <Container maxW="7xl">
-          <Flex justify="space-between" align="center" h={16}>
+          <Flex justify="space-between" align="center" h={8}>
             {/* Logo */}
             <Box
               as="button"
@@ -202,7 +202,10 @@ export default function Layout() {
                         {user?.username || user?.email || "User"}
                       </Button>
                       <Button
-                        onClick={() => { logout(); setMobileMenuOpen(false); }}
+                        onClick={() => {
+                          logout();
+                          setMobileMenuOpen(false);
+                        }}
                         variant="ghost"
                         color="gray.700"
                         fontWeight="500"

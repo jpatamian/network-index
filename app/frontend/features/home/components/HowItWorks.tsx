@@ -9,57 +9,52 @@ import {
   VStack,
   Icon,
   Center,
-  Image,
-} from '@chakra-ui/react'
-import { FaHandsHelping, FaUsers, FaMapMarkerAlt, FaShieldAlt } from 'react-icons/fa'
-import helpingHandsImage from '@/assets/images/helping-hands.svg'
+} from "@chakra-ui/react";
+import {
+  FaHandsHelping,
+  FaUsers,
+  FaMapMarkerAlt,
+  FaShieldAlt,
+} from "react-icons/fa";
 
 export default function HowItWorks() {
   const features = [
     {
       icon: FaHandsHelping,
-      title: 'Mutual Aid',
-      description: 'Help and support your neighbors with what they need',
+      title: "Mutual Aid",
+      description: "Help and support your neighbors with what they need",
     },
     {
       icon: FaUsers,
-      title: 'Community',
-      description: 'Connect with people in your local area',
+      title: "Community",
+      description: "Connect with people in your local area",
     },
     {
       icon: FaMapMarkerAlt,
-      title: 'Neighborhood',
-      description: 'Share resources and opportunities nearby',
+      title: "Neighborhood",
+      description: "Share resources and opportunities nearby",
     },
     {
       icon: FaShieldAlt,
-      title: 'Safe & Secure',
-      description: 'Your privacy and safety are our priority',
+      title: "Safe & Secure",
+      description: "Your privacy and safety are our priority",
     },
-  ]
+  ];
 
   return (
-    <Box py={{ base: 12, md: 16 }} bg="bg.subtle" borderBottomWidth="1px" borderColor="border.subtle">
+    <Box
+      py={{ base: 12, md: 16 }}
+      bg="bg.subtle"
+      borderBottomWidth="1px"
+      borderColor="border.subtle"
+    >
       <Container maxW="7xl">
-        <Stack padding={4} gap={8}>
+        <Stack gap={8}>
           <Center>
             <Stack textAlign="center" gap={4}>
               <Heading size="lg" color="fg" fontWeight="700">
-                How It Works
-              </Heading>
-              <Text fontSize="md" color="fg.muted" maxW="2xl">
                 Connect with neighbors to share, help, and grow together
-              </Text>
-              {/* Community helping image */}
-              <Box maxW="lg" mx="auto" mt={4}>
-                <Image
-                  src={helpingHandsImage}
-                  alt="Community members helping each other"
-                  w="100%"
-                  h="auto"
-                  borderRadius="lg"
-                />
-              </Box>
+              </Heading>
             </Stack>
           </Center>
 
@@ -67,7 +62,7 @@ export default function HowItWorks() {
             {features.map((feature, idx) => (
               <Card.Root
                 key={idx}
-                _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }}
+                _hover={{ boxShadow: "md", transform: "translateY(-2px)" }}
                 transition="all 0.3s"
                 borderColor="border.subtle"
                 borderWidth="1px"
@@ -99,5 +94,5 @@ export default function HowItWorks() {
         </Stack>
       </Container>
     </Box>
-  )
+  );
 }

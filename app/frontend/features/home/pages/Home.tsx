@@ -6,7 +6,6 @@ import {
   Button,
   Stack,
   HStack,
-  Image,
   Icon,
   IconButton,
 } from "@chakra-ui/react";
@@ -17,7 +16,6 @@ import { useAuth } from "@/hooks/useAuth";
 import HowItWorks from "@/features/home/components/HowItWorks";
 import FindYourNeighborhood from "@/features/home/components/FindYourNeighborhood";
 import YourNeighborhood from "@/features/neighborhood/components/YourNeighborhood";
-import communityHeroImage from "@/assets/images/community-hero.svg";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -43,6 +41,26 @@ export default function Home() {
         borderBottomWidth="1px"
         borderColor="border.subtle"
       >
+        <Container maxW="7xl">
+          <Stack textAlign="center" maxW="2xl" gap={6} mx="auto">
+            <Heading
+              as="h1"
+              size="2xl"
+              fontWeight="700"
+              color="fg"
+              lineHeight="1.2"
+            >
+              {isAuthenticated
+                ? `Welcome back, ${user?.username || user?.email}!`
+                : "Your Neighborhood, Connected"}
+            </Heading>
+            <Text fontSize="lg" color="fg.muted" lineHeight={1.6}>
+              {isAuthenticated
+                ? "Connect with neighbors to share resources, ask for help, and build community."
+                : "Share resources, ask for help, and build genuine connections with neighbors near you."}
+            </Text>
+          </Stack>
+        </Container>
         <Container maxW="7xl">
           {needsZipcode && (
             <Box
@@ -79,7 +97,7 @@ export default function Home() {
 
           {!isAuthenticated && showSupportBanner && (
             <Box
-              mb={6}
+              mt={4}
               bg="teal.50"
               border="1px"
               borderColor="teal.200"
@@ -131,100 +149,9 @@ export default function Home() {
             </Box>
           )}
 
-          <Stack gap={8} align="center">
-            {/* Hero Image */}
-            <Box
-              w="100%"
-              maxW="4xl"
-              borderRadius="xl"
-              overflow="hidden"
-              boxShadow="lg"
-              bg="white"
-            >
-              <Image
-                src={communityHeroImage}
-                alt="Friendly neighborhood community with houses and people"
-                w="100%"
-                h="auto"
-                objectFit="cover"
-              />
-            </Box>
-
-            <Stack textAlign="center" maxW="2xl" gap={6}>
-              <Heading
-                as="h1"
-                size="2xl"
-                fontWeight="700"
-                color="fg"
-                lineHeight="1.2"
-              >
-                {isAuthenticated
-                  ? `Welcome back, ${user?.username || user?.email}!`
-                  : "Your Neighborhood, Connected"}
-              </Heading>
-              <Text fontSize="lg" color="fg.muted" lineHeight={1.6}>
-                {isAuthenticated
-                  ? "Connect with neighbors to share resources, ask for help, and build community."
-                  : "Share resources, ask for help, and build genuine connections with neighbors near you."}
-              </Text>
-            </Stack>
-          </Stack>
-
-          {!isAuthenticated && (
-            <Stack
-              direction={{ base: "column", sm: "row" }}
-              gap={4}
-              justify="center"
-              align="center"
-              pt={4}
-              w="100%"
-            >
-              <Button
-                onClick={() => {
-                  navigate("/signup");
-                }}
-                bg="teal.600"
-                color="white"
-                size="lg"
-                fontWeight="600"
-                borderRadius="md"
-                w={{ base: "full", sm: "auto" }}
-                _hover={{
-                  bg: "teal.700",
-                  transform: "translateY(-1px)",
-                  boxShadow: "md",
-                }}
-                transition="all 0.2s"
-              >
-                Get Started
-              </Button>
-              <Button
-                onClick={() => {
-                  navigate("/login");
-                }}
-                variant="outline"
-                size="lg"
-                fontWeight="600"
-                borderRadius="md"
-                borderColor="border"
-                color="fg"
-                w={{ base: "full", sm: "auto" }}
-                _hover={{
-                  bg: "bg.subtle",
-                  transform: "translateY(-1px)",
-                  boxShadow: "md",
-                }}
-                transition="all 0.2s"
-              >
-                Sign In
-              </Button>
-            </Stack>
-          )}
+          {!isAuthenticated && <FindYourNeighborhood />}
         </Container>
       </Box>
-
-      {/* Find Your Neighborhood Section - For Unauthenticated Users */}
-      {!isAuthenticated && <FindYourNeighborhood />}
 
       {/* Your Neighborhood Section - For Authenticated Users */}
       {isAuthenticated && user && user.username && user.email && (
