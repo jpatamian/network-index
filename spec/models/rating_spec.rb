@@ -37,7 +37,7 @@ RSpec.describe Rating, type: :model do
       rater = create(:user)
       rated = create(:user)
       post = create(:post)
-      [0, 6, 10].each do |invalid_value|
+      [ 0, 6, 10 ].each do |invalid_value|
         rating = build(:rating, rater_user: rater, rated_user: rated, post: post, rating_value: invalid_value)
         expect(rating).not_to be_valid
       end

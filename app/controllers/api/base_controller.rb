@@ -10,12 +10,12 @@ class Api::BaseController < ActionController::API
   private
 
   def not_found
-    render json: { error: 'Not found' }, status: :not_found
+    render json: { error: "Not found" }, status: :not_found
   end
 
   def unprocessable_entity(exception)
     render json: {
-      error: 'Unprocessable entity',
+      error: "Unprocessable entity",
       details: exception.record.errors.full_messages
     }, status: :unprocessable_entity
   end

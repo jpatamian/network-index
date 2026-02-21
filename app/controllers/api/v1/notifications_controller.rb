@@ -29,7 +29,7 @@ class Api::V1::NotificationsController < Api::BaseController
       post_title: notification.post&.title,
       actor: {
         id: notification.actor_user&.id,
-        name: notification.actor_user&.username || notification.actor_user&.email || 'Someone'
+        name: notification.actor_user&.username || notification.actor_user&.email || "Someone"
       }
     }
   end

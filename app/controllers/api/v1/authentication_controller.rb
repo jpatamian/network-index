@@ -16,7 +16,7 @@ class Api::V1::AuthenticationController < Api::BaseController
       }, status: :created
     else
       render json: {
-        error: 'Signup failed',
+        error: "Signup failed",
         details: user.errors.full_messages
       }, status: :unprocessable_entity
     end
@@ -33,7 +33,7 @@ class Api::V1::AuthenticationController < Api::BaseController
         user: user_response(user)
       }, status: :ok
     else
-      render json: { error: 'Invalid email or password' }, status: :unauthorized
+      render json: { error: "Invalid email or password" }, status: :unauthorized
     end
   end
 
@@ -43,18 +43,18 @@ class Api::V1::AuthenticationController < Api::BaseController
     credential = normalized_google_params[:credential]
 
     if credential.blank?
-      render json: { error: 'Google credential is required' }, status: :unprocessable_entity
+      render json: { error: "Google credential is required" }, status: :unprocessable_entity
       return
     end
 
     payload = verify_google_credential(credential)
     return if performed?
 
-    email = payload['email']
-    email_verified = ActiveModel::Type::Boolean.new.cast(payload['email_verified'])
+    email = payload["email"]
+    email_verified = ActiveModel::Type::Boolean.new.cast(payload["email_verified"])
 
     unless email.present? && email_verified
-      render json: { error: 'Google account email is not verified' }, status: :unprocessable_entity
+      render json: { error: "Google account email is not verified" }, status: :unprocessable_entity
       return
     end
 
@@ -64,7 +64,7 @@ class Api::V1::AuthenticationController < Api::BaseController
       random_password = SecureRandom.hex(24)
       user_attributes = {
         email: email,
-        display_name: payload['name'],
+        display_name: payload["name"],
         username: nil,
         anonymous: false,
         password: random_password,
@@ -76,7 +76,7 @@ class Api::V1::AuthenticationController < Api::BaseController
 
       unless user.save
         render json: {
-          error: 'Google signup failed',
+          error: "Google signup failed",
           details: user.errors.full_messages
         }, status: :unprocessable_entity
         return
@@ -89,13 +89,13 @@ class Api::V1::AuthenticationController < Api::BaseController
       user: user_response(user)
     }, status: :ok
   rescue GoogleIDToken::ValidationError
-    render json: { error: 'Invalid Google credential' }, status: :unauthorized
+    render json: { error: "Invalid Google credential" }, status: :unauthorized
   end
 
   # GET /api/v1/auth/me
   def me
-    header = request.headers['Authorization']
-    token = header.split(' ').last if header
+    header = request.headers["Authorization"]
+    token = header.split(" ").last if header
 
     decoded = JsonWebToken.decode(token)
 
@@ -104,10 +104,10 @@ class Api::V1::AuthenticationController < Api::BaseController
       if user
         render json: { user: user_response(user) }, status: :ok
       else
-        render json: { error: 'User not found' }, status: :not_found
+        render json: { error: "User not found" }, status: :not_found
       end
     else
-      render json: { error: 'Invalid token' }, status: :unauthorized
+      render json: { error: "Invalid token" }, status: :unauthorized
     end
   end
 
@@ -115,14 +115,14 @@ class Api::V1::AuthenticationController < Api::BaseController
 
   def verify_google_credential(credential)
     client_id =
-      ENV['GOOGLE_CLIENT_ID'].presence ||
-      ENV['VITE_GOOGLE_CLIENT_ID'].presence ||
+      ENV["GOOGLE_CLIENT_ID"].presence ||
+      ENV["VITE_GOOGLE_CLIENT_ID"].presence ||
       Rails.application.credentials.dig(:google, :client_id).presence
 
     if client_id.blank?
       render json: {
-        error: 'Google OAuth is not configured',
-        details: 'Set GOOGLE_CLIENT_ID (or VITE_GOOGLE_CLIENT_ID) in server environment'
+        error: "Google OAuth is not configured",
+        details: "Set GOOGLE_CLIENT_ID (or VITE_GOOGLE_CLIENT_ID) in server environment"
       }, status: :internal_server_error
       return
     end
@@ -139,7 +139,7 @@ class Api::V1::AuthenticationController < Api::BaseController
   end
 
   def google_params
-    permitted = params.permit(:credential, :zipcode, authentication: [:credential, :zipcode])
+    permitted = params.permit(:credential, :zipcode, authentication: [ :credential, :zipcode ])
     nested = permitted[:authentication] || {}
 
     {

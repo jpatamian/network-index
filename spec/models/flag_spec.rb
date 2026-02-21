@@ -49,7 +49,7 @@ RSpec.describe Flag, type: :model do
     end
 
     it 'allows common flag reasons' do
-      reasons = ['Spam', 'Harassment', 'Inappropriate Content', 'Other']
+      reasons = [ 'Spam', 'Harassment', 'Inappropriate Content', 'Other' ]
       reasons.each do |reason|
         flag = build(:flag, :for_post, reason: reason)
         expect(flag).to be_valid

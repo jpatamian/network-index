@@ -112,7 +112,7 @@ RSpec.describe Post, type: :model do
       post2 = create(:post, user: user, created_at: 1.day.ago)
       post3 = create(:post, user: user, created_at: 3.days.ago)
 
-      expect(Post.recent).to eq([post2, post1, post3])
+      expect(Post.recent).to eq([ post2, post1, post3 ])
     end
   end
 

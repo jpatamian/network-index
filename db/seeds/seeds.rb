@@ -11,7 +11,7 @@ if Rails.env.development?
   puts "\nCleaning existing data..."
 
   # Order matters: destroy dependents before parents
-  [UserSafetyReport, Flag, Rating, DirectMessage, CommentHistory, Comment, Post, User].each do |model|
+  [ UserSafetyReport, Flag, Rating, DirectMessage, CommentHistory, Comment, Post, User ].each do |model|
     model.destroy_all
     puts "   Cleared #{model.name.pluralize}"
   end
@@ -27,7 +27,7 @@ seed_files = [
   'direct_messages',
   'ratings',
   'flags',
-  'safety_reports',
+  'safety_reports'
 ]
 
 seed_files.each do |seed_file|

@@ -38,14 +38,14 @@ posts_to_flag = @all_posts.sample(5)
 
 posts_to_flag.each_with_index do |post, i|
   reason = FLAG_DESCRIPTIONS.keys.sample
-  num_flags = [1, 2, 2, 3, 4].sample # Some reach threshold
-  
+  num_flags = [ 1, 2, 2, 3, 4 ].sample # Some reach threshold
+
   # Different users flag the same post
   flaggers = @all_authenticated_users.sample(num_flags)
-  
+
   flaggers.each do |flagger|
     next if flagger.id == post.user_id # Can't flag your own post
-    
+
     flag = Flag.create!(
       flaggable_type: 'Post',
       flaggable_id: post.id,
@@ -58,10 +58,10 @@ posts_to_flag.each_with_index do |post, i|
       reviewed_at: i < 2 ? nil : rand(1..7).days.ago,
       reviewed_by_user_id: i < 2 ? nil : @moderator.id
     )
-    
+
     flags << flag
   end
-  
+
   # Update post flag count and hidden status
   post.update!(
     flag_count: flaggers.count,
@@ -75,16 +75,16 @@ puts "      ✓ Created #{flags.count} post flags"
 # Flag some comments
 if @all_comments.any?
   comments_to_flag = @all_comments.sample(3)
-  
+
   comments_to_flag.each_with_index do |comment, i|
-    reason = [:profanity, :harassment, :spam].sample
-    num_flags = [1, 2].sample
-    
+    reason = [ :profanity, :harassment, :spam ].sample
+    num_flags = [ 1, 2 ].sample
+
     flaggers = @all_authenticated_users.sample(num_flags)
-    
+
     flaggers.each do |flagger|
       next if flagger.id == comment.user_id
-      
+
       flag = Flag.create!(
         flaggable_type: 'Comment',
         flaggable_id: comment.id,
@@ -95,17 +95,17 @@ if @all_comments.any?
         is_auto_flagged: false,
         created_at: comment.created_at + rand(1..48).hours
       )
-      
+
       flags << flag
     end
-    
+
     comment.update!(
       flag_count: flaggers.count,
       is_flagged: true,
       is_hidden: flaggers.count >= 3
     )
   end
-  
+
   puts "      ✓ Created #{flags.count - posts_to_flag.map { |p| Flag.where(flaggable_type: 'Post', flaggable_id: p.id).count }.sum} comment flags"
 end
 

@@ -3,18 +3,18 @@ class Api::V1::FlagsController < Api::BaseController
 
   skip_before_action :verify_authenticity_token
   before_action :require_authentication!
-  before_action :set_post, only: [:create]
-  before_action :set_comment, only: [:create], if: -> { params[:comment_id].present? }
-  before_action :set_flag, only: [:update]
+  before_action :set_post, only: [ :create ]
+  before_action :set_comment, only: [ :create ], if: -> { params[:comment_id].present? }
+  before_action :set_flag, only: [ :update ]
 
   # GET /api/v1/flags
   def index
     unless current_user.is_moderator?
-      render json: { error: 'Unauthorized' }, status: :forbidden
+      render json: { error: "Unauthorized" }, status: :forbidden
       return
     end
 
-    status = params[:status].presence || 'pending'
+    status = params[:status].presence || "pending"
     flags = Flag.includes(:flagger_user, flaggable: :post)
       .where(status: status)
       .order(created_at: :desc)
@@ -29,27 +29,27 @@ class Api::V1::FlagsController < Api::BaseController
     flaggable = @comment || @post
 
     if flaggable.user_id == current_user.id
-      render json: { error: 'Cannot report your own content' }, status: :forbidden
+      render json: { error: "Cannot report your own content" }, status: :forbidden
       return
     end
 
     if Flag.exists?(flagger_user_id: current_user.id, flaggable: flaggable)
-      render json: { error: 'You already reported this content' }, status: :unprocessable_entity
+      render json: { error: "You already reported this content" }, status: :unprocessable_entity
       return
     end
 
     flag = Flag.new(flag_params)
     flag.flaggable = flaggable
     flag.flagger_user = current_user
-    flag.status = 'pending'
+    flag.status = "pending"
     flag.is_auto_flagged = false
 
     if flag.save
       update_flag_state!(flaggable)
-      render json: { message: 'Flag submitted successfully' }, status: :created
+      render json: { message: "Flag submitted successfully" }, status: :created
     else
       render json: {
-        error: 'Failed to submit flag',
+        error: "Failed to submit flag",
         details: flag.errors.full_messages
       }, status: :unprocessable_entity
     end
@@ -58,15 +58,15 @@ class Api::V1::FlagsController < Api::BaseController
   # PATCH /api/v1/flags/:id
   def update
     unless current_user.is_moderator?
-      render json: { error: 'Unauthorized' }, status: :forbidden
+      render json: { error: "Unauthorized" }, status: :forbidden
       return
     end
 
-    if @flag.update(status: 'seen', reviewed_at: Time.current, reviewed_by_user_id: current_user.id)
+    if @flag.update(status: "seen", reviewed_at: Time.current, reviewed_by_user_id: current_user.id)
       render json: flag_response(@flag), status: :ok
     else
       render json: {
-        error: 'Failed to acknowledge flag',
+        error: "Failed to acknowledge flag",
         details: @flag.errors.full_messages
       }, status: :unprocessable_entity
     end
@@ -113,7 +113,7 @@ class Api::V1::FlagsController < Api::BaseController
       flaggable_id: flag.flaggable_id,
       flagger: {
         id: flag.flagger_user&.id,
-        name: flag.flagger_user&.username || flag.flagger_user&.email || 'Anonymous User'
+        name: flag.flagger_user&.username || flag.flagger_user&.email || "Anonymous User"
       }
     }
 

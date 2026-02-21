@@ -8,7 +8,7 @@ ARLINGTON_ZIPCODES = [
   '02474', '02476', '02144', '02145', '02143',
   '02138', '02139', '02140', '02141', '02142',
   '02155', '02156', '02478', '02421', '02420',
-  '02452', '02453',
+  '02452', '02453'
 ]
 
 NEIGHBORHOODS = [
@@ -101,8 +101,8 @@ puts "      Created #{verified_helpers.count} verified helpers"
 active_members = []
 
 15.times do |i|
-  first_names = ['Frank', 'Grace', 'Henry', 'Iris', 'Jack', 'Kate', 'Leo', 'Maya', 'Noah', 'Olivia', 'Peter', 'Quinn', 'Rosa', 'Sam', 'Tina']
-  last_names = ['Anderson', 'Brown', 'Davis', 'Evans', 'Foster', 'Garcia', 'Harris', 'Irving', 'James', 'Kim', 'Lee', 'Miller', 'Nelson', 'Park', 'Reed']
+  first_names = [ 'Frank', 'Grace', 'Henry', 'Iris', 'Jack', 'Kate', 'Leo', 'Maya', 'Noah', 'Olivia', 'Peter', 'Quinn', 'Rosa', 'Sam', 'Tina' ]
+  last_names = [ 'Anderson', 'Brown', 'Davis', 'Evans', 'Foster', 'Garcia', 'Harris', 'Irving', 'James', 'Kim', 'Lee', 'Miller', 'Nelson', 'Park', 'Reed' ]
 
   first = first_names[i]
   last = last_names.sample
@@ -124,9 +124,9 @@ active_members = []
       nil
     ].sample,
     anonymous: false,
-    average_rating: [0, 0, 0, rand(3.5..4.5), rand(4.5..5.0)].sample.round(1),
-    total_ratings_count: [0, 0, 0, rand(1..5), rand(5..15)].sample,
-    last_rated_at: [nil, rand(1..60).days.ago].sample,
+    average_rating: [ 0, 0, 0, rand(3.5..4.5), rand(4.5..5.0) ].sample.round(1),
+    total_ratings_count: [ 0, 0, 0, rand(1..5), rand(5..15) ].sample,
+    last_rated_at: [ nil, rand(1..60).days.ago ].sample,
     zipcode: ARLINGTON_ZIPCODES.sample
   )
   active_members << user
@@ -138,8 +138,8 @@ puts "      Created #{active_members.count} active members"
 new_members = []
 
 10.times do |i|
-  first_names = ['Uma', 'Victor', 'Wendy', 'Xavier', 'Yuki', 'Zara', 'Aaron', 'Bella', 'Chris', 'Diana']
-  last_names = ['Smith', 'Wilson', 'Taylor', 'White', 'Green', 'Young', 'King', 'Scott', 'Adams', 'Clark']
+  first_names = [ 'Uma', 'Victor', 'Wendy', 'Xavier', 'Yuki', 'Zara', 'Aaron', 'Bella', 'Chris', 'Diana' ]
+  last_names = [ 'Smith', 'Wilson', 'Taylor', 'White', 'Green', 'Young', 'King', 'Scott', 'Adams', 'Clark' ]
 
   first = first_names[i]
   last = last_names[i]

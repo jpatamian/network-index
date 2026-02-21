@@ -80,7 +80,7 @@ class AddCommunityFeatures < ActiveRecord::Migration[7.1]
     end
     add_foreign_key :flags, :users, column: :flagger_user_id
     add_foreign_key :flags, :users, column: :reviewed_by_user_id
-    add_index :flags, [:flaggable_type, :flaggable_id]
+    add_index :flags, [ :flaggable_type, :flaggable_id ]
     add_index :flags, :flagger_user_id
     add_index :flags, :reviewed_by_user_id
 
