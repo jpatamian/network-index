@@ -46,7 +46,7 @@ RSpec.describe 'Api::V1::Comments', type: :request do
       get "/api/v1/posts/#{post_record.id}/comments"
 
       body = JSON.parse(response.body)
-      expect(body.first).to have_key('user')
+      expect(body.first).to have_key('author')
     end
   end
 

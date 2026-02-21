@@ -27,6 +27,8 @@ RSpec.describe 'Api::V1::Users', type: :request do
     end
 
     it 'returns only safe public fields' do
+      create(:user)  # Create at least one user
+      
       get '/api/v1/users'
 
       body = JSON.parse(response.body)
