@@ -14,7 +14,7 @@ module Authenticable
     begin
       @decoded = JsonWebToken.decode(header)
       @current_user = User.find(@decoded[:user_id]) if @decoded
-    rescue ActiveRecord::RecordNotFound
+    rescue ActiveRecord::RecordNotFound, JWT::DecodeError, JWT::ExpiredSignature, JWT::ImmatureSignature, JWT::VerificationError
       render json: { error: "Unauthorized" }, status: :unauthorized
     end
   end
