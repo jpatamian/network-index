@@ -43,7 +43,7 @@ module ResponseSerializable
       message: comment.message,
       author: {
         id: comment.user.id,
-        name: comment.user.username || comment.user.email || 'Anonymous User',
+        name: comment.user.username || comment.user.email || "Anonymous User",
         username: comment.user.username
       },
       created_at: comment.created_at

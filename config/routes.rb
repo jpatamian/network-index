@@ -13,28 +13,28 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       # Authentication routes
-      post 'auth/signup', to: 'authentication#signup'
-      post 'auth/login', to: 'authentication#login'
-      post 'auth/google', to: 'authentication#google'
-      get 'auth/me', to: 'authentication#me'
+      post "auth/signup", to: "authentication#signup"
+      post "auth/login", to: "authentication#login"
+      post "auth/google", to: "authentication#google"
+      get "auth/me", to: "authentication#me"
 
       # User routes
-      resources :users, only: [:index, :show, :update]
+      resources :users, only: [ :index, :show, :update ]
 
       # Moderation routes
-      resources :flags, only: [:index, :update]
+      resources :flags, only: [ :index, :update ]
 
       # Notification routes
-      resources :notifications, only: [:index]
+      resources :notifications, only: [ :index ]
 
       # Post routes
       resources :posts do
-        get 'my_posts', on: :collection
-        resources :comments, only: [:index, :create, :destroy] do
-          resources :flags, only: [:create]
+        get "my_posts", on: :collection
+        resources :comments, only: [ :index, :create, :destroy ] do
+          resources :flags, only: [ :create ]
         end
-        resources :flags, only: [:create]
-        resource :likes, only: [:create, :destroy], controller: 'post_likes'
+        resources :flags, only: [ :create ]
+        resource :likes, only: [ :create, :destroy ], controller: "post_likes"
       end
     end
   end
@@ -43,7 +43,7 @@ Rails.application.routes.draw do
   root "pages#index"
 
   # Catch-all route for client-side routing (must be last)
-  get '*path', to: 'pages#index', constraints: ->(request) do
+  get "*path", to: "pages#index", constraints: ->(request) do
     !request.xhr? && request.format.html?
   end
 end

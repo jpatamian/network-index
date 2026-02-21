@@ -3,11 +3,11 @@ class Api::V1::CommentsController < Api::BaseController
   include ResponseSerializable
 
   skip_before_action :verify_authenticity_token
-  skip_before_action :authorize_request, only: [:index]
-  before_action :require_authentication!, only: [:create, :destroy]
+  skip_before_action :authorize_request, only: [ :index ]
+  before_action :require_authentication!, only: [ :create, :destroy ]
   before_action :set_post
-  before_action :set_comment, only: [:destroy]
-  before_action :authorize_comment_owner!, only: [:destroy]
+  before_action :set_comment, only: [ :destroy ]
+  before_action :authorize_comment_owner!, only: [ :destroy ]
 
   # GET /api/v1/posts/:post_id/comments
   def index
@@ -22,20 +22,20 @@ class Api::V1::CommentsController < Api::BaseController
 
     if comment.save
       if @post.user_id != current_user.id
-        actor_name = current_user.username || current_user.email || 'Someone'
+        actor_name = current_user.username || current_user.email || "Someone"
         Notification.create(
           user_id: @post.user_id,
           actor_user: current_user,
           post: @post,
           comment: comment,
-          notification_type: 'comment',
+          notification_type: "comment",
           message: "#{actor_name} commented on your post"
         )
       end
       render json: comment_response(comment), status: :created
     else
       render json: {
-        error: 'Failed to create comment',
+        error: "Failed to create comment",
         details: comment.errors.full_messages
       }, status: :unprocessable_entity
     end
@@ -44,7 +44,7 @@ class Api::V1::CommentsController < Api::BaseController
   # DELETE /api/v1/posts/:post_id/comments/:id
   def destroy
     @comment.destroy
-    render json: { message: 'Comment deleted successfully' }, status: :ok
+    render json: { message: "Comment deleted successfully" }, status: :ok
   end
 
   private
@@ -59,7 +59,7 @@ class Api::V1::CommentsController < Api::BaseController
 
   def authorize_comment_owner!
     unless @comment.user_id == current_user.id
-      render json: { error: 'Unauthorized' }, status: :forbidden
+      render json: { error: "Unauthorized" }, status: :forbidden
     end
   end
 

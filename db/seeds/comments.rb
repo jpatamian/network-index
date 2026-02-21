@@ -13,7 +13,7 @@ HELPFUL_COMMENTS = [
   "I'd love to help out. Free this weekend.",
   "Count me in! What day were you thinking?",
   "I have experience with this. Would be happy to assist.",
-  "Great offer! Sent you a message.",
+  "Great offer! Sent you a message."
 ]
 
 QUESTION_COMMENTS = [
@@ -26,7 +26,7 @@ QUESTION_COMMENTS = [
   "Is morning or afternoon better?",
   "How many people do you need?",
   "Should I bring anything?",
-  "What's your availability like?",
+  "What's your availability like?"
 ]
 
 SUPPORTIVE_COMMENTS = [
@@ -39,7 +39,7 @@ SUPPORTIVE_COMMENTS = [
   "Thank you for being so generous!",
   "I hope someone can help you soon.",
   "This is such a thoughtful offer.",
-  "Wishing you the best with this!",
+  "Wishing you the best with this!"
 ]
 
 FOLLOWUP_COMMENTS = [
@@ -47,7 +47,7 @@ FOLLOWUP_COMMENTS = [
   "Still looking for help if anyone is available.",
   "This worked out great, thanks to this community!",
   "Rescheduled to next week, still need help.",
-  "All set now, appreciate all the responses!",
+  "All set now, appreciate all the responses!"
 ]
 
 comments = []
@@ -55,28 +55,28 @@ comments = []
 # Add comments to posts
 @all_posts.each do |post|
   # Number of comments varies
-  num_comments = [0, 0, 1, 1, 2, 2, 3, 3, 4, 5].sample
-  
+  num_comments = [ 0, 0, 1, 1, 2, 2, 3, 3, 4, 5 ].sample
+
   next if num_comments == 0
-  
+
   # Get potential commenters (can't comment on own post, must be authenticated)
   potential_commenters = @all_authenticated_users.reject { |u| u.id == post.user_id }
-  
+
   num_comments.times do |i|
     commenter = potential_commenters.sample
     next unless commenter
-    
+
     # Choose comment type based on post status and comment order
     message = if i == 0 && post.status == 'open'
                 HELPFUL_COMMENTS.sample
-              elsif i == 0
+    elsif i == 0
                 QUESTION_COMMENTS.sample
-              elsif i < num_comments - 1
-                [HELPFUL_COMMENTS, QUESTION_COMMENTS, SUPPORTIVE_COMMENTS].sample.sample
-              else
+    elsif i < num_comments - 1
+                [ HELPFUL_COMMENTS, QUESTION_COMMENTS, SUPPORTIVE_COMMENTS ].sample.sample
+    else
                 post.status == 'fulfilled' ? FOLLOWUP_COMMENTS.sample : SUPPORTIVE_COMMENTS.sample
-              end
-    
+    end
+
     comment = Comment.create!(
       post: post,
       user: commenter,
@@ -84,7 +84,7 @@ comments = []
       created_at: post.created_at + rand(1..48).hours,
       updated_at: post.created_at + rand(1..48).hours
     )
-    
+
     comments << comment
   end
 end
@@ -101,7 +101,7 @@ if defined?(CommentHistory)
       message: "#{original_message} [EDITED: Added more details]",
       updated_at: comment.created_at + 2.hours
     )
-    
+
     CommentHistory.create!(
       comment: comment,
       edited_by_user_id: comment.user_id,
@@ -110,7 +110,7 @@ if defined?(CommentHistory)
       edited_at: comment.updated_at
     )
   end
-  
+
   puts "      ✓ Created #{edited_comments.count} edited comments with history"
 end
 

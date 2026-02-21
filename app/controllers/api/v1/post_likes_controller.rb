@@ -14,12 +14,12 @@ class Api::V1::PostLikesController < Api::BaseController
       like.save!
 
       if @post.user_id != current_user.id
-        actor_name = current_user.username || current_user.email || 'Someone'
+        actor_name = current_user.username || current_user.email || "Someone"
         Notification.create(
           user_id: @post.user_id,
           actor_user: current_user,
           post: @post,
-          notification_type: 'like',
+          notification_type: "like",
           message: "#{actor_name} liked your post"
         )
       end

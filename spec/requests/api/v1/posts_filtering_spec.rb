@@ -11,7 +11,7 @@ RSpec.describe 'Api::V1::Posts filtering', type: :request do
 
       expect(response).to have_http_status(:ok)
       body = JSON.parse(response.body)
-      expect(body.map { |post| post['id'] }).to eq([food_post.id])
+      expect(body.map { |post| post['id'] }).to eq([ food_post.id ])
       expect(body.first['post_type']).to eq('food')
     end
   end

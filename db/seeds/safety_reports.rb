@@ -75,32 +75,32 @@ num_reports.times do |i|
   # Pick random incident type
   incident_type = SAFETY_INCIDENTS.keys.sample
   incident_data = SAFETY_INCIDENTS[incident_type].sample
-  
+
   # Reporter is a random authenticated user
   reporter = @all_authenticated_users.sample
-  
+
   # Reported user is different authenticated user
   # Some users might be repeat offenders
   if i < 2 && @active_members.any?
     # First 2 reports about the same problematic user
     reported = @active_members.last
   else
-    reported = (@all_authenticated_users - [reporter]).sample
+    reported = (@all_authenticated_users - [ reporter ]).sample
   end
-  
+
   # Find a post context (ideally one involving both users)
   post_context = @all_posts.sample
-  
+
   # Status based on when it was created
   days_ago = rand(1..30)
   status = if days_ago <= 7
              'pending'
-           elsif days_ago <= 14
+  elsif days_ago <= 14
              'reviewed'
-           else
+  else
              'actioned'
-           end
-  
+  end
+
   report = UserSafetyReport.create!(
     reporter_user: reporter,
     reported_user: reported,
@@ -112,7 +112,7 @@ num_reports.times do |i|
     reviewed_at: status == 'pending' ? nil : (days_ago - rand(1..5)).days.ago,
     reviewed_by_user_id: status == 'pending' ? nil : @moderator.id
   )
-  
+
   safety_reports << report
 end
 

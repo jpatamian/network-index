@@ -1,15 +1,15 @@
 class Post < ApplicationRecord
   POST_TYPES = {
-    childcare: 'childcare',
-    ride_share: 'ride_share',
-    food: 'food',
-    other: 'other'
+    childcare: "childcare",
+    ride_share: "ride_share",
+    food: "food",
+    other: "other"
   }.freeze
   TYPE_METADATA_REQUIREMENTS = {
-    'childcare' => %w[needed_by children_count],
-    'ride_share' => %w[from to departure_time],
-    'food' => %w[pickup_window],
-    'other' => []
+    "childcare" => %w[needed_by children_count],
+    "ride_share" => %w[from to departure_time],
+    "food" => %w[pickup_window],
+    "other" => []
   }.freeze
 
   belongs_to :user
@@ -34,10 +34,10 @@ class Post < ApplicationRecord
   scope :by_zipcode, ->(zipcode) { joins(:user).where(users: { zipcode: zipcode }) }
   scope :search_query, lambda { |query|
     sanitized = ActiveRecord::Base.sanitize_sql_like(query.to_s.downcase)
-    where('LOWER(posts.title) LIKE :q OR LOWER(posts.content) LIKE :q', q: "%#{sanitized}%")
+    where("LOWER(posts.title) LIKE :q OR LOWER(posts.content) LIKE :q", q: "%#{sanitized}%")
   }
-  scope :open, -> { where(status: 'open') }
-  scope :fulfilled, -> { where(status: 'fulfilled') }
+  scope :open, -> { where(status: "open") }
+  scope :fulfilled, -> { where(status: "fulfilled") }
   scope :visible, -> { where(is_hidden: false) }
   scope :by_post_type, ->(post_type) { where(post_type: post_type) }
 
@@ -50,13 +50,13 @@ class Post < ApplicationRecord
   private
 
   def normalize_post_type
-    self.post_type = post_type.to_s.downcase.presence || 'other'
+    self.post_type = post_type.to_s.downcase.presence || "other"
   end
 
   def metadata_must_be_a_hash
     return if metadata.is_a?(Hash)
 
-    errors.add(:metadata, 'must be an object')
+    errors.add(:metadata, "must be an object")
   end
 
   def metadata_requirements_for_post_type

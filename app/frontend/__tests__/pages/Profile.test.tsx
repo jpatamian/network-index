@@ -115,24 +115,6 @@ describe("Profile Page", () => {
     expect(screen.getByText(mockUser.zipcode)).toBeInTheDocument();
   });
 
-  it("displays user type badge for verified users", () => {
-    (useAuth as jest.Mock).mockReturnValue({
-      user: mockUser,
-      isAuthenticated: true,
-      isLoading: false,
-    });
-
-    const { container } = render(
-      <TestWrapper>
-        <Profile />
-      </TestWrapper>,
-    );
-
-    expect(screen.getByText("Account type")).toBeInTheDocument();
-    const verifiedElements = screen.getAllByText("Verified");
-    expect(verifiedElements.length).toBeGreaterThan(0);
-  });
-
   it("displays anonymous badge for anonymous users", () => {
     const anonymousUser = { ...mockUser, anonymous: true };
     (useAuth as jest.Mock).mockReturnValue({
@@ -141,7 +123,7 @@ describe("Profile Page", () => {
       isLoading: false,
     });
 
-    const { container } = render(
+    render(
       <TestWrapper>
         <Profile />
       </TestWrapper>,

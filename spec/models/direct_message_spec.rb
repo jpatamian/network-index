@@ -37,7 +37,7 @@ RSpec.describe DirectMessage, type: :model do
       dm1 = create(:direct_message, sender: sender, recipient: recipient, created_at: 2.hours.ago)
       dm2 = create(:direct_message, sender: sender, recipient: recipient, created_at: 1.hour.ago)
 
-      expect(DirectMessage.order(:created_at)).to eq([dm1, dm2])
+      expect(DirectMessage.order(:created_at)).to eq([ dm1, dm2 ])
     end
   end
 

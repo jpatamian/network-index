@@ -8,14 +8,14 @@ module Authenticable
   private
 
   def authorize_request
-    header = request.headers['Authorization']
-    header = header.split(' ').last if header
+    header = request.headers["Authorization"]
+    header = header.split(" ").last if header
 
     begin
       @decoded = JsonWebToken.decode(header)
       @current_user = User.find(@decoded[:user_id]) if @decoded
     rescue ActiveRecord::RecordNotFound
-      render json: { error: 'Unauthorized' }, status: :unauthorized
+      render json: { error: "Unauthorized" }, status: :unauthorized
     end
   end
 
@@ -24,6 +24,6 @@ module Authenticable
   end
 
   def require_authentication!
-    render json: { error: 'Unauthorized' }, status: :unauthorized unless current_user
+    render json: { error: "Unauthorized" }, status: :unauthorized unless current_user
   end
 end
