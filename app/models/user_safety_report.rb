@@ -12,7 +12,9 @@ class UserSafetyReport < ApplicationRecord
     hate_speech
     misinformation
     inappropriate_content
-    scam
+    inappropriate_behavior
+    safety_concern
+    no_show
     other
   ].freeze
 

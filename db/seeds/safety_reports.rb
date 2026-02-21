@@ -98,7 +98,7 @@ num_reports.times do |i|
   elsif days_ago <= 14
              'reviewed'
   else
-             'actioned'
+             'resolved'
   end
 
   report = UserSafetyReport.create!(
@@ -126,7 +126,7 @@ end
 
 puts "         Pending: #{safety_reports.count { |r| r.status == 'pending' }}"
 puts "         Reviewed: #{safety_reports.count { |r| r.status == 'reviewed' }}"
-puts "         Actioned: #{safety_reports.count { |r| r.status == 'actioned' }}"
+puts "         Resolved: #{safety_reports.count { |r| r.status == 'resolved' }}"
 
 # Mark one user as having multiple reports (potential problem user)
 problem_user = safety_reports.first.reported_user

@@ -35,13 +35,13 @@ class Api::V1::PostsController < Api::BaseController
   def create
     check_authentication_if_token_present
 
-    user = current_user || AnonymousUserCreator.create(zipcode: params.dig(:post, :zipcode))
+    user = current_user || AnonymousUserCreator.create(zipcode: params[:post][:zipcode])
 
     unless user
       return render json: { error: "Zipcode is required for anonymous posts" }, status: :unprocessable_entity
     end
 
-    post = user.posts.build(post_params)
+    post = user.posts.build(post_params.except(:zipcode))
 
     if post.save
       render json: post_response(post, current_user), status: :created

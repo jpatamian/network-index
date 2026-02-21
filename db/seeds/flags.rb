@@ -52,7 +52,7 @@ posts_to_flag.each_with_index do |post, i|
       flagger_user: flagger,
       reason: reason,
       description: FLAG_DESCRIPTIONS[reason].sample,
-      status: i < 2 ? 'pending' : 'reviewed', # Some reviewed, some pending
+      status: i < 2 ? 'pending' : 'approved', # Some reviewed, some pending
       is_auto_flagged: false,
       created_at: rand(14).days.ago,
       reviewed_at: i < 2 ? nil : rand(1..7).days.ago,
