@@ -10,7 +10,6 @@ class Api::V1::FlagsController < Api::BaseController
 
   # GET /api/v1/flags
   def index
-    binding.pry
     return render_forbidden unless current_user.is_moderator?
 
     status = params[:status].presence || Flag::STATUSES[:pending]
