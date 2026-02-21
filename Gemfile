@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.1.0"
+gem "rails", "~> 8.0.0"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use postgresql as the database for Active Record
@@ -48,13 +48,13 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   # Testing framework
-  gem "rspec-rails", "~> 6.1"
+  gem "rspec-rails", "~> 8.0"
   # Test data factories
   gem "factory_bot_rails", "~> 6.4"
   # Realistic fake data
   gem "faker", "~> 3.2"
   # RSpec matchers for Rails
-  gem "shoulda-matchers", "~> 6.0"
+  gem "shoulda-matchers", "~> 7.0"
   # Clean database between tests
   gem "database_cleaner-active_record", "~> 2.1"
 
