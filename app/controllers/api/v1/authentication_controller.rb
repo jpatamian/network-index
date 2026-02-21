@@ -11,7 +11,7 @@ class Api::V1::AuthenticationController < Api::BaseController
     if user.save
       render json: { token: JsonWebToken.encode(user_id: user.id), user: user_response(user) }, status: :created
     else
-      render_errors(user, message: 'Signup failed')
+      render_errors(user, message: "Signup failed")
     end
   end
 
@@ -22,7 +22,7 @@ class Api::V1::AuthenticationController < Api::BaseController
     if user&.authenticate(login_params[:password])
       render json: { token: JsonWebToken.encode(user_id: user.id), user: user_response(user) }, status: :ok
     else
-      render json: { error: 'Invalid email or password' }, status: :unauthorized
+      render json: { error: "Invalid email or password" }, status: :unauthorized
     end
   end
 
@@ -32,7 +32,7 @@ class Api::V1::AuthenticationController < Api::BaseController
     credential = normalized[:credential]
 
     if credential.blank?
-      return render json: { error: 'Google credential is required' }, status: :unprocessable_entity
+      return render json: { error: "Google credential is required" }, status: :unprocessable_entity
     end
 
     user = GoogleAuthService.authenticate(credential: credential, zipcode: normalized[:zipcode])
@@ -41,8 +41,8 @@ class Api::V1::AuthenticationController < Api::BaseController
 
   # GET /api/v1/auth/me
   def me
-    header = request.headers['Authorization']
-    token = header&.split(' ')&.last
+    header = request.headers["Authorization"]
+    token = header&.split(" ")&.last
 
     decoded = JsonWebToken.decode(token)
     user = decoded && User.find_by(id: decoded[:user_id])
@@ -50,7 +50,7 @@ class Api::V1::AuthenticationController < Api::BaseController
     if user
       render json: { user: user_response(user) }, status: :ok
     else
-      render json: { error: 'Invalid token' }, status: :unauthorized
+      render json: { error: "Invalid token" }, status: :unauthorized
     end
   end
 
@@ -65,7 +65,7 @@ class Api::V1::AuthenticationController < Api::BaseController
   end
 
   def google_params
-    permitted = params.permit(:credential, :zipcode, authentication: [:credential, :zipcode])
+    permitted = params.permit(:credential, :zipcode, authentication: [ :credential, :zipcode ])
     nested = permitted[:authentication] || {}
 
     {

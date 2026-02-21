@@ -18,7 +18,7 @@ REQUESTS = [
   { title: 'Ride to grocery store', content: "Don't have a car and the bus doesn't run on Sundays. Need ride to Trader Joe's and back. Usually takes about an hour total." },
   { title: 'Help setting up router', content: "Internet company installed new router but WiFi isn't working right. Completely confused by all the settings. Tech-savvy help needed!" },
   { title: 'Temporary housing for friend', content: "Friend's apartment flooded. Need temporary place to stay for 3-4 days while repairs happen. Very respectful, quiet, will help with any chores." },
-  { title: 'Spanish tutoring for my kid', content: "My 10-year-old is struggling with Spanish class. Looking for patient tutor for 1 hour/week. Can pay or trade services." },
+  { title: 'Spanish tutoring for my kid', content: "My 10-year-old is struggling with Spanish class. Looking for patient tutor for 1 hour/week. Can pay or trade services." }
 ]
 
 OFFERS = [
@@ -36,7 +36,7 @@ OFFERS = [
   { title: 'Spare bedroom available', content: 'Have extra bedroom that sits empty. Can host someone in need for short-term stay (1-2 weeks). Clean, quiet home.' },
   { title: 'Resume review and job search help', content: "HR professional offering free resume reviews and interview prep. Helped many friends land jobs. Video calls work best." },
   { title: 'Photography services', content: "Amateur photographer building portfolio. Will do free headshots, family photos, or event coverage. You get the photos, I get practice!" },
-  { title: 'Moving truck available', content: "Have pickup truck and can help with moves or large item pickup. Just cover gas and I'm happy to help. Weekends only." },
+  { title: 'Moving truck available', content: "Have pickup truck and can help with moves or large item pickup. Just cover gas and I'm happy to help. Weekends only." }
 ]
 
 posts_created = 0
@@ -58,7 +58,7 @@ end
 # Active members post remaining requests
 remaining_requests = REQUESTS[@anonymous_users.length..-1] || []
 @active_members.take(remaining_requests.length).each_with_index do |user, i|
-  status = ['open', 'open', 'open', 'in_progress', 'fulfilled'].sample
+  status = [ 'open', 'open', 'open', 'in_progress', 'fulfilled' ].sample
   Post.create!(
     user: user,
     title: remaining_requests[i][:title],
@@ -77,7 +77,7 @@ offers_created = 0
 
 @verified_helpers.each_with_index do |user, i|
   next if i >= OFFERS.length
-  status = ['open', 'open', 'open', 'in_progress'].sample
+  status = [ 'open', 'open', 'open', 'in_progress' ].sample
   Post.create!(
     user: user,
     title: OFFERS[i][:title],
@@ -91,7 +91,7 @@ end
 
 remaining_offers = OFFERS[@verified_helpers.length..-1] || []
 @active_members.drop(6).take(remaining_offers.length).each_with_index do |user, i|
-  status = ['open', 'open', 'fulfilled'].sample
+  status = [ 'open', 'open', 'fulfilled' ].sample
   Post.create!(
     user: user,
     title: remaining_offers[i][:title],

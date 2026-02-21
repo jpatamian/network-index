@@ -3,11 +3,11 @@ class Api::V1::CommentsController < Api::BaseController
   include ResponseSerializable
 
   skip_before_action :verify_authenticity_token
-  skip_before_action :authorize_request, only: [:index]
-  before_action :require_authentication!, only: [:create, :destroy]
+  skip_before_action :authorize_request, only: [ :index ]
+  before_action :require_authentication!, only: [ :create, :destroy ]
   before_action :set_post
-  before_action :set_comment, only: [:destroy]
-  before_action :authorize_comment_owner!, only: [:destroy]
+  before_action :set_comment, only: [ :destroy ]
+  before_action :authorize_comment_owner!, only: [ :destroy ]
 
   # GET /api/v1/posts/:post_id/comments
   def index
@@ -24,14 +24,14 @@ class Api::V1::CommentsController < Api::BaseController
       NotificationService.notify_post_owner_of_comment(post: @post, comment: comment, actor: current_user)
       render json: comment_response(comment), status: :created
     else
-      render_errors(comment, message: 'Failed to create comment')
+      render_errors(comment, message: "Failed to create comment")
     end
   end
 
   # DELETE /api/v1/posts/:post_id/comments/:id
   def destroy
     @comment.destroy
-    render json: { message: 'Comment deleted successfully' }, status: :ok
+    render json: { message: "Comment deleted successfully" }, status: :ok
   end
 
   private

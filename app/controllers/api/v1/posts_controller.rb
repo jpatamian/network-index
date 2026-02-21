@@ -3,10 +3,10 @@ class Api::V1::PostsController < Api::BaseController
   include ResponseSerializable
 
   skip_before_action :verify_authenticity_token
-  skip_before_action :authorize_request, only: [:index, :show, :create]
-  before_action :require_authentication!, only: [:update, :destroy, :my_posts]
-  before_action :set_post, only: [:show, :update, :destroy]
-  before_action :authorize_post_owner!, only: [:update, :destroy]
+  skip_before_action :authorize_request, only: [ :index, :show, :create ]
+  before_action :require_authentication!, only: [ :update, :destroy, :my_posts ]
+  before_action :set_post, only: [ :show, :update, :destroy ]
+  before_action :authorize_post_owner!, only: [ :update, :destroy ]
 
   # GET /api/v1/posts
   def index
@@ -38,7 +38,7 @@ class Api::V1::PostsController < Api::BaseController
     user = current_user || AnonymousUserCreator.create(zipcode: params.dig(:post, :zipcode))
 
     unless user
-      return render json: { error: 'Zipcode is required for anonymous posts' }, status: :unprocessable_entity
+      return render json: { error: "Zipcode is required for anonymous posts" }, status: :unprocessable_entity
     end
 
     post = user.posts.build(post_params)
@@ -46,7 +46,7 @@ class Api::V1::PostsController < Api::BaseController
     if post.save
       render json: post_response(post, current_user), status: :created
     else
-      render_errors(post, message: 'Failed to create post')
+      render_errors(post, message: "Failed to create post")
     end
   end
 
@@ -55,23 +55,23 @@ class Api::V1::PostsController < Api::BaseController
     if @post.update(post_params)
       render json: post_response(@post, current_user)
     else
-      render_errors(@post, message: 'Failed to update post')
+      render_errors(@post, message: "Failed to update post")
     end
   end
 
   # DELETE /api/v1/posts/:id
   def destroy
     @post.destroy
-    render json: { message: 'Post deleted successfully' }, status: :ok
+    render json: { message: "Post deleted successfully" }, status: :ok
   end
 
   private
 
   def check_authentication_if_token_present
-    header = request.headers['Authorization']
+    header = request.headers["Authorization"]
     return unless header
 
-    token = header.split(' ').last
+    token = header.split(" ").last
     return if token.blank?
 
     decoded = JsonWebToken.decode(token)

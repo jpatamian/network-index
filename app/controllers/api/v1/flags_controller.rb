@@ -4,12 +4,13 @@ class Api::V1::FlagsController < Api::BaseController
 
   skip_before_action :verify_authenticity_token
   before_action :require_authentication!
-  before_action :set_post, only: [:create]
-  before_action :set_comment, only: [:create], if: -> { params[:comment_id].present? }
-  before_action :set_flag, only: [:update]
+  before_action :set_post, only: [ :create ]
+  before_action :set_comment, only: [ :create ], if: -> { params[:comment_id].present? }
+  before_action :set_flag, only: [ :update ]
 
   # GET /api/v1/flags
   def index
+    binding.pry
     return render_forbidden unless current_user.is_moderator?
 
     status = params[:status].presence || Flag::STATUSES[:pending]
@@ -26,10 +27,10 @@ class Api::V1::FlagsController < Api::BaseController
   def create
     flaggable = @comment || @post
 
-    return render_forbidden('Cannot report your own content') if flaggable.user_id == current_user.id
+    return render_forbidden("Cannot report your own content") if flaggable.user_id == current_user.id
 
     if Flag.exists?(flagger_user_id: current_user.id, flaggable: flaggable)
-      return render json: { error: 'You already reported this content' }, status: :unprocessable_entity
+      return render json: { error: "You already reported this content" }, status: :unprocessable_entity
     end
 
     flag = Flag.new(flag_params)
@@ -40,24 +41,24 @@ class Api::V1::FlagsController < Api::BaseController
 
     if flag.save
       Flag.update_flaggable_state!(flaggable)
-      render json: { message: 'Flag submitted successfully' }, status: :created
+      render json: { message: "Flag submitted successfully" }, status: :created
     else
-      render_errors(flag, message: 'Failed to submit flag')
+      render_errors(flag, message: "Failed to submit flag")
     end
   end
 
   # PATCH /api/v1/flags/:id
   def update
     unless current_user.is_moderator?
-      render json: { error: 'Unauthorized' }, status: :forbidden
+      render json: { error: "Unauthorized" }, status: :forbidden
       return
     end
 
-    if @flag.update(status: 'seen', reviewed_at: Time.current, reviewed_by_user_id: current_user.id)
+    if @flag.update(status: "seen", reviewed_at: Time.current, reviewed_by_user_id: current_user.id)
       render json: flag_response(@flag), status: :ok
     else
       render json: {
-        error: 'Failed to acknowledge flag',
+        error: "Failed to acknowledge flag",
         details: @flag.errors.full_messages
       }, status: :unprocessable_entity
     end

@@ -62,7 +62,7 @@ module ResponseSerializable
       flaggable_id: flag.flaggable_id,
       flagger: {
         id: flag.flagger_user&.id,
-        name: flag.flagger_user&.display_name || 'Anonymous User'
+        name: flag.flagger_user&.display_name || "Anonymous User"
       }
     }
 
@@ -93,7 +93,7 @@ module ResponseSerializable
       post_title: notification.post&.title,
       actor: {
         id: notification.actor_user&.id,
-        name: notification.actor_user&.display_name || 'Anonymous User'
+        name: notification.actor_user&.display_name || "Anonymous User"
       }
     }
   end

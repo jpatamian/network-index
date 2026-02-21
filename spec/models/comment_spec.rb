@@ -39,7 +39,7 @@ RSpec.describe Comment, type: :model do
       comment2 = create(:comment, post: post, user: user, created_at: 1.day.ago)
       comment3 = create(:comment, post: post, user: user, created_at: 3.days.ago)
 
-      expect(post.comments.order(created_at: :desc)).to eq([comment2, comment1, comment3])
+      expect(post.comments.order(created_at: :desc)).to eq([ comment2, comment1, comment3 ])
     end
   end
 

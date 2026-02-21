@@ -13,10 +13,10 @@ class GoogleAuthService
 
   def authenticate
     payload = verify_credential!
-    email = payload['email']
-    email_verified = ActiveModel::Type::Boolean.new.cast(payload['email_verified'])
+    email = payload["email"]
+    email_verified = ActiveModel::Type::Boolean.new.cast(payload["email_verified"])
 
-    raise ValidationError, 'Google account email is not verified' unless email.present? && email_verified
+    raise ValidationError, "Google account email is not verified" unless email.present? && email_verified
 
     user = find_or_create_user(email, payload)
     user
@@ -26,11 +26,11 @@ class GoogleAuthService
 
   def verify_credential!
     client_id =
-      ENV['GOOGLE_CLIENT_ID'].presence ||
-      ENV['VITE_GOOGLE_CLIENT_ID'].presence ||
+      ENV["GOOGLE_CLIENT_ID"].presence ||
+      ENV["VITE_GOOGLE_CLIENT_ID"].presence ||
       Rails.application.credentials.dig(:google, :client_id).presence
 
-    raise ConfigurationError, 'Set GOOGLE_CLIENT_ID (or VITE_GOOGLE_CLIENT_ID) in server environment' if client_id.blank?
+    raise ConfigurationError, "Set GOOGLE_CLIENT_ID (or VITE_GOOGLE_CLIENT_ID) in server environment" if client_id.blank?
 
     GoogleIDToken::Validator.new.check(@credential, client_id)
   rescue GoogleIDToken::ValidationError => e
@@ -44,7 +44,7 @@ class GoogleAuthService
     random_password = SecureRandom.hex(24)
     attributes = {
       email: email,
-      display_name: payload['name'],
+      display_name: payload["name"],
       username: nil,
       anonymous: false,
       password: random_password,

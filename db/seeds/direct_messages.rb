@@ -9,7 +9,7 @@ DM_STARTERS = [
   "I'm interested in your offer. Can we discuss details?",
   "Hi there! I think I can help with this.",
   "Saw your post - I'm available and nearby.",
-  "Hello! I'd like to learn more about this.",
+  "Hello! I'd like to learn more about this."
 ]
 
 DM_RESPONSES = [
@@ -18,7 +18,7 @@ DM_RESPONSES = [
   "Thank you so much! What time is good?",
   "Perfect! Let me know what you need.",
   "Awesome, really appreciate it. How about Saturday?",
-  "Yes please! Does tomorrow work?",
+  "Yes please! Does tomorrow work?"
 ]
 
 DM_DETAILS = [
@@ -27,7 +27,7 @@ DM_DETAILS = [
   "I can meet you wherever is convenient.",
   "Should take about an hour. I have all the tools.",
   "Let me know if you need anything specific.",
-  "I'm at [phone number]. Text me!",
+  "I'm at [phone number]. Text me!"
 ]
 
 DM_THANKS = [
@@ -35,7 +35,7 @@ DM_THANKS = [
   "Really appreciate this, you're amazing!",
   "You're a lifesaver, thank you!",
   "This community is the best. Thanks again!",
-  "So grateful for your help!",
+  "So grateful for your help!"
 ]
 
 direct_messages = []
@@ -46,37 +46,37 @@ posts_with_dms = @all_posts.sample(@all_posts.count / 2)
 posts_with_dms.each do |post|
   # Skip if post is from anonymous user (they can receive DMs but makes testing easier to skip)
   next if post.user.anonymous?
-  
+
   # 1-3 DM threads per post
-  num_threads = [1, 1, 2, 2, 3].sample
-  
+  num_threads = [ 1, 1, 2, 2, 3 ].sample
+
   # Get potential DM senders (must be authenticated, not post owner)
   potential_senders = @all_authenticated_users.reject { |u| u.id == post.user_id }
-  
+
   num_threads.times do
     sender = potential_senders.sample
     next unless sender
-    
+
     # Create conversation thread (2-4 messages back and forth)
-    conversation_length = [2, 3, 4].sample
-    
+    conversation_length = [ 2, 3, 4 ].sample
+
     conversation_length.times do |i|
       is_sender_turn = i.even?
-      
+
       from_user = is_sender_turn ? sender : post.user
       to_user = is_sender_turn ? post.user : sender
-      
+
       message = case i
-                when 0
+      when 0
                   DM_STARTERS.sample
-                when 1
+      when 1
                   DM_RESPONSES.sample
-                when 2
+      when 2
                   DM_DETAILS.sample
-                else
+      else
                   DM_THANKS.sample
-                end
-      
+      end
+
       dm = DirectMessage.create!(
         post: post,
         sender: from_user,
@@ -85,7 +85,7 @@ posts_with_dms.each do |post|
         created_at: post.created_at + (i * 2).hours,
         read_at: post.created_at + (i * 2 + 1).hours
       )
-      
+
       direct_messages << dm
     end
   end

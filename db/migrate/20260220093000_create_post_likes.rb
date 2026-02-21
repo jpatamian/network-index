@@ -6,7 +6,7 @@ class CreatePostLikes < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_index :post_likes, [:user_id, :post_id], unique: true
+    add_index :post_likes, [ :user_id, :post_id ], unique: true
     add_index :post_likes, :post_id
     add_foreign_key :post_likes, :users
     add_foreign_key :post_likes, :posts

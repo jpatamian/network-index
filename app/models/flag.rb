@@ -2,15 +2,15 @@ class Flag < ApplicationRecord
   AUTO_HIDE_THRESHOLD = 3
 
   STATUSES = {
-    pending: 'pending',
-    approved: 'approved',
-    rejected: 'rejected',
-    archived: 'archived'
+    pending: "pending",
+    approved: "approved",
+    rejected: "rejected",
+    archived: "archived"
   }.freeze
 
   belongs_to :flaggable, polymorphic: true
-  belongs_to :flagger_user, class_name: 'User', foreign_key: :flagger_user_id, optional: true
-  belongs_to :reviewed_by_user, class_name: 'User', foreign_key: :reviewed_by_user_id, optional: true
+  belongs_to :flagger_user, class_name: "User", foreign_key: :flagger_user_id, optional: true
+  belongs_to :reviewed_by_user, class_name: "User", foreign_key: :reviewed_by_user_id, optional: true
 
   enum :status, STATUSES, validate: true
 

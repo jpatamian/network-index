@@ -1,13 +1,13 @@
 class Notification < ApplicationRecord
   TYPES = {
-    comment: 'comment',
-    mention: 'mention',
-    flag: 'flag',
-    safety_report: 'safety_report'
+    comment: "comment",
+    mention: "mention",
+    flag: "flag",
+    safety_report: "safety_report"
   }.freeze
 
   belongs_to :user
-  belongs_to :actor_user, class_name: 'User', foreign_key: :actor_user_id, optional: true
+  belongs_to :actor_user, class_name: "User", foreign_key: :actor_user_id, optional: true
   belongs_to :post
   belongs_to :comment, optional: true
 
