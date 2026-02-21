@@ -11,12 +11,16 @@ class Api::V1::PostsController < Api::BaseController
   # GET /api/v1/posts
   def index
     check_authentication_if_token_present
-    posts = Post.includes(:user, :comments).recent
+    posts = Post.includes(:user, :comments).recent.where.not(user_id: nil)
     posts = posts.by_zipcode(params[:zipcode]) if params[:zipcode].present?
     posts = posts.by_post_type(params[:post_type].to_s.downcase) if params[:post_type].present?
     posts = posts.search_query(params[:q]) if params[:q].present?
     posts = posts.limit(50)
     render json: posts.map { |post| post_response(post, current_user) }
+  rescue StandardError => e
+    Rails.logger.error "Error in PostsController#index: #{e.class} - #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    render json: { error: "Failed to load posts", details: e.message }, status: :internal_server_error
   end
 
   # GET /api/v1/posts/:id

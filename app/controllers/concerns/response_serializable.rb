@@ -17,6 +17,23 @@ module ResponseSerializable
   end
 
   def post_response(post, current_user = nil)
+    # Handle posts without users (orphaned posts)
+    author_data = if post.user.present?
+      {
+        id: post.user.id,
+        name: post.author_name,
+        username: post.user.username,
+        email: post.user.email
+      }
+    else
+      {
+        id: nil,
+        name: "Deleted User",
+        username: nil,
+        email: nil
+      }
+    end
+
     {
       id: post.id,
       title: post.title,
@@ -25,12 +42,7 @@ module ResponseSerializable
       metadata: post.metadata,
       likes_count: post.likes_count || 0,
       liked_by_current_user: current_user ? post.post_likes.exists?(user_id: current_user.id) : false,
-      author: {
-        id: post.user.id,
-        name: post.author_name,
-        username: post.user.username,
-        email: post.user.email
-      },
+      author: author_data,
       comment_count: post.comments.size,
       created_at: post.created_at,
       updated_at: post.updated_at
