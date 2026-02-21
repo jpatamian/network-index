@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import HowItWorks from "@/features/home/components/HowItWorks";
 import FindYourNeighborhood from "@/features/home/components/FindYourNeighborhood";
+import LocalResources from "@/features/home/components/LocalResources";
+import FreeOnlineResources from "@/features/home/components/FreeOnlineResources";
 import YourNeighborhood from "@/features/neighborhood/components/YourNeighborhood";
 
 export default function Home() {
@@ -163,6 +165,12 @@ export default function Home() {
           }}
         />
       )}
+
+      {/* Local Resources Section */}
+      <LocalResources zipcode={user?.zipcode ?? undefined} />
+
+      {/* Free Online Resources Section */}
+      <FreeOnlineResources />
 
       {/* Features Section */}
       <HowItWorks />
