@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -14,185 +14,54 @@ import {
   Badge,
   Input,
   Link,
+  Spinner,
+  Center,
 } from "@chakra-ui/react";
 import {
-  FaUtensils,
-  FaHospital,
-  FaHome,
-  FaStethoscope,
-  FaGavel,
-  FaBolt,
-  FaGlobe,
   FaSearch,
+  FaMapMarkerAlt,
+  FaPhone,
+  FaGlobe,
+  FaClock,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
+import { useLocalResources } from "@/features/resources/lib/useLocalResources";
 
 interface LocalResourcesProps {
   zipcode?: string;
 }
 
-interface ResourceLink {
-  name: string;
-  description: string;
-  getUrl: (zipcode?: string) => string;
+const CATEGORY_COLORS: Record<string, { color: string; bg: string }> = {
+  Food: { color: "orange.600", bg: "orange.50" },
+  "Housing & Shelter": { color: "blue.600", bg: "blue.50" },
+  Healthcare: { color: "red.600", bg: "red.50" },
+  "Community Center": { color: "teal.600", bg: "teal.50" },
+  "Social Services": { color: "purple.600", bg: "purple.50" },
+};
+
+function categoryStyle(category: string) {
+  return CATEGORY_COLORS[category] ?? { color: "gray.600", bg: "gray.100" };
 }
 
-interface ResourceCategory {
-  icon: React.ElementType;
-  category: string;
-  color: string;
-  bg: string;
-  resources: ResourceLink[];
-}
-
-const categories: ResourceCategory[] = [
-  {
-    icon: FaGlobe,
-    category: "All Services",
-    color: "teal.600",
-    bg: "teal.50",
-    resources: [
-      {
-        name: "211.org",
-        description: "Comprehensive directory of local social services",
-        getUrl: (zip) =>
-          zip
-            ? `https://www.211.org/?zip=${encodeURIComponent(zip)}`
-            : "https://www.211.org",
-      },
-      {
-        name: "findhelp.org",
-        description: "Find free or reduced-cost local programs",
-        getUrl: (zip) =>
-          zip
-            ? `https://findhelp.org?postal=${encodeURIComponent(zip)}`
-            : "https://findhelp.org",
-      },
-    ],
-  },
-  {
-    icon: FaUtensils,
-    category: "Food",
-    color: "orange.600",
-    bg: "orange.50",
-    resources: [
-      {
-        name: "Feeding America",
-        description: "Find your local food bank",
-        getUrl: () => "https://www.feedingamerica.org/find-your-local-foodbank",
-      },
-      {
-        name: "FoodPantries.org",
-        description: "Local food pantries and meal programs",
-        getUrl: (zip) =>
-          zip
-            ? `https://www.foodpantries.org/ci/${encodeURIComponent(zip)}`
-            : "https://www.foodpantries.org",
-      },
-    ],
-  },
-  {
-    icon: FaHospital,
-    category: "Healthcare",
-    color: "red.600",
-    bg: "red.50",
-    resources: [
-      {
-        name: "FreeClinics.com",
-        description: "Free and low-cost medical clinics near you",
-        getUrl: () => "https://www.freeclinics.com",
-      },
-      {
-        name: "NeedyMeds",
-        description: "Prescription assistance and low-cost care programs",
-        getUrl: () => "https://www.needymeds.org",
-      },
-    ],
-  },
-  {
-    icon: FaHome,
-    category: "Housing",
-    color: "blue.600",
-    bg: "blue.50",
-    resources: [
-      {
-        name: "HUD Rental Assistance",
-        description: "Federal housing programs and rental help",
-        getUrl: () => "https://www.hud.gov/topics/rental_assistance",
-      },
-      {
-        name: "NLIHC Emergency Assistance",
-        description: "Emergency rental and housing assistance locator",
-        getUrl: () => "https://nlihc.org/rental-assistance",
-      },
-    ],
-  },
-  {
-    icon: FaStethoscope,
-    category: "Mental Health",
-    color: "purple.600",
-    bg: "purple.50",
-    resources: [
-      {
-        name: "SAMHSA Treatment Locator",
-        description: "Find mental health and substance use treatment",
-        getUrl: () => "https://findtreatment.gov",
-      },
-      {
-        name: "Open Path Collective",
-        description: "Affordable therapy sessions ($30–$80)",
-        getUrl: () => "https://openpathcollective.org",
-      },
-    ],
-  },
-  {
-    icon: FaGavel,
-    category: "Legal Aid",
-    color: "gray.600",
-    bg: "gray.100",
-    resources: [
-      {
-        name: "LawHelp.org",
-        description: "Free legal information and aid referrals by state",
-        getUrl: () => "https://www.lawhelp.org",
-      },
-      {
-        name: "Legal Services Corp.",
-        description: "Find a free civil legal aid office near you",
-        getUrl: () =>
-          "https://www.lsc.gov/about-lsc/what-legal-aid/get-legal-help",
-      },
-    ],
-  },
-  {
-    icon: FaBolt,
-    category: "Utilities",
-    color: "yellow.600",
-    bg: "yellow.50",
-    resources: [
-      {
-        name: "LIHEAP",
-        description: "Energy bill assistance for low-income households",
-        getUrl: () =>
-          "https://www.acf.hhs.gov/ocs/programs/liheap",
-      },
-      {
-        name: "NeedHelpPayingBills.com",
-        description: "Utility assistance programs by state",
-        getUrl: () =>
-          "https://www.needhelppayingbills.com/html/utility_assistance.html",
-      },
-    ],
-  },
-];
+const PAGE_SIZE = 10;
 
 export default function LocalResources({ zipcode: propZipcode }: LocalResourcesProps) {
   const [inputValue, setInputValue] = useState(propZipcode ?? "");
   const [activeZipcode, setActiveZipcode] = useState(propZipcode ?? "");
+  const [page, setPage] = useState(0);
+
+  const { resources, isLoading, error } = useLocalResources(activeZipcode);
+
+  useEffect(() => {
+    setPage(0);
+  }, [activeZipcode]);
+
+  const pageCount = Math.ceil(resources.length / PAGE_SIZE);
+  const visibleResources = resources.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   const handleSearch = () => {
-    if (inputValue.trim()) {
-      setActiveZipcode(inputValue.trim());
-    }
+    const trimmed = inputValue.trim();
+    if (trimmed) setActiveZipcode(trimmed);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -208,13 +77,14 @@ export default function LocalResources({ zipcode: propZipcode }: LocalResourcesP
     >
       <Container maxW="7xl">
         <Stack gap={8}>
+          {/* Header */}
           <Stack gap={4} align="center" textAlign="center">
             <Heading size="lg" color="fg" fontWeight="700">
               Free Local Resources
             </Heading>
             <Text fontSize="md" color="fg.muted" maxW="xl">
-              Find free services in your community. Enter a zipcode to get
-              personalized links for your area.
+              Real services near you — food banks, shelters, community centers,
+              and more.
             </Text>
 
             {!propZipcode && (
@@ -237,12 +107,12 @@ export default function LocalResources({ zipcode: propZipcode }: LocalResourcesP
                   gap={2}
                 >
                   <Icon as={FaSearch} />
-                  Find
+                  Search
                 </Button>
               </HStack>
             )}
 
-            {activeZipcode && (
+            {activeZipcode && !isLoading && !error && (
               <Badge
                 bg="teal.50"
                 color="teal.700"
@@ -252,68 +122,243 @@ export default function LocalResources({ zipcode: propZipcode }: LocalResourcesP
                 borderRadius="full"
                 fontSize="sm"
               >
-                Showing resources for {activeZipcode}
+                {resources.length} service{resources.length !== 1 ? "s" : ""}{" "}
+                found near {activeZipcode}
               </Badge>
             )}
           </Stack>
 
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
-            {categories.map((cat) => (
-              <Card.Root
-                key={cat.category}
-                borderColor="border.subtle"
-                borderWidth="1px"
-                _hover={{ boxShadow: "sm" }}
-                transition="all 0.2s"
+          {/* Loading */}
+          {isLoading && (
+            <Center py={12}>
+              <VStack gap={3}>
+                <Spinner size="lg" color="teal.500" />
+                <Text color="fg.muted" fontSize="sm">
+                  Searching for services near {activeZipcode}...
+                </Text>
+              </VStack>
+            </Center>
+          )}
+
+          {/* Error */}
+          {error && !isLoading && (
+            <Box
+              bg="red.50"
+              border="1px"
+              borderColor="red.200"
+              borderRadius="lg"
+              p={4}
+              textAlign="center"
+            >
+              <Text color="red.700" fontSize="sm">
+                {error}
+              </Text>
+            </Box>
+          )}
+
+          {/* No zipcode entered yet */}
+          {!activeZipcode && !isLoading && (
+            <Box
+              bg="bg.subtle"
+              border="1px"
+              borderColor="border.subtle"
+              borderRadius="lg"
+              p={8}
+              textAlign="center"
+            >
+              <Text color="fg.muted" fontSize="sm">
+                Enter a zipcode above to find real local services in your area.
+              </Text>
+            </Box>
+          )}
+
+          {/* Results */}
+          {!isLoading && resources.length > 0 && (
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
+              {visibleResources.map((r) => {
+                const { color, bg } = categoryStyle(r.category);
+                return (
+                  <Card.Root
+                    key={r.id}
+                    borderColor="border.subtle"
+                    borderWidth="1px"
+                    _hover={{ boxShadow: "sm" }}
+                    transition="all 0.2s"
+                  >
+                    <Card.Body>
+                      <VStack align="start" gap={3}>
+                        <HStack justify="space-between" w="100%">
+                          <Badge
+                            bg={bg}
+                            color={color}
+                            fontWeight="600"
+                            px={2}
+                            py={0.5}
+                            borderRadius="md"
+                            fontSize="xs"
+                          >
+                            {r.category}
+                          </Badge>
+                          {r.distanceMiles !== undefined && (
+                            <Text fontSize="xs" color="fg.muted">
+                              {r.distanceMiles.toFixed(1)} mi
+                            </Text>
+                          )}
+                        </HStack>
+
+                        <Text fontWeight="600" fontSize="sm" color="fg" lineHeight="1.3">
+                          {r.name}
+                        </Text>
+
+                        <VStack align="start" gap={1.5} w="100%">
+                          {r.address && (
+                            <HStack gap={1.5} align="start">
+                              <Icon
+                                as={FaMapMarkerAlt}
+                                color="fg.muted"
+                                fontSize="xs"
+                                mt={0.5}
+                                flexShrink={0}
+                              />
+                              <Text fontSize="xs" color="fg.muted" lineHeight="1.4">
+                                {r.address}
+                              </Text>
+                            </HStack>
+                          )}
+
+                          {r.phone && (
+                            <HStack gap={1.5}>
+                              <Icon as={FaPhone} color="fg.muted" fontSize="xs" flexShrink={0} />
+                              <Link
+                                href={`tel:${r.phone}`}
+                                color="teal.600"
+                                fontSize="xs"
+                                _hover={{ textDecoration: "underline" }}
+                              >
+                                {r.phone}
+                              </Link>
+                            </HStack>
+                          )}
+
+                          {r.hours && (
+                            <HStack gap={1.5} align="start">
+                              <Icon
+                                as={FaClock}
+                                color="fg.muted"
+                                fontSize="xs"
+                                mt={0.5}
+                                flexShrink={0}
+                              />
+                              <Text fontSize="xs" color="fg.muted" lineHeight="1.4">
+                                {r.hours}
+                              </Text>
+                            </HStack>
+                          )}
+
+                          {r.website && (
+                            <HStack gap={1.5}>
+                              <Icon as={FaGlobe} color="fg.muted" fontSize="xs" flexShrink={0} />
+                              <Link
+                                href={
+                                  r.website.startsWith("http")
+                                    ? r.website
+                                    : `https://${r.website}`
+                                }
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                color="teal.600"
+                                fontSize="xs"
+                                _hover={{ textDecoration: "underline" }}
+                              >
+                                <HStack gap={1}>
+                                  <Text>Website</Text>
+                                  <Icon as={FaExternalLinkAlt} fontSize="2xs" />
+                                </HStack>
+                              </Link>
+                            </HStack>
+                          )}
+                        </VStack>
+                      </VStack>
+                    </Card.Body>
+                  </Card.Root>
+                );
+              })}
+            </SimpleGrid>
+          )}
+
+          {/* Pagination */}
+          {!isLoading && pageCount > 1 && (
+            <HStack justify="center" gap={4}>
+              <Button
+                onClick={() => setPage((p) => p - 1)}
+                disabled={page === 0}
+                variant="outline"
+                size="sm"
+                borderColor="border"
+                color="fg"
+                _hover={{ bg: "bg.subtle" }}
               >
-                <Card.Body>
-                  <VStack align="start" gap={3}>
-                    <HStack gap={3}>
-                      <Box
-                        color={cat.color}
-                        fontSize="lg"
-                        p={2}
-                        bg={cat.bg}
-                        borderRadius="md"
-                      >
-                        <Icon as={cat.icon} />
-                      </Box>
-                      <Text fontWeight="600" color="fg" fontSize="sm">
-                        {cat.category}
-                      </Text>
-                    </HStack>
+                Previous
+              </Button>
+              <Text fontSize="sm" color="fg.muted">
+                Page {page + 1} of {pageCount}
+              </Text>
+              <Button
+                onClick={() => setPage((p) => p + 1)}
+                disabled={page >= pageCount - 1}
+                variant="outline"
+                size="sm"
+                borderColor="border"
+                color="fg"
+                _hover={{ bg: "bg.subtle" }}
+              >
+                Next
+              </Button>
+            </HStack>
+          )}
 
-                    <VStack align="start" gap={3} w="100%">
-                      {cat.resources.map((resource) => (
-                        <Link
-                          key={resource.name}
-                          href={resource.getUrl(activeZipcode || undefined)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          color="teal.600"
-                          _hover={{ color: "teal.800", textDecoration: "underline" }}
-                        >
-                          <VStack align="start" gap={0.5}>
-                            <Text fontWeight="600" fontSize="sm">
-                              {resource.name}
-                            </Text>
-                            <Text color="fg.muted" fontSize="xs" lineHeight="1.4">
-                              {resource.description}
-                            </Text>
-                          </VStack>
-                        </Link>
-                      ))}
-                    </VStack>
-                  </VStack>
-                </Card.Body>
-              </Card.Root>
-            ))}
-          </SimpleGrid>
-
-          <Text fontSize="xs" color="fg.subtle" textAlign="center">
-            These are external services. We are not affiliated with any of the
-            organizations listed above.
-          </Text>
+          {/* Empty state after search */}
+          {!isLoading && !error && activeZipcode && resources.length === 0 && (
+            <Box
+              bg="bg.subtle"
+              border="1px"
+              borderColor="border.subtle"
+              borderRadius="lg"
+              p={8}
+              textAlign="center"
+            >
+              <VStack gap={3}>
+                <Text color="fg.muted" fontSize="sm">
+                  No results found in OpenStreetMap for this area. Try these
+                  national directories instead:
+                </Text>
+                <HStack gap={4} flexWrap="wrap" justify="center">
+                  <Link
+                    href={`https://www.211.org/?zip=${encodeURIComponent(activeZipcode)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    color="teal.600"
+                    fontWeight="600"
+                    fontSize="sm"
+                    _hover={{ textDecoration: "underline" }}
+                  >
+                    211.org →
+                  </Link>
+                  <Link
+                    href={`https://findhelp.org?postal=${encodeURIComponent(activeZipcode)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    color="teal.600"
+                    fontWeight="600"
+                    fontSize="sm"
+                    _hover={{ textDecoration: "underline" }}
+                  >
+                    findhelp.org →
+                  </Link>
+                </HStack>
+              </VStack>
+            </Box>
+          )}
         </Stack>
       </Container>
     </Box>

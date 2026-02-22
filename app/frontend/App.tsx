@@ -8,6 +8,7 @@ import { Posts } from "./features/posts/pages/Posts";
 import { PostShow } from "./features/posts/pages/PostShow";
 import { CreatePostPage } from "./features/posts/pages/CreatePostPage";
 import Profile from "./features/profile/pages/Profile";
+import Resources from "./features/resources/pages/Resources";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="posts/new" element={<CreatePostPage />} />
           <Route path="posts/:id" element={<PostShow />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="resources" element={<Resources />} />
         </Route>
       </Routes>
     </AuthProvider>

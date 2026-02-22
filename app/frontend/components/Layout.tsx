@@ -87,6 +87,15 @@ export default function Layout() {
               >
                 Feed
               </Button>
+              <Button
+                onClick={() => handleNavigation("/resources")}
+                variant="ghost"
+                color="fg"
+                fontWeight="500"
+                _hover={{ color: "teal.600", bg: "transparent" }}
+              >
+                Resources
+              </Button>
 
               {!isLoading && (
                 <>
@@ -185,6 +194,16 @@ export default function Layout() {
                 _hover={{ color: "teal.600", bg: "bg.subtle" }}
               >
                 Feed
+              </Button>
+              <Button
+                onClick={() => handleNavigation("/resources")}
+                variant="ghost"
+                color="fg"
+                fontWeight="500"
+                justifyContent="flex-start"
+                _hover={{ color: "teal.600", bg: "bg.subtle" }}
+              >
+                Resources
               </Button>
 
               {!isLoading && (
