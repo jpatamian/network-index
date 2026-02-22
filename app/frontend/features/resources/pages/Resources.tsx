@@ -1,10 +1,15 @@
 import { Box, Container, Heading, Text, Stack } from "@chakra-ui/react";
+import { useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import LocalResources from "@/features/home/components/LocalResources";
 import FreeOnlineResources from "@/features/home/components/FreeOnlineResources";
 
 export default function Resources() {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+
+  const zipcode =
+    searchParams.get("zipcode") ?? user?.zipcode ?? undefined;
 
   return (
     <Box>
@@ -28,7 +33,7 @@ export default function Resources() {
         </Container>
       </Box>
 
-      <LocalResources zipcode={user?.zipcode ?? undefined} />
+      <LocalResources zipcode={zipcode} />
       <FreeOnlineResources />
     </Box>
   );

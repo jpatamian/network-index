@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import HowItWorks from "@/features/home/components/HowItWorks";
 import FindYourNeighborhood from "@/features/home/components/FindYourNeighborhood";
+import FindResources from "@/features/home/components/FindResources";
 import YourNeighborhood from "@/features/neighborhood/components/YourNeighborhood";
 
 export default function Home() {
@@ -163,6 +164,9 @@ export default function Home() {
           }}
         />
       )}
+
+      {/* Find Resources Section */}
+      <FindResources zipcode={user?.zipcode ?? undefined} />
 
       {/* Features Section */}
       <HowItWorks />

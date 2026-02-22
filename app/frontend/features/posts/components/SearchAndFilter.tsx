@@ -6,6 +6,7 @@ import {
   HStack,
   Button,
   chakra,
+  createListCollection,
 } from "@chakra-ui/react";
 import { FaMapMarkerAlt, FaSearch, FaThList } from "react-icons/fa";
 import { POST_TYPE_VALUES, SearchAndFilterProps } from "@/types/post";
@@ -27,12 +28,30 @@ const POST_TYPE_OPTIONS = [
   })),
 ];
 
+const radiusOptions = createListCollection({
+  items: [
+    { label: "5 miles", value: "5" },
+    { label: "10 miles", value: "10" },
+    { label: "15 miles", value: "15" },
+    { label: "20 miles (default)", value: "20" },
+    { label: "30 miles", value: "30" },
+    { label: "50 miles", value: "50" },
+  ],
+});
+
 export const SearchAndFilter = ({ state, actions }: SearchAndFilterProps) => {
-  const { zipcodeInput, queryInput, postTypeInput, canResetSearch } = state;
+  const {
+    zipcodeInput,
+    queryInput,
+    postTypeInput,
+    radiusInput,
+    canResetSearch,
+  } = state;
   const {
     onZipcodeInputChange,
     onQueryInputChange,
     onPostTypeInputChange,
+    onRadiusInputChange,
     onSearchSubmit,
     onSearchReset,
   } = actions;
@@ -80,6 +99,20 @@ export const SearchAndFilter = ({ state, actions }: SearchAndFilterProps) => {
             onChange={onZipcodeInputChange}
             placeholder={postsText.searchZipPlaceholder}
           />
+
+          {zipcodeInput.trim() && (
+            <FilterField
+              type="select"
+              label="Search radius"
+              icon={FaSearch}
+              value={radiusInput}
+              onChange={onRadiusInputChange}
+              options={radiusOptions.items.map((item) => ({
+                value: item.value,
+                label: item.label,
+              }))}
+            />
+          )}
 
           <FilterField
             type="input"

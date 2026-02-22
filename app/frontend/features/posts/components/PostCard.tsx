@@ -30,6 +30,7 @@ import {
   FaCar,
   FaUtensils,
   FaTag,
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 import type { IconType } from "react-icons";
 import { CommentSection } from "./CommentSection";
@@ -139,6 +140,12 @@ export const PostCard = ({ post, onDelete }: PostCardProps) => {
                   <Icon as={FaClock} color="teal.600" fontSize="xs" />
                   <Text>{createdAt}</Text>
                 </HStack>
+                {post.zipcode && (
+                  <HStack gap={1.5}>
+                    <Icon as={FaMapMarkerAlt} color="teal.600" fontSize="xs" />
+                    <Text>{post.zipcode}</Text>
+                  </HStack>
+                )}
                 <Badge
                   colorPalette="teal"
                   variant="subtle"

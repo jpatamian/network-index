@@ -19,6 +19,7 @@ export function usePostsSearchFilters() {
   const zipcode = searchParams.get("zipcode");
   const query = searchParams.get("q");
   const postTypeParam = searchParams.get("post_type");
+  const radiusParam = searchParams.get("radius");
   const viewingMine = searchParams.get("filter") === "mine";
 
   const [zipcodeInput, setZipcodeInput] = useState(zipcode ?? "");
@@ -26,13 +27,18 @@ export function usePostsSearchFilters() {
   const [postTypeInput, setPostTypeInput] = useState<PostTypeFilter>(
     normalizePostTypeFilter(postTypeParam),
   );
+  const [radiusInput, setRadiusInput] = useState(radiusParam ?? "20");
 
   const hasSearchFilters =
-    Boolean(zipcode) || Boolean(query) || Boolean(postTypeParam);
+    Boolean(zipcode) ||
+    Boolean(query) ||
+    Boolean(postTypeParam) ||
+    Boolean(radiusParam);
   const isSearchFormDirty =
     Boolean(zipcodeInput.trim()) ||
     Boolean(queryInput.trim()) ||
-    postTypeInput !== "all";
+    postTypeInput !== "all" ||
+    radiusInput !== "20";
   const canResetSearch = hasSearchFilters || isSearchFormDirty;
 
   useEffect(() => {
@@ -47,14 +53,20 @@ export function usePostsSearchFilters() {
     setPostTypeInput(normalizePostTypeFilter(postTypeParam));
   }, [postTypeParam]);
 
+  useEffect(() => {
+    setRadiusInput(radiusParam ?? "20");
+  }, [radiusParam]);
+
   const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const params = new URLSearchParams(searchParams);
 
     if (zipcodeInput.trim()) {
       params.set("zipcode", zipcodeInput.trim());
+      params.set("radius", radiusInput);
     } else {
       params.delete("zipcode");
+      params.delete("radius");
     }
 
     if (queryInput.trim()) {
@@ -76,11 +88,13 @@ export function usePostsSearchFilters() {
   const handleSearchReset = () => {
     setZipcodeInput("");
     setQueryInput("");
+    setRadiusInput("20");
 
     const params = new URLSearchParams(searchParams);
     params.delete("zipcode");
     params.delete("q");
     params.delete("post_type");
+    params.delete("radius");
     setSearchParams(params);
   };
 
@@ -88,6 +102,7 @@ export function usePostsSearchFilters() {
     setZipcodeInput("");
     setQueryInput("");
     setPostTypeInput("all");
+    setRadiusInput("20");
     setSearchParams(new URLSearchParams());
   };
 
@@ -96,12 +111,14 @@ export function usePostsSearchFilters() {
       zipcode,
       query,
       postType: postTypeParam,
+      radius: radiusParam ?? "20",
       viewingMine,
     },
     state: {
       zipcodeInput,
       queryInput,
       postTypeInput,
+      radiusInput,
       hasSearchFilters,
       canResetSearch,
     },
@@ -109,6 +126,7 @@ export function usePostsSearchFilters() {
       setZipcodeInput,
       setQueryInput,
       setPostTypeInput,
+      setRadiusInput,
       handleSearchSubmit,
       handleSearchReset,
       handleClearFilter,

@@ -86,6 +86,7 @@ type PostsQuery = {
   zipcode?: string | null;
   query?: string | null;
   postType?: PostType | "all" | null;
+  radius?: string | null;
 };
 
 export const postsApi = {
@@ -94,6 +95,10 @@ export const postsApi = {
 
     if (filters.zipcode) {
       params.set("zipcode", filters.zipcode);
+    }
+
+    if (filters.radius) {
+      params.set("radius", filters.radius);
     }
 
     if (filters.query) {

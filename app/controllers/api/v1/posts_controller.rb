@@ -13,6 +13,8 @@ class Api::V1::PostsController < Api::BaseController
     check_authentication_if_token_present
     posts = Post.includes(:user, :comments).recent.where.not(user_id: nil)
     posts = posts.by_zipcode(params[:zipcode]) if params[:zipcode].present?
+    # Note: radius filtering is validated on the frontend for now
+    # Full server-side radius filtering would require geocoding integration
     posts = posts.by_post_type(params[:post_type].to_s.downcase) if params[:post_type].present?
     posts = posts.search_query(params[:q]) if params[:q].present?
     posts = posts.limit(50)

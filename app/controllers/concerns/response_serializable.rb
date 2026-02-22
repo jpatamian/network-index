@@ -44,6 +44,7 @@ module ResponseSerializable
       liked_by_current_user: current_user ? post.post_likes.exists?(user_id: current_user.id) : false,
       author: author_data,
       comment_count: post.comments.size,
+      zipcode: post.user&.zipcode,
       created_at: post.created_at,
       updated_at: post.updated_at
     }

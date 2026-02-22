@@ -20,9 +20,12 @@ function categorize(tags: Record<string, string>): string {
   const amenity = tags.amenity;
   const sf = tags["social_facility"];
 
-  if (amenity === "food_bank" || sf === "food_bank" || sf === "soup_kitchen") return "Food";
-  if (amenity === "shelter" || sf === "shelter" || sf === "housing") return "Housing & Shelter";
-  if (sf === "healthcare" || sf === "clinic" || sf === "hospice") return "Healthcare";
+  if (amenity === "food_bank" || sf === "food_bank" || sf === "soup_kitchen")
+    return "Food";
+  if (amenity === "shelter" || sf === "shelter" || sf === "housing")
+    return "Housing & Shelter";
+  if (sf === "healthcare" || sf === "clinic" || sf === "hospice")
+    return "Healthcare";
   if (amenity === "community_centre") return "Community Center";
   return "Social Services";
 }
@@ -37,7 +40,12 @@ function buildAddress(tags: Record<string, string>): string | undefined {
   return parts.length ? parts.join(" ") : undefined;
 }
 
-function haversineMiles(lat1: number, lon1: number, lat2: number, lon2: number): number {
+function haversineMiles(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
+): number {
   const R = 3958.8;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
@@ -49,7 +57,9 @@ function haversineMiles(lat1: number, lon1: number, lat2: number, lon2: number):
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-async function geocodeZipcode(zipcode: string): Promise<{ lat: number; lon: number } | null> {
+async function geocodeZipcode(
+  zipcode: string,
+): Promise<{ lat: number; lon: number } | null> {
   const url = `${NOMINATIM_URL}/search?postalcode=${encodeURIComponent(zipcode)}&countrycodes=us&format=json&limit=1`;
   const res = await fetch(url, {
     headers: { "User-Agent": "MutualAidClub/1.0" },
@@ -60,8 +70,12 @@ async function geocodeZipcode(zipcode: string): Promise<{ lat: number; lon: numb
   return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
 }
 
-async function queryOverpass(lat: number, lon: number): Promise<LocalResource[]> {
-  const radius = 32000; // ~20 miles
+async function queryOverpass(
+  lat: number,
+  lon: number,
+  radiusMiles: number = 20,
+): Promise<LocalResource[]> {
+  const radius = radiusMiles * 1609.34; // Convert miles to meters
   const query = `
 [out:json][timeout:25];
 (
@@ -115,7 +129,7 @@ out center 80 qt;
     );
 }
 
-export function useLocalResources(zipcode: string) {
+export function useLocalResources(zipcode: string, radiusMiles: number = 20) {
   const [resources, setResources] = useState<LocalResource[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -133,12 +147,18 @@ export function useLocalResources(zipcode: string) {
         const coords = await geocodeZipcode(zipcode);
         if (cancelled) return;
         if (!coords) {
-          setError("Couldn't find that zipcode. Please double-check and try again.");
+          setError(
+            "Couldn't find that zipcode. Please double-check and try again.",
+          );
           setIsLoading(false);
           return;
         }
 
-        const results = await queryOverpass(coords.lat, coords.lon);
+        const results = await queryOverpass(
+          coords.lat,
+          coords.lon,
+          radiusMiles,
+        );
         if (!cancelled) {
           setResources(results);
           setIsLoading(false);
@@ -154,7 +174,7 @@ export function useLocalResources(zipcode: string) {
     return () => {
       cancelled = true;
     };
-  }, [zipcode]);
+  }, [zipcode, radiusMiles]);
 
   return { resources, isLoading, error };
 }

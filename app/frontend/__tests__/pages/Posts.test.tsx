@@ -92,6 +92,7 @@ describe("Posts Page", () => {
         zipcode: "30301",
         query: "rides",
         postType: null,
+        radius: "20",
       });
     });
   });
@@ -144,6 +145,7 @@ describe("Posts Page", () => {
         zipcode: "94110",
         query: "tool share",
         postType: null,
+        radius: "20",
       });
     });
   });

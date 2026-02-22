@@ -13,7 +13,7 @@ export const Posts = () => {
   const { token, isAuthenticated, isLoading: isAuthLoading } = useAuth();
 
   const { params, state, actions } = usePostsSearchFilters();
-  const { zipcode, query, postType, viewingMine } = params;
+  const { zipcode, query, postType, radius, viewingMine } = params;
 
   const { posts, loading, error, handlePostCreated, handlePostDeleted } =
     usePostsFeed({
@@ -21,6 +21,7 @@ export const Posts = () => {
       zipcode,
       query,
       postType,
+      radius,
       token,
       isAuthenticated,
       isAuthLoading,
@@ -42,12 +43,14 @@ export const Posts = () => {
     zipcodeInput: state.zipcodeInput,
     queryInput: state.queryInput,
     postTypeInput: state.postTypeInput,
+    radiusInput: state.radiusInput,
     canResetSearch: state.canResetSearch,
   };
   const searchActions = {
     onZipcodeInputChange: actions.setZipcodeInput,
     onQueryInputChange: actions.setQueryInput,
     onPostTypeInputChange: actions.setPostTypeInput,
+    onRadiusInputChange: actions.setRadiusInput,
     onSearchSubmit: actions.handleSearchSubmit,
     onSearchReset: actions.handleSearchReset,
   };

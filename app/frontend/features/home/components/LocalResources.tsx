@@ -16,6 +16,8 @@ import {
   Link,
   Spinner,
   Center,
+  Select,
+  createListCollection,
 } from "@chakra-ui/react";
 import {
   FaSearch,
@@ -45,19 +47,39 @@ function categoryStyle(category: string) {
 
 const PAGE_SIZE = 10;
 
-export default function LocalResources({ zipcode: propZipcode }: LocalResourcesProps) {
+const radiusOptions = createListCollection({
+  items: [
+    { label: "5 miles", value: "5" },
+    { label: "10 miles", value: "10" },
+    { label: "15 miles", value: "15" },
+    { label: "20 miles (default)", value: "20" },
+    { label: "30 miles", value: "30" },
+    { label: "50 miles", value: "50" },
+  ],
+});
+
+export default function LocalResources({
+  zipcode: propZipcode,
+}: LocalResourcesProps) {
   const [inputValue, setInputValue] = useState(propZipcode ?? "");
   const [activeZipcode, setActiveZipcode] = useState(propZipcode ?? "");
+  const [radius, setRadius] = useState("20");
   const [page, setPage] = useState(0);
 
-  const { resources, isLoading, error } = useLocalResources(activeZipcode);
+  const { resources, isLoading, error } = useLocalResources(
+    activeZipcode,
+    parseInt(radius),
+  );
 
   useEffect(() => {
     setPage(0);
   }, [activeZipcode]);
 
   const pageCount = Math.ceil(resources.length / PAGE_SIZE);
-  const visibleResources = resources.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const visibleResources = resources.slice(
+    page * PAGE_SIZE,
+    (page + 1) * PAGE_SIZE,
+  );
 
   const handleSearch = () => {
     const trimmed = inputValue.trim();
@@ -88,28 +110,46 @@ export default function LocalResources({ zipcode: propZipcode }: LocalResourcesP
             </Text>
 
             {!propZipcode && (
-              <HStack gap={2} maxW="sm" w="100%">
-                <Input
-                  placeholder="Enter zipcode"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  size="md"
-                  borderColor="border"
-                />
-                <Button
-                  onClick={handleSearch}
-                  bg="teal.600"
-                  color="white"
-                  size="md"
-                  disabled={!inputValue.trim()}
-                  _hover={{ bg: "teal.700" }}
-                  gap={2}
-                >
-                  <Icon as={FaSearch} />
-                  Search
-                </Button>
-              </HStack>
+              <Stack gap={3} maxW="sm" w="100%">
+                <HStack gap={2} w="100%">
+                  <Input
+                    placeholder="Enter zipcode"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    size="md"
+                    borderColor="border"
+                  />
+                  <Button
+                    onClick={handleSearch}
+                    bg="teal.600"
+                    color="white"
+                    size="md"
+                    disabled={!inputValue.trim()}
+                    _hover={{ bg: "teal.700" }}
+                    gap={2}
+                  >
+                    <Icon as={FaSearch} />
+                    Search
+                  </Button>
+                </HStack>
+                {activeZipcode && (
+                  <Select.Root
+                    collection={radiusOptions}
+                    value={[radius]}
+                    onValueChange={(value) => setRadius(value.value[0])}
+                    size="md"
+                  >
+                    <Select.Content>
+                      {radiusOptions.items.map((item) => (
+                        <Select.Item key={item.value} item={item}>
+                          {item.label}
+                        </Select.Item>
+                      ))}
+                    </Select.Content>
+                  </Select.Root>
+                )}
+              </Stack>
             )}
 
             {activeZipcode && !isLoading && !error && (
@@ -206,7 +246,12 @@ export default function LocalResources({ zipcode: propZipcode }: LocalResourcesP
                           )}
                         </HStack>
 
-                        <Text fontWeight="600" fontSize="sm" color="fg" lineHeight="1.3">
+                        <Text
+                          fontWeight="600"
+                          fontSize="sm"
+                          color="fg"
+                          lineHeight="1.3"
+                        >
                           {r.name}
                         </Text>
 
@@ -220,7 +265,11 @@ export default function LocalResources({ zipcode: propZipcode }: LocalResourcesP
                                 mt={0.5}
                                 flexShrink={0}
                               />
-                              <Text fontSize="xs" color="fg.muted" lineHeight="1.4">
+                              <Text
+                                fontSize="xs"
+                                color="fg.muted"
+                                lineHeight="1.4"
+                              >
                                 {r.address}
                               </Text>
                             </HStack>
@@ -228,7 +277,12 @@ export default function LocalResources({ zipcode: propZipcode }: LocalResourcesP
 
                           {r.phone && (
                             <HStack gap={1.5}>
-                              <Icon as={FaPhone} color="fg.muted" fontSize="xs" flexShrink={0} />
+                              <Icon
+                                as={FaPhone}
+                                color="fg.muted"
+                                fontSize="xs"
+                                flexShrink={0}
+                              />
                               <Link
                                 href={`tel:${r.phone}`}
                                 color="teal.600"
@@ -249,7 +303,11 @@ export default function LocalResources({ zipcode: propZipcode }: LocalResourcesP
                                 mt={0.5}
                                 flexShrink={0}
                               />
-                              <Text fontSize="xs" color="fg.muted" lineHeight="1.4">
+                              <Text
+                                fontSize="xs"
+                                color="fg.muted"
+                                lineHeight="1.4"
+                              >
                                 {r.hours}
                               </Text>
                             </HStack>
@@ -257,7 +315,12 @@ export default function LocalResources({ zipcode: propZipcode }: LocalResourcesP
 
                           {r.website && (
                             <HStack gap={1.5}>
-                              <Icon as={FaGlobe} color="fg.muted" fontSize="xs" flexShrink={0} />
+                              <Icon
+                                as={FaGlobe}
+                                color="fg.muted"
+                                fontSize="xs"
+                                flexShrink={0}
+                              />
                               <Link
                                 href={
                                   r.website.startsWith("http")

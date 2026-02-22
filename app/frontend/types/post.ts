@@ -25,6 +25,7 @@ export interface Post {
   comment_count: number;
   created_at: string;
   updated_at: string;
+  zipcode?: string;
 }
 
 export interface Comment {
@@ -71,12 +72,14 @@ export interface SearchAndFilterProps {
     zipcodeInput: string;
     queryInput: string;
     postTypeInput: PostTypeFilter;
+    radiusInput: string;
     canResetSearch: boolean;
   };
   actions: {
     onZipcodeInputChange: (value: string) => void;
     onQueryInputChange: (value: string) => void;
     onPostTypeInputChange: (value: PostTypeFilter) => void;
+    onRadiusInputChange: (value: string) => void;
     onSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
     onSearchReset: () => void;
   };
