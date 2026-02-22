@@ -33,14 +33,14 @@ export default function YourNeighborhood({ user }: YourNeighborhoodProps) {
 
   return (
     <Box
-      py={{ base: 12, md: 16 }}
+      py={{ base: 6, md: 8 }}
       bg="bg.subtle"
       borderTopWidth="1px"
       borderColor="border.subtle"
       borderBottomWidth="1px"
     >
       <Container maxW="7xl">
-        <VStack gap={8}>
+        <VStack gap={5}>
           <HStack gap={3} flexWrap="wrap" justify="center">
             <Box color="teal.600" fontSize="2xl">
               <Icon as={FaMapPin} />

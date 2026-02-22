@@ -38,12 +38,12 @@ export default function Home() {
       {/* Hero Section */}
       <Box
         bg="bg"
-        py={{ base: 12, md: 16 }}
+        py={{ base: 8, md: 10 }}
         borderBottomWidth="1px"
         borderColor="border.subtle"
       >
         <Container maxW="7xl">
-          <Stack textAlign="center" maxW="2xl" gap={6} mx="auto">
+          <Stack textAlign="center" maxW="2xl" gap={4} mx="auto">
             <Heading
               as="h1"
               size="2xl"

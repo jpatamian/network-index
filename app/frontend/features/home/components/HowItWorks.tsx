@@ -43,13 +43,13 @@ export default function HowItWorks() {
 
   return (
     <Box
-      py={{ base: 12, md: 16 }}
+      py={{ base: 6, md: 8 }}
       bg="bg.subtle"
       borderBottomWidth="1px"
       borderColor="border.subtle"
     >
       <Container maxW="7xl">
-        <Stack gap={8}>
+        <Stack gap={5}>
           <Center>
             <Stack textAlign="center" gap={4}>
               <Heading size="lg" color="fg" fontWeight="700">
@@ -70,10 +70,10 @@ export default function HowItWorks() {
                 <Card.Body>
                   <VStack gap={4} textAlign="center">
                     <Box
-                      color="teal.600"
+                      color="orange.600"
                       fontSize="3xl"
                       p={3}
-                      bg="teal.50"
+                      bg="orange.50"
                       borderRadius="lg"
                       w="fit-content"
                       mx="auto"

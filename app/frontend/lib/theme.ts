@@ -14,13 +14,13 @@ const config = defineConfig({
         // Semantic tokens for backgrounds
         bg: {
           DEFAULT: { value: { base: "white", _dark: "gray.800" } },
-          subtle: { value: { base: "gray.50", _dark: "gray.900" } },
-          muted: { value: { base: "gray.100", _dark: "gray.700" } },
+          subtle: { value: { base: "orange.50", _dark: "gray.900" } },
+          muted: { value: { base: "orange.100", _dark: "gray.700" } },
         },
         // Semantic tokens for borders
         border: {
-          DEFAULT: { value: { base: "gray.200", _dark: "gray.700" } },
-          subtle: { value: { base: "gray.200", _dark: "gray.700" } },
+          DEFAULT: { value: { base: "orange.200", _dark: "gray.700" } },
+          subtle: { value: { base: "orange.100", _dark: "gray.700" } },
         },
       },
     },

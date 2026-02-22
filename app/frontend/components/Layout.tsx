@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
   Flex,
@@ -11,16 +11,70 @@ import {
   Icon,
   Heading,
   IconButton,
+  Separator,
 } from "@chakra-ui/react";
-import { FaHome, FaBars, FaTimes } from "react-icons/fa";
-import { useAuth } from "@/hooks/useAuth";
+import {
+  FaHome,
+  FaBars,
+  FaTimes,
+  FaNewspaper,
+  FaHandsHelping,
+  FaUser,
+  FaSignOutAlt,
+  FaSignInAlt,
+  FaUserPlus,
+} from "react-icons/fa";
 import { GiEyeShield } from "react-icons/gi";
+import { useAuth } from "@/hooks/useAuth";
 import { Toaster } from "@/components/ui/toaster";
 import { useState } from "react";
+import type { IconType } from "react-icons";
+
+interface SidebarItemProps {
+  icon: IconType;
+  label: string;
+  to?: string;
+  onClick?: () => void;
+  active?: boolean;
+}
+
+function SidebarItem({ icon, label, to, onClick, active }: SidebarItemProps) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else if (to) {
+      navigate(to);
+    }
+  };
+
+  return (
+    <Button
+      onClick={handleClick}
+      variant="ghost"
+      justifyContent="flex-start"
+      gap={3}
+      px={3}
+      py={2}
+      borderRadius="md"
+      fontWeight={active ? "600" : "500"}
+      color={active ? "teal.600" : "fg"}
+      bg={active ? "teal.50" : "transparent"}
+      _hover={{ bg: "orange.50", color: "teal.600" }}
+      transition="all 0.15s"
+      w="100%"
+    >
+      <Icon as={icon} fontSize="md" flexShrink={0} />
+      <Text fontSize="sm">{label}</Text>
+    </Button>
+  );
+}
 
 export default function Layout() {
   const { user, logout, isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleNavigation = (url: string) => {
@@ -28,17 +82,25 @@ export default function Layout() {
     setMobileMenuOpen(false);
   };
 
+  const handleLogout = () => {
+    logout();
+    setMobileMenuOpen(false);
+  };
+
   return (
     <Flex direction="column" minH="100vh">
-      {/* Navigation */}
+      {/* Top Navigation Bar */}
       <Box
         as="nav"
         bg="bg"
         boxShadow="sm"
         borderBottomWidth="1px"
         borderColor="border.subtle"
+        position="sticky"
+        top="0"
+        zIndex="10"
       >
-        <Container maxW="7xl">
+        <Container maxW="full" px={4}>
           <Flex justify="space-between" align="center" h={14}>
             {/* Logo */}
             <Box
@@ -67,67 +129,20 @@ export default function Layout() {
               </HStack>
             </Box>
 
-            {/* Desktop Navigation Links */}
-            <HStack gap={6} display={{ base: "none", md: "flex" }}>
-              <Button
-                onClick={() => handleNavigation("/")}
-                variant="ghost"
-                color="fg"
-                fontWeight="500"
-                _hover={{ color: "teal.600", bg: "transparent" }}
-              >
-                Home
-              </Button>
-              <Button
-                onClick={() => handleNavigation("/posts")}
-                variant="ghost"
-                color="fg"
-                fontWeight="500"
-                _hover={{ color: "teal.600", bg: "transparent" }}
-              >
-                Feed
-              </Button>
-              <Button
-                onClick={() => handleNavigation("/resources")}
-                variant="ghost"
-                color="fg"
-                fontWeight="500"
-                _hover={{ color: "teal.600", bg: "transparent" }}
-              >
-                Resources
-              </Button>
-
+            {/* Desktop: auth buttons only (sidebar handles nav links) */}
+            <HStack gap={3} display={{ base: "none", md: "flex" }}>
               {!isLoading && (
                 <>
                   {isAuthenticated ? (
-                    <>
-                      <Button
-                        onClick={() => handleNavigation("/profile")}
-                        variant="ghost"
-                        color="gray.700"
-                        size="sm"
-                        fontWeight="500"
-                        _hover={{ color: "teal.600", bg: "transparent" }}
-                      >
-                        {user?.username || user?.email || "User"}
-                      </Button>
-                      <Button
-                        onClick={logout}
-                        variant="ghost"
-                        color="gray.700"
-                        size="sm"
-                        fontWeight="500"
-                        _hover={{ color: "teal.600", bg: "transparent" }}
-                      >
-                        Logout
-                      </Button>
-                    </>
+                    <Text fontSize="sm" color="fg.subtle" fontWeight="500">
+                      {user?.username || user?.email}
+                    </Text>
                   ) : (
                     <>
                       <Button
                         onClick={() => handleNavigation("/login")}
                         variant="ghost"
-                        color="gray.700"
+                        color="fg"
                         size="sm"
                         fontWeight="500"
                         _hover={{ color: "teal.600", bg: "transparent" }}
@@ -181,8 +196,10 @@ export default function Layout() {
                 color="fg"
                 fontWeight="500"
                 justifyContent="flex-start"
-                _hover={{ color: "teal.600", bg: "bg.subtle" }}
+                gap={3}
+                _hover={{ color: "teal.600", bg: "orange.50" }}
               >
+                <Icon as={FaHome} />
                 Home
               </Button>
               <Button
@@ -191,8 +208,10 @@ export default function Layout() {
                 color="fg"
                 fontWeight="500"
                 justifyContent="flex-start"
-                _hover={{ color: "teal.600", bg: "bg.subtle" }}
+                gap={3}
+                _hover={{ color: "teal.600", bg: "orange.50" }}
               >
+                <Icon as={FaNewspaper} />
                 Feed
               </Button>
               <Button
@@ -201,8 +220,10 @@ export default function Layout() {
                 color="fg"
                 fontWeight="500"
                 justifyContent="flex-start"
-                _hover={{ color: "teal.600", bg: "bg.subtle" }}
+                gap={3}
+                _hover={{ color: "teal.600", bg: "orange.50" }}
               >
+                <Icon as={FaHandsHelping} />
                 Resources
               </Button>
 
@@ -213,24 +234,25 @@ export default function Layout() {
                       <Button
                         onClick={() => handleNavigation("/profile")}
                         variant="ghost"
-                        color="gray.700"
+                        color="fg"
                         fontWeight="500"
                         justifyContent="flex-start"
-                        _hover={{ color: "teal.600", bg: "bg.subtle" }}
+                        gap={3}
+                        _hover={{ color: "teal.600", bg: "orange.50" }}
                       >
-                        {user?.username || user?.email || "User"}
+                        <Icon as={FaUser} />
+                        {user?.username || user?.email || "Profile"}
                       </Button>
                       <Button
-                        onClick={() => {
-                          logout();
-                          setMobileMenuOpen(false);
-                        }}
+                        onClick={handleLogout}
                         variant="ghost"
-                        color="gray.700"
+                        color="fg"
                         fontWeight="500"
                         justifyContent="flex-start"
-                        _hover={{ color: "teal.600", bg: "bg.subtle" }}
+                        gap={3}
+                        _hover={{ color: "teal.600", bg: "orange.50" }}
                       >
+                        <Icon as={FaSignOutAlt} />
                         Logout
                       </Button>
                     </>
@@ -239,11 +261,13 @@ export default function Layout() {
                       <Button
                         onClick={() => handleNavigation("/login")}
                         variant="ghost"
-                        color="gray.700"
+                        color="fg"
                         fontWeight="500"
                         justifyContent="flex-start"
-                        _hover={{ color: "teal.600", bg: "bg.subtle" }}
+                        gap={3}
+                        _hover={{ color: "teal.600", bg: "orange.50" }}
                       >
+                        <Icon as={FaSignInAlt} />
                         Log In
                       </Button>
                       <Button
@@ -265,14 +289,94 @@ export default function Layout() {
         )}
       </Box>
 
-      {/* Main Content */}
-      <Box as="main" flex="1">
-        <Outlet />
-      </Box>
+      {/* Body: Sidebar + Main Content */}
+      <Flex flex="1" align="stretch">
+        {/* Left Sidebar — desktop only */}
+        <Box
+          as="aside"
+          display={{ base: "none", md: "flex" }}
+          flexDirection="column"
+          w="220px"
+          flexShrink={0}
+          bg="bg"
+          borderRightWidth="1px"
+          borderColor="border.subtle"
+          px={3}
+          py={4}
+          position="sticky"
+          top="56px"
+          h="calc(100vh - 56px)"
+          overflowY="auto"
+        >
+          {/* Main nav items */}
+          <VStack align="stretch" gap={1} flex="1">
+            <SidebarItem
+              icon={FaHome}
+              label="Home"
+              to="/"
+              active={location.pathname === "/"}
+            />
+            <SidebarItem
+              icon={FaNewspaper}
+              label="Feed"
+              to="/posts"
+              active={location.pathname.startsWith("/posts")}
+            />
+            <SidebarItem
+              icon={FaHandsHelping}
+              label="Resources"
+              to="/resources"
+              active={location.pathname.startsWith("/resources")}
+            />
+          </VStack>
+
+          {/* Bottom: profile / auth */}
+          {!isLoading && (
+            <VStack align="stretch" gap={1}>
+              <Separator mb={2} borderColor="border.subtle" />
+              {isAuthenticated ? (
+                <>
+                  <SidebarItem
+                    icon={FaUser}
+                    label={user?.username || user?.email || "Profile"}
+                    to="/profile"
+                    active={location.pathname.startsWith("/profile")}
+                  />
+                  <SidebarItem
+                    icon={FaSignOutAlt}
+                    label="Logout"
+                    onClick={logout}
+                  />
+                </>
+              ) : (
+                <>
+                  <SidebarItem
+                    icon={FaSignInAlt}
+                    label="Log In"
+                    to="/login"
+                    active={location.pathname === "/login"}
+                  />
+                  <SidebarItem
+                    icon={FaUserPlus}
+                    label="Sign Up"
+                    to="/signup"
+                    active={location.pathname === "/signup"}
+                  />
+                </>
+              )}
+            </VStack>
+          )}
+        </Box>
+
+        {/* Main Content */}
+        <Box as="main" flex="1" minW="0">
+          <Outlet />
+        </Box>
+      </Flex>
 
       {/* Footer */}
       <Box as="footer" bg="bg" borderTop="1px" borderColor="border">
-        <Container maxW="7xl" py={6}>
+        <Container maxW="full" px={4} py={6}>
           <Center>
             <Text fontSize="sm" color="fg.subtle" textAlign="center">
               © 2026 Mutual Aid Club. Built by the community, for the community.

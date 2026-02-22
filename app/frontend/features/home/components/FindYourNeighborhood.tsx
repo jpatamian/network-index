@@ -34,13 +34,13 @@ export default function FindYourNeighborhood() {
 
   return (
     <Box
-      py={{ base: 12, md: 16 }}
+      py={{ base: 6, md: 8 }}
       bg="bg"
       borderBottomWidth="1px"
       borderColor="border.subtle"
     >
       <Container maxW="7xl">
-        <VStack gap={8} align="center" textAlign="center">
+        <VStack gap={5} align="center" textAlign="center">
           {/* Neighborhood map image */}
           <Box maxW="lg" w="100%">
             <Image
@@ -53,7 +53,7 @@ export default function FindYourNeighborhood() {
             />
           </Box>
 
-          <Box color="teal.600" fontSize="4xl">
+          <Box color="orange.600" fontSize="4xl">
             <Icon as={FaMapPin} />
           </Box>
           <Stack gap={3} maxW="2xl">

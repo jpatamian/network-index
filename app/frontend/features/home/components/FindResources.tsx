@@ -19,7 +19,9 @@ interface FindResourcesProps {
   zipcode?: string;
 }
 
-export default function FindResources({ zipcode: propZipcode }: FindResourcesProps) {
+export default function FindResources({
+  zipcode: propZipcode,
+}: FindResourcesProps) {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
 
@@ -38,14 +40,14 @@ export default function FindResources({ zipcode: propZipcode }: FindResourcesPro
 
   return (
     <Box
-      py={{ base: 12, md: 16 }}
+      py={{ base: 6, md: 8 }}
       bg="bg.subtle"
       borderBottomWidth="1px"
       borderColor="border.subtle"
     >
       <Container maxW="7xl">
         <VStack gap={6} align="center" textAlign="center">
-          <Box color="teal.600" fontSize="4xl">
+          <Box color="orange.600" fontSize="4xl">
             <Icon as={FaHandsHelping} />
           </Box>
 
@@ -85,7 +87,11 @@ export default function FindResources({ zipcode: propZipcode }: FindResourcesPro
                 size="lg"
                 fontWeight="600"
                 borderRadius="md"
-                _hover={{ bg: "teal.700", transform: "translateY(-1px)", boxShadow: "md" }}
+                _hover={{
+                  bg: "teal.700",
+                  transform: "translateY(-1px)",
+                  boxShadow: "md",
+                }}
                 transition="all 0.2s"
                 gap={2}
               >
@@ -114,7 +120,11 @@ export default function FindResources({ zipcode: propZipcode }: FindResourcesPro
                 size="lg"
                 fontWeight="600"
                 borderRadius="md"
-                _hover={{ bg: "teal.700", transform: "translateY(-1px)", boxShadow: "md" }}
+                _hover={{
+                  bg: "teal.700",
+                  transform: "translateY(-1px)",
+                  boxShadow: "md",
+                }}
                 transition="all 0.2s"
                 gap={2}
                 flexShrink={0}
