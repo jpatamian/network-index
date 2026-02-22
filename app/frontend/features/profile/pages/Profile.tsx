@@ -1,36 +1,31 @@
 import { useEffect, useState } from "react";
-import { Box, Container, Stack } from "@chakra-ui/react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { flagsApi, notificationsApi, usersApi, postsApi } from "@/lib/api";
 import { toaster } from "@/components/ui/toaster";
 import { FlagReview } from "@/types/flag";
 import { NotificationItem } from "@/types/notification";
-import { ProfileTopBar } from "@/features/profile/components/ProfileTopBar";
-import { ProfileHeaderCard } from "@/features/profile/components/ProfileHeaderCard";
-import { MissingZipcodeBanner } from "@/features/profile/components/MissingZipcodeBanner";
-import { ProfileDetailsCard } from "@/features/profile/components/ProfileDetailsCard";
-import { NotificationsCard } from "@/features/profile/components/NotificationsCard";
-import { ModerationQueueCard } from "@/features/profile/components/ModerationQueueCard";
-import { SeenFlagsCard } from "@/features/profile/components/SeenFlagsCard";
-import { AccountSidebar } from "@/features/profile/components/AccountSidebar";
+import { formatDate } from "@/lib/date";
+
+const dateFormat: Intl.DateTimeFormatOptions = {
+  month: "short",
+  day: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "UTC",
+};
 
 export default function Profile() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
-  const needsZipcode = user?.zipcode === "00000";
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-  const [notificationsLoading, setNotificationsLoading] = useState(false);
-  const [notificationsError, setNotificationsError] = useState("");
+  const [notifLoading, setNotifLoading] = useState(false);
   const [flagReviews, setFlagReviews] = useState<FlagReview[]>([]);
   const [seenFlags, setSeenFlags] = useState<FlagReview[]>([]);
   const [flagLoading, setFlagLoading] = useState(false);
-  const [flagError, setFlagError] = useState("");
-  const [seenLoading, setSeenLoading] = useState(false);
-  const [seenError, setSeenError] = useState("");
   const [formData, setFormData] = useState({
     username: user?.username || "",
     email: user?.email || "",
@@ -38,64 +33,54 @@ export default function Profile() {
   });
 
   useEffect(() => {
-    const loadFlags = async () => {
-      if (!user?.is_moderator || !token) return;
-      setFlagLoading(true);
-      setFlagError("");
-      try {
-        const data = await flagsApi.list(token, "pending");
-        setFlagReviews(data);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "";
-        setFlagError(message || "Unable to load flags.");
-      } finally {
-        setFlagLoading(false);
-      }
-    };
-
-    loadFlags();
-  }, [token, user?.is_moderator]);
-
-  useEffect(() => {
-    const loadSeenFlags = async () => {
-      if (!user?.is_moderator || !token) return;
-      setSeenLoading(true);
-      setSeenError("");
-      try {
-        const data = await flagsApi.list(token, "seen");
-        setSeenFlags(data);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "";
-        setSeenError(message || "Unable to load seen flags.");
-      } finally {
-        setSeenLoading(false);
-      }
-    };
-
-    loadSeenFlags();
-  }, [token, user?.is_moderator]);
-
-  useEffect(() => {
-    const loadNotifications = async () => {
-      if (!token) return;
-      setNotificationsLoading(true);
-      setNotificationsError("");
-      try {
-        const data = await notificationsApi.list(token);
-        setNotifications(data);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "";
-        setNotificationsError(message || "Unable to load notifications.");
-      } finally {
-        setNotificationsLoading(false);
-      }
-    };
-
-    loadNotifications();
+    if (!token) return;
+    setNotifLoading(true);
+    notificationsApi
+      .list(token)
+      .then(setNotifications)
+      .catch(() => {})
+      .finally(() => setNotifLoading(false));
   }, [token]);
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  useEffect(() => {
+    if (!user?.is_moderator || !token) return;
+    setFlagLoading(true);
+    Promise.all([flagsApi.list(token, "pending"), flagsApi.list(token, "seen")])
+      .then(([pending, seen]) => {
+        setFlagReviews(pending);
+        setSeenFlags(seen);
+      })
+      .catch(() => {})
+      .finally(() => setFlagLoading(false));
+  }, [token, user?.is_moderator]);
+
+  const handleSave = async () => {
+    if (!user || !token) return;
+    setIsSaving(true);
+    const updateData: Record<string, string> = {};
+    if (formData.username !== user.username) updateData.username = formData.username;
+    if (formData.email !== user.email) updateData.email = formData.email;
+    if (formData.zipcode !== user.zipcode) updateData.zipcode = formData.zipcode;
+
+    if (Object.keys(updateData).length === 0) {
+      setIsEditing(false);
+      setIsSaving(false);
+      return;
+    }
+
+    try {
+      await usersApi.update(user.id, updateData, token);
+      toaster.success({ title: "Profile updated" });
+      setIsEditing(false);
+      window.location.reload();
+    } catch (err) {
+      toaster.error({
+        title: "Error updating profile",
+        description: err instanceof Error ? err.message : "An error occurred",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -107,176 +92,278 @@ export default function Profile() {
     setIsEditing(false);
   };
 
-  const handleSave = async () => {
-    if (!user || !token) return;
-    setIsSaving(true);
-    try {
-      const updateData: {
-        username?: string;
-        email?: string;
-        zipcode?: string;
-      } = {};
-      if (formData.username !== user.username) {
-        updateData.username = formData.username;
-      }
-      if (formData.email !== user.email) {
-        updateData.email = formData.email;
-      }
-      if (formData.zipcode !== user.zipcode) {
-        updateData.zipcode = formData.zipcode;
-      }
-
-      if (Object.keys(updateData).length === 0) {
-        toaster.create({
-          title: "No changes",
-          description: "No fields were modified",
-          type: "info",
-        });
-        setIsEditing(false);
-        return;
-      }
-
-      await usersApi.update(user.id, updateData, token);
-      toaster.success({
-        title: "Profile updated",
-        description: "Your profile has been updated successfully",
-      });
-      setIsEditing(false);
-      window.location.reload();
-    } catch (error) {
-      toaster.error({
-        title: "Error updating profile",
-        description:
-          error instanceof Error ? error.message : "An error occurred",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   const handleAcknowledge = async (flagId: number) => {
     if (!token) return;
     try {
       await flagsApi.acknowledge(flagId, token);
-      setFlagReviews((prev) => prev.filter((flag) => flag.id !== flagId));
-      const seenFlag = flagReviews.find((flag) => flag.id === flagId);
-      if (seenFlag) {
-        setSeenFlags((prev) => [seenFlag, ...prev]);
-      }
-    } catch (error) {
-      toaster.error({
-        title: "Unable to acknowledge",
-        description:
-          error instanceof Error ? error.message : "Please try again",
-      });
+      const moved = flagReviews.find((f) => f.id === flagId);
+      setFlagReviews((prev) => prev.filter((f) => f.id !== flagId));
+      if (moved) setSeenFlags((prev) => [moved, ...prev]);
+    } catch (err) {
+      toaster.error({ title: "Unable to acknowledge", description: err instanceof Error ? err.message : "" });
     }
   };
 
-  const handleDeletePost = async (postId: number, flagId: number) => {
-    if (
-      !token ||
-      !confirm(
-        "Are you sure you want to delete this post? This action cannot be undone.",
-      )
-    ) {
-      return;
-    }
-
+  const handleDeleteFlaggedPost = async (postId: number, flagId: number) => {
+    if (!token || !confirm("Delete this post? This cannot be undone.")) return;
     try {
       await postsApi.delete(postId, token);
       await flagsApi.acknowledge(flagId, token);
-      setFlagReviews((prev) => prev.filter((flag) => flag.id !== flagId));
-      const seenFlag = flagReviews.find((flag) => flag.id === flagId);
-      if (seenFlag) {
-        setSeenFlags((prev) => [seenFlag, ...prev]);
-      }
-      toaster.success({
-        title: "Post deleted",
-        description: "The flagged post has been deleted",
-      });
-    } catch (error) {
-      toaster.error({
-        title: "Unable to delete post",
-        description:
-          error instanceof Error ? error.message : "Please try again",
-      });
+      const moved = flagReviews.find((f) => f.id === flagId);
+      setFlagReviews((prev) => prev.filter((f) => f.id !== flagId));
+      if (moved) setSeenFlags((prev) => [moved, ...prev]);
+      toaster.success({ title: "Post deleted" });
+    } catch (err) {
+      toaster.error({ title: "Unable to delete post", description: err instanceof Error ? err.message : "" });
     }
   };
 
   return (
     <ProtectedRoute>
-      <Box minH="100vh" bgGradient="linear(to-b, #f6f2ee, #ffffff)">
-        <ProfileTopBar user={user} onBack={() => navigate("/")} />
+      <div className="wire-profile">
+        {/* Breadcrumb */}
+        <div className="wire-breadcrumb">
+          <Link to="/">local wire</Link> › my account
+        </div>
 
-        {user && (
-          <Box py={{ base: 10, md: 14 }}>
-            <Container maxW="6xl">
-              <Stack gap={{ base: 6, md: 8 }}>
-                <ProfileHeaderCard
-                  isEditing={isEditing}
-                  isSaving={isSaving}
-                  onEdit={() => setIsEditing(true)}
-                  onSave={handleSave}
-                  onCancel={handleCancel}
-                />
-
-                <Stack
-                  direction={{ base: "column", lg: "row" }}
-                  align="flex-start"
-                  gap={{ base: 6, lg: 8 }}
+        {/* Account Details */}
+        <div className="wire-profile-section">
+          <div className="wire-profile-section-title">
+            account details
+            {!isEditing && (
+              <>
+                {" "}
+                <button
+                  className="wire-btn-link"
+                  style={{ fontSize: "12px" }}
+                  onClick={() => setIsEditing(true)}
                 >
-                  <Stack gap={6} flex="1" w="full">
-                    {needsZipcode && (
-                      <MissingZipcodeBanner
-                        isEditing={isEditing}
-                        onUpdate={() => setIsEditing(true)}
-                      />
-                    )}
-
-                    <ProfileDetailsCard
-                      user={user}
-                      formData={formData}
-                      isEditing={isEditing}
-                      onChange={handleInputChange}
+                  edit
+                </button>
+              </>
+            )}
+          </div>
+          <table className="wire-profile-table">
+            <tbody>
+              <tr>
+                <td>username</td>
+                <td>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={formData.username}
+                      onChange={(e) =>
+                        setFormData((p) => ({ ...p, username: e.target.value }))
+                      }
+                      style={{ font: "inherit", fontSize: "13px", border: "1px solid #aaa", padding: "2px 4px" }}
                     />
-
-                    <NotificationsCard
-                      notifications={notifications}
-                      isLoading={notificationsLoading}
-                      error={notificationsError}
+                  ) : (
+                    user?.username || <span style={{ color: "#999" }}>not set</span>
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <td>email</td>
+                <td>
+                  {isEditing ? (
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData((p) => ({ ...p, email: e.target.value }))
+                      }
+                      style={{ font: "inherit", fontSize: "13px", border: "1px solid #aaa", padding: "2px 4px", width: "240px" }}
                     />
+                  ) : (
+                    user?.email || <span style={{ color: "#999" }}>not set</span>
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <td>phone</td>
+                <td>
+                  {user?.phone || <span style={{ color: "#999" }}>not set</span>}
+                </td>
+              </tr>
+              <tr>
+                <td>zipcode</td>
+                <td>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={formData.zipcode}
+                      onChange={(e) =>
+                        setFormData((p) => ({ ...p, zipcode: e.target.value }))
+                      }
+                      maxLength={10}
+                      style={{ font: "inherit", fontSize: "13px", border: "1px solid #aaa", padding: "2px 4px", width: "100px" }}
+                    />
+                  ) : (
+                    user?.zipcode || <span style={{ color: "#999" }}>not set</span>
+                  )}
+                </td>
+              </tr>
+              {user?.is_moderator && (
+                <tr>
+                  <td>role</td>
+                  <td style={{ color: "#4a4a8a", fontWeight: "bold" }}>moderator</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          {isEditing && (
+            <div style={{ padding: "8px 10px", borderTop: "1px solid #eee", display: "flex", gap: "8px" }}>
+              <button
+                className="wire-btn wire-btn-sm"
+                onClick={handleCancel}
+              >
+                cancel
+              </button>
+              <button
+                className="wire-btn wire-btn-primary wire-btn-sm"
+                onClick={handleSave}
+                disabled={isSaving}
+              >
+                {isSaving ? "saving..." : "save changes"}
+              </button>
+            </div>
+          )}
+        </div>
 
-                    {user.is_moderator && (
-                      <ModerationQueueCard
-                        flags={flagReviews}
-                        isLoading={flagLoading}
-                        error={flagError}
-                        onAcknowledge={handleAcknowledge}
-                        onDelete={handleDeletePost}
-                      />
+        {/* Quick links */}
+        <div className="wire-profile-section">
+          <div className="wire-profile-section-title">my activity</div>
+          <div style={{ padding: "8px 10px", fontSize: "13px" }}>
+            <Link to="/posts?filter=mine">my posts</Link>
+            {" · "}
+            <Link to="/posts/new">create new post</Link>
+            {" · "}
+            <Link to="/posts">browse community</Link>
+          </div>
+        </div>
+
+        {/* Notifications */}
+        <div className="wire-profile-section">
+          <div className="wire-profile-section-title">
+            notifications ({notifications.length})
+          </div>
+          {notifLoading ? (
+            <div className="wire-loading" style={{ padding: "8px 10px" }}>loading...</div>
+          ) : notifications.length === 0 ? (
+            <div className="wire-empty" style={{ padding: "8px 10px" }}>no notifications.</div>
+          ) : (
+            <div style={{ padding: "4px 10px" }}>
+              {notifications.map((n) => (
+                <div key={n.id} className={`wire-notification${!n.read_at ? " unread" : ""}`}>
+                  <div>{n.message}</div>
+                  <div className="wire-notification-meta">
+                    {formatDate(n.created_at, dateFormat)}
+                    {n.post_title && (
+                      <>
+                        {" · "}
+                        <Link to={`/posts/${n.post_id}`}>{n.post_title}</Link>
+                      </>
                     )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-                    {user.is_moderator && (
-                      <SeenFlagsCard
-                        flags={seenFlags}
-                        isLoading={seenLoading}
-                        error={seenError}
-                      />
-                    )}
-                  </Stack>
+        {/* Moderation queue (moderators only) */}
+        {user?.is_moderator && (
+          <>
+            <div className="wire-profile-section">
+              <div className="wire-profile-section-title">
+                moderation queue ({flagReviews.length} pending)
+              </div>
+              {flagLoading ? (
+                <div className="wire-loading" style={{ padding: "8px 10px" }}>loading...</div>
+              ) : flagReviews.length === 0 ? (
+                <div className="wire-empty" style={{ padding: "8px 10px" }}>no pending flags.</div>
+              ) : (
+                <table className="wire-table">
+                  <thead>
+                    <tr>
+                      <th>type</th>
+                      <th>content</th>
+                      <th>reason</th>
+                      <th>date</th>
+                      <th>actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {flagReviews.map((flag) => (
+                      <tr key={flag.id}>
+                        <td>{flag.flaggable_type}</td>
+                        <td style={{ maxWidth: "300px" }}>
+                          {flag.flaggable?.title || flag.flaggable?.content?.slice(0, 80) || flag.flaggable?.message?.slice(0, 80) || "—"}
+                          {flag.flaggable?.post_id && (
+                            <>
+                              {" "}
+                              <Link to={`/posts/${flag.flaggable.post_id}`} style={{ fontSize: "11px" }}>
+                                view
+                              </Link>
+                            </>
+                          )}
+                        </td>
+                        <td>{flag.reason}{flag.description ? `: ${flag.description}` : ""}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{formatDate(flag.created_at, dateFormat)}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>
+                          <button
+                            className="wire-btn wire-btn-sm"
+                            onClick={() => handleAcknowledge(flag.id)}
+                          >
+                            dismiss
+                          </button>
+                          {" "}
+                          {flag.flaggable_type === "Post" && (
+                            <button
+                              className="wire-btn wire-btn-danger wire-btn-sm"
+                              onClick={() =>
+                                handleDeleteFlaggedPost(flag.flaggable_id, flag.id)
+                              }
+                            >
+                              delete post
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
 
-                  <AccountSidebar
-                    user={user}
-                    notificationsCount={notifications.length}
-                    onEdit={() => setIsEditing(true)}
-                    onBrowse={() => navigate("/posts")}
-                  />
-                </Stack>
-              </Stack>
-            </Container>
-          </Box>
+            {seenFlags.length > 0 && (
+              <div className="wire-profile-section">
+                <div className="wire-profile-section-title">
+                  reviewed flags ({seenFlags.length})
+                </div>
+                <table className="wire-table">
+                  <thead>
+                    <tr>
+                      <th>type</th>
+                      <th>reason</th>
+                      <th>date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seenFlags.map((flag) => (
+                      <tr key={flag.id}>
+                        <td>{flag.flaggable_type}</td>
+                        <td>{flag.reason}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{formatDate(flag.created_at, dateFormat)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         )}
-      </Box>
+      </div>
     </ProtectedRoute>
   );
 }

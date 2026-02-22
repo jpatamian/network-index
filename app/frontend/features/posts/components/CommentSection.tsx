@@ -1,16 +1,4 @@
 import { useState } from "react";
-import {
-  Box,
-  VStack,
-  HStack,
-  Button,
-  Input,
-  Text,
-  Avatar,
-  Alert,
-  Spinner,
-  Flex,
-} from "@chakra-ui/react";
 import { useAuth } from "@/hooks/useAuth";
 import { commentsApi } from "@/lib/api";
 import { Comment } from "@/types/post";
@@ -18,9 +6,7 @@ import { formatDate } from "@/lib/date";
 import { FlagButton } from "./FlagButton";
 import {
   commentDateFormat,
-  getInitial,
   postsErrorMessages,
-  postsText,
   toErrorMessage,
 } from "@/features/posts/lib/utils";
 
@@ -29,10 +15,7 @@ interface CommentSectionProps {
   commentCount: number;
 }
 
-export const CommentSection = ({
-  postId,
-  commentCount,
-}: CommentSectionProps) => {
+export const CommentSection = ({ postId, commentCount }: CommentSectionProps) => {
   const { user, token, isAuthenticated } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -57,27 +40,19 @@ export const CommentSection = ({
 
   const handleExpand = () => {
     setIsExpanded((prev) => {
-      if (!prev) {
-        loadComments();
-      }
+      if (!prev) loadComments();
       return !prev;
     });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmedMessage = message.trim();
-    if (!token || !trimmedMessage) return;
-
+    const trimmed = message.trim();
+    if (!token || !trimmed) return;
     setSubmitting(true);
     setError("");
-
     try {
-      const newComment = await commentsApi.create(
-        postId,
-        trimmedMessage,
-        token,
-      );
+      const newComment = await commentsApi.create(postId, trimmed, token);
       setComments((prev) => [...prev, newComment]);
       setCount((prev) => prev + 1);
       setMessage("");
@@ -90,10 +65,9 @@ export const CommentSection = ({
 
   const handleDelete = async (commentId: number) => {
     if (!token) return;
-
     try {
       await commentsApi.delete(postId, commentId, token);
-      setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
       setCount((prev) => prev - 1);
     } catch (err) {
       alert(toErrorMessage(err, postsErrorMessages.deleteCommentFailed));
@@ -101,134 +75,72 @@ export const CommentSection = ({
   };
 
   return (
-    <Box borderTop="1px" borderColor="border" mt={4} pt={4}>
-      <Button
-        onClick={handleExpand}
-        variant="ghost"
-        size="sm"
-        fontWeight="600"
-        color="fg.muted"
-        _hover={{ color: "teal.600" }}
-      >
-        {isExpanded ? "▼ Hide Comments" : `▶ Comments (${count})`}
-      </Button>
+    <div className="wire-comments">
+      <div className="wire-comments-title" onClick={handleExpand}>
+        {isExpanded ? "▼" : "▶"} comments ({count})
+      </div>
 
       {isExpanded && (
-        <VStack gap={4} mt={4}>
-          {error && (
-            <Alert.Root status="error" borderRadius="md" fontSize="sm">
-              {error}
-            </Alert.Root>
-          )}
-
-          {loading && (
-            <Flex justify="center" w="full">
-              <Spinner color="teal.600" size="sm" />
-            </Flex>
-          )}
+        <>
+          {error && <div className="wire-error">{error}</div>}
+          {loading && <div className="wire-loading">loading comments...</div>}
 
           {!loading && comments.length === 0 && (
-            <Text fontSize="sm" color="fg.subtle" w="full" textAlign="center">
-              No comments yet. Be the first to share your thoughts!
-            </Text>
+            <div className="wire-empty">no comments yet.</div>
           )}
 
           {comments.map((comment) => (
-            <Box key={comment.id} w="full">
-              <HStack gap={3} align="flex-start">
-                <Avatar.Root size="sm">
-                  <Avatar.Image />
-                  <Avatar.Fallback
-                    bg="teal.600"
-                    color="white"
-                    fontWeight="bold"
+            <div key={comment.id} className="wire-comment">
+              <div className="wire-comment-meta">
+                <span className="wire-comment-author">{comment.author.name}</span>
+                <span>{formatDate(comment.created_at, commentDateFormat)}</span>
+                {isAuthenticated && user?.id !== comment.author.id && (
+                  <FlagButton
+                    target="comment"
+                    postId={postId}
+                    commentId={comment.id}
+                    ariaLabel="flag comment"
+                  />
+                )}
+                {user?.id === comment.author.id && (
+                  <button
+                    className="wire-btn-link"
+                    style={{ color: "#c33", fontSize: "11px" }}
+                    onClick={() => handleDelete(comment.id)}
                   >
-                    {getInitial(comment.author.name)}
-                  </Avatar.Fallback>
-                </Avatar.Root>
-                <Box flex={1} minW={0}>
-                  <Flex justify="space-between" align="flex-start">
-                    <Box>
-                      <Text fontSize="sm" fontWeight="600" color="fg">
-                        {comment.author.name}
-                      </Text>
-                      <Text fontSize="xs" color="fg.subtle">
-                        {formatDate(comment.created_at, commentDateFormat)}
-                      </Text>
-                    </Box>
-                    <HStack gap={2} align="center">
-                      {isAuthenticated && user?.id !== comment.author.id && (
-                        <FlagButton
-                          target="comment"
-                          postId={postId}
-                          commentId={comment.id}
-                          ariaLabel="Report comment"
-                        />
-                      )}
-                      {user?.id === comment.author.id && (
-                        <Button
-                          onClick={() => handleDelete(comment.id)}
-                          size="xs"
-                          variant="ghost"
-                          color="red.500"
-                          fontWeight="500"
-                          _hover={{ bg: "red.50" }}
-                        >
-                          Delete
-                        </Button>
-                      )}
-                    </HStack>
-                  </Flex>
-                  <Text fontSize="sm" color="fg" mt={2}>
-                    {comment.message}
-                  </Text>
-                </Box>
-              </HStack>
-            </Box>
+                    delete
+                  </button>
+                )}
+              </div>
+              <div className="wire-comment-body">{comment.message}</div>
+            </div>
           ))}
 
           {isAuthenticated ? (
-            <Box as="form" onSubmit={handleSubmit} w="full">
-              <VStack gap={2} align="stretch">
-                <HStack gap={2} align="flex-end">
-                  <Input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder={postsText.commentInputPlaceholder}
-                    size="sm"
-                    borderRadius="md"
-                    required
-                  />
-                  <Button
-                    type="submit"
-                    disabled={submitting || !message.trim()}
-                    size="sm"
-                    bg="teal.600"
-                    color="white"
-                    fontWeight="600"
-                    _hover={{ bg: "teal.700" }}
-                    _disabled={{ bg: "gray.300", cursor: "not-allowed" }}
-                    minW="70px"
-                  >
-                    {submitting ? <Spinner size="xs" /> : "Post"}
-                  </Button>
-                </HStack>
-              </VStack>
-            </Box>
+            <form className="wire-comment-form" onSubmit={handleSubmit}>
+              <input
+                className="wire-comment-input"
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="add a comment..."
+                required
+              />
+              <button
+                type="submit"
+                className="wire-btn wire-btn-sm"
+                disabled={submitting || !message.trim()}
+              >
+                {submitting ? "posting..." : "post"}
+              </button>
+            </form>
           ) : (
-            <Text
-              fontSize="xs"
-              color="fg.subtle"
-              fontStyle="italic"
-              w="full"
-              textAlign="center"
-            >
-              Sign in to leave a comment
-            </Text>
+            <div className="wire-empty">
+              <a href="/login">log in</a> to leave a comment
+            </div>
           )}
-        </VStack>
+        </>
       )}
-    </Box>
+    </div>
   );
 };

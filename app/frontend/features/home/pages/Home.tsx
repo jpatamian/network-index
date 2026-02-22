@@ -1,179 +1,167 @@
-import {
-  Box,
-  Container,
-  Heading,
-  Text,
-  Button,
-  Stack,
-  HStack,
-  Icon,
-  IconButton,
-} from "@chakra-ui/react";
-import { FaPen, FaTimes } from "react-icons/fa";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import HowItWorks from "@/features/home/components/HowItWorks";
-import FindYourNeighborhood from "@/features/home/components/FindYourNeighborhood";
-import LocalResources from "@/features/home/components/LocalResources";
-import FreeOnlineResources from "@/features/home/components/FreeOnlineResources";
-import YourNeighborhood from "@/features/neighborhood/components/YourNeighborhood";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const needsZipcode = isAuthenticated && user?.zipcode === null;
-  const [showSupportBanner, setShowSupportBanner] = useState(true);
 
-  useEffect(() => {
-    const storedValue = window.localStorage.getItem(
-      "home-support-banner-dismissed",
-    );
-    if (storedValue === "true") {
-      setShowSupportBanner(false);
-    }
-  }, []);
+  const locationLabel = user?.zipcode
+    ? `local wire · ${user.zipcode}`
+    : "local wire";
 
   return (
-    <Box>
-      {/* Hero Section */}
-      <Box
-        bg="bg"
-        py={{ base: 12, md: 16 }}
-        borderBottomWidth="1px"
-        borderColor="border.subtle"
-      >
-        <Container maxW="7xl">
-          <Stack textAlign="center" maxW="2xl" gap={6} mx="auto">
-            <Heading
-              as="h1"
-              size="2xl"
-              fontWeight="700"
-              color="fg"
-              lineHeight="1.2"
-            >
-              {isAuthenticated
-                ? `Welcome back, ${user?.username || user?.email}!`
-                : "Your Neighborhood, Connected"}
-            </Heading>
-            <Text fontSize="lg" color="fg.muted" lineHeight={1.6}>
-              {isAuthenticated
-                ? "Connect with neighbors to share resources, ask for help, and build community."
-                : "Share resources, ask for help, and build genuine connections with neighbors near you."}
-            </Text>
-          </Stack>
-        </Container>
-        <Container maxW="7xl">
-          {needsZipcode && (
-            <Box
-              mb={6}
-              bg="orange.50"
-              border="1px"
-              borderColor="orange.200"
-              borderRadius="lg"
-              p={4}
-            >
-              <HStack
-                justify="space-between"
-                align="center"
-                flexWrap="wrap"
-                gap={3}
-              >
-                <Text color="orange.800" fontSize="sm" fontWeight="500">
-                  Finish setting up your account by adding your zipcode.
-                </Text>
-                <Button
-                  size="sm"
-                  bg="orange.500"
-                  color="white"
-                  _hover={{ bg: "orange.600" }}
-                  onClick={() => {
-                    navigate("/profile");
-                  }}
-                >
-                  Add Zipcode
-                </Button>
-              </HStack>
-            </Box>
+    <div className="wire-home">
+      {/* Top bar: location + search */}
+      <div className="wire-home-top">
+        <div>
+          <span className="wire-home-location">{locationLabel}</span>
+          {isAuthenticated && user && (
+            <div style={{ fontSize: "12px", color: "#666", marginTop: "2px" }}>
+              welcome back, {user.username || user.email}
+              {" · "}
+              <Link to="/profile">my account</Link>
+            </div>
           )}
-
-          {!isAuthenticated && showSupportBanner && (
-            <Box
-              mt={4}
-              bg="teal.50"
-              border="1px"
-              borderColor="teal.200"
-              borderRadius="lg"
-              p={4}
-            >
-              <HStack
-                justify="space-between"
-                align="center"
-                flexWrap="wrap"
-                gap={3}
-              >
-                <HStack gap={2.5} color="teal.800">
-                  <Icon as={FaPen} />
-                  <Text fontSize="sm" fontWeight="600">
-                    Need help or want to offer support? Post now — no account
-                    required.
-                  </Text>
-                </HStack>
-                <HStack gap={2} align="center">
-                  <Button
-                    size="sm"
-                    bg="teal.600"
-                    color="white"
-                    _hover={{ bg: "teal.700" }}
-                    onClick={() => {
-                      navigate("/posts/new");
-                    }}
-                  >
-                    Create a Post
-                  </Button>
-                  <IconButton
-                    aria-label="Dismiss banner"
-                    size="sm"
-                    variant="ghost"
-                    color="teal.800"
-                    onClick={() => {
-                      window.localStorage.setItem(
-                        "home-support-banner-dismissed",
-                        "true",
-                      );
-                      setShowSupportBanner(false);
-                    }}
-                  >
-                    <Icon as={FaTimes} boxSize={3} />
-                  </IconButton>
-                </HStack>
-              </HStack>
-            </Box>
+          {!isAuthenticated && (
+            <div style={{ fontSize: "12px", color: "#666", marginTop: "2px" }}>
+              <Link to="/login">log in</Link>
+              {" or "}
+              <Link to="/signup">create account</Link>
+              {" to personalize your feed"}
+            </div>
           )}
+        </div>
+        <div className="wire-home-search">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const q = (e.currentTarget.elements.namedItem("q") as HTMLInputElement).value;
+              navigate(`/posts?query=${encodeURIComponent(q)}`);
+            }}
+          >
+            <input type="text" name="q" placeholder="search local wire" />
+            {" "}
+            <button type="submit" className="wire-btn wire-btn-sm">go</button>
+          </form>
+        </div>
+      </div>
 
-          {!isAuthenticated && <FindYourNeighborhood />}
-        </Container>
-      </Box>
+      {/* Category grid */}
+      <div className="wire-category-grid">
 
-      {/* Your Neighborhood Section - For Authenticated Users */}
-      {isAuthenticated && user && user.username && user.email && (
-        <YourNeighborhood
-          user={{
-            zipcode: user.zipcode ?? undefined,
-            username: user.username,
-            email: user.email,
-          }}
-        />
-      )}
+        {/* Community */}
+        <div className="wire-category-section">
+          <Link to="/posts" className="wire-category-title">community</Link>
+          <ul className="wire-category-links">
+            <li><Link to="/posts?post_type=childcare">childcare</Link></li>
+            <li><Link to="/posts?post_type=ride_share">ride share</Link></li>
+            <li><Link to="/posts?post_type=food">food sharing</Link></li>
+            <li><Link to="/posts?post_type=other">general help</Link></li>
+            <li><Link to="/posts">all posts</Link></li>
+          </ul>
+        </div>
 
-      {/* Local Resources Section */}
-      <LocalResources zipcode={user?.zipcode ?? undefined} />
+        {/* Resources */}
+        <div className="wire-category-section">
+          <span className="wire-category-title" style={{ cursor: "default" }}>resources</span>
+          <ul className="wire-category-links">
+            <li>
+              <a
+                href="https://www.211.org"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                211 helpline
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.foodpantries.org"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                food pantries
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.needhelppayingbills.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                bill assistance
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.benefits.gov"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                benefits.gov
+              </a>
+            </li>
+          </ul>
+        </div>
 
-      {/* Free Online Resources Section */}
-      <FreeOnlineResources />
+        {/* Account */}
+        <div className="wire-category-section">
+          <span className="wire-category-title" style={{ cursor: "default" }}>account</span>
+          <ul className="wire-category-links">
+            {isAuthenticated ? (
+              <>
+                <li><Link to="/profile">my account</Link></li>
+                <li><Link to="/posts?mine=true">my posts</Link></li>
+                <li><Link to="/posts/new">create post</Link></li>
+              </>
+            ) : (
+              <>
+                <li><Link to="/login">log in</Link></li>
+                <li><Link to="/signup">create account</Link></li>
+                <li><Link to="/posts/new">post anonymously</Link></li>
+              </>
+            )}
+          </ul>
+        </div>
 
-      {/* Features Section */}
-      <HowItWorks />
-    </Box>
+        {/* Childcare */}
+        <div className="wire-category-section">
+          <Link to="/posts?post_type=childcare" className="wire-category-title">childcare</Link>
+          <ul className="wire-category-links">
+            <li><Link to="/posts?post_type=childcare">childcare requests</Link></li>
+            <li><Link to="/posts?post_type=childcare">childcare offers</Link></li>
+            <li><Link to="/posts/new">post a childcare need</Link></li>
+          </ul>
+        </div>
+
+        {/* Ride Share */}
+        <div className="wire-category-section">
+          <Link to="/posts?post_type=ride_share" className="wire-category-title">ride share</Link>
+          <ul className="wire-category-links">
+            <li><Link to="/posts?post_type=ride_share">ride requests</Link></li>
+            <li><Link to="/posts?post_type=ride_share">ride offers</Link></li>
+            <li><Link to="/posts/new">post a ride need</Link></li>
+          </ul>
+        </div>
+
+        {/* Food */}
+        <div className="wire-category-section">
+          <Link to="/posts?post_type=food" className="wire-category-title">food</Link>
+          <ul className="wire-category-links">
+            <li><Link to="/posts?post_type=food">food needed</Link></li>
+            <li><Link to="/posts?post_type=food">food offered</Link></li>
+            <li><Link to="/posts/new">post a food need</Link></li>
+          </ul>
+        </div>
+
+      </div>
+
+      {/* Footer note */}
+      <div style={{ marginTop: "24px", borderTop: "1px solid #d5d5d5", paddingTop: "10px", fontSize: "12px", color: "#666" }}>
+        local wire is a free community mutual aid board.{" "}
+        <Link to="/posts/new">post now</Link>
+        {" — no account required."}
+      </div>
+    </div>
   );
 }

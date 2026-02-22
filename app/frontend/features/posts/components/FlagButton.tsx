@@ -1,16 +1,4 @@
-import { useState } from "react";
-import {
-  Box,
-  Button,
-  HStack,
-  Icon,
-  IconButton,
-  Input,
-  NativeSelect,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
-import { FaFlag } from "react-icons/fa";
+import { useState, useRef, useEffect } from "react";
 import { flagsApi } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { toaster } from "@/components/ui/toaster";
@@ -25,11 +13,7 @@ const FLAG_REASONS = [
   { value: "other", label: "Other" },
 ];
 
-export const FlagButton = ({
-  isDisabled,
-  ariaLabel,
-  ...target
-}: FlagButtonProps) => {
+export const FlagButton = ({ isDisabled, ariaLabel, ...target }: FlagButtonProps) => {
   const { token } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [reason, setReason] = useState("spam");
@@ -37,136 +21,105 @@ export const FlagButton = ({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [isOpen]);
 
   const handleSubmit = async () => {
     if (!token) return;
-
-    const trimmedDescription = description.trim();
-    if (reason === "other" && !trimmedDescription) {
-      setError("Please share a short explanation for 'Other'.");
+    const trimmed = description.trim();
+    if (reason === "other" && !trimmed) {
+      setError("Please share a short explanation.");
       return;
     }
-
     setSubmitting(true);
     setError("");
-
     try {
-      const payload = {
-        reason,
-        description: trimmedDescription || undefined,
-      };
-
+      const payload = { reason, description: trimmed || undefined };
       if (target.target === "post") {
         await flagsApi.createForPost(target.postId, payload, token);
       } else {
-        await flagsApi.createForComment(
-          target.postId,
-          target.commentId,
-          payload,
-          token,
-        );
+        await flagsApi.createForComment(target.postId, target.commentId, payload, token);
       }
       setSubmitted(true);
       setIsOpen(false);
-      toaster.success({
-        title: "Thanks for reporting",
-        description: "We'll review this soon.",
-      });
+      toaster.success({ title: "Thanks for reporting", description: "We'll review this soon." });
     } catch (err) {
-      const message = err instanceof Error ? err.message : "";
-      setError(message || "Failed to submit report.");
+      setError(err instanceof Error ? err.message : "Failed to submit report.");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <Box position="relative">
-      <IconButton
-        aria-label={ariaLabel || "Report content"}
-        size="xs"
-        variant="ghost"
-        color={submitted ? "orange.600" : "fg.muted"}
+    <span ref={ref} style={{ position: "relative", display: "inline-block" }}>
+      <button
+        aria-label={ariaLabel || "flag"}
+        className="wire-btn-link"
+        style={{
+          fontSize: "11px",
+          color: submitted ? "#c33" : "#999",
+        }}
         disabled={isDisabled || submitted}
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        <Icon as={FaFlag} boxSize={3} />
-      </IconButton>
+        {submitted ? "flagged" : "flag"}
+      </button>
 
       {isOpen && !submitted && (
-        <Box
-          position="absolute"
-          right={0}
-          top="100%"
-          mt={2}
-          bg="bg"
-          borderWidth="1px"
-          borderColor="border.subtle"
-          borderRadius="md"
-          boxShadow="md"
-          p={3}
-          minW="220px"
-          zIndex={10}
-        >
-          <VStack align="stretch" gap={2}>
-            <Text fontSize="xs" color="fg.muted">
-              Why are you reporting this?
-            </Text>
-            <NativeSelect.Root size="sm">
-              <NativeSelect.Field
-                value={reason}
-                onChange={(event) => setReason(event.target.value)}
-                borderRadius="md"
-                bg="bg"
-                borderColor="border"
-              >
-                {FLAG_REASONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </NativeSelect.Field>
-              <NativeSelect.Indicator />
-            </NativeSelect.Root>
-
-            {reason === "other" && (
-              <Input
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-                placeholder="Share a short reason"
-                size="sm"
-                borderRadius="md"
-              />
-            )}
-
-            {error && (
-              <Text fontSize="xs" color="red.500">
-                {error}
-              </Text>
-            )}
-
-            <HStack justify="flex-end" gap={2}>
-              <Button
-                size="xs"
-                variant="ghost"
-                onClick={() => setIsOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                size="xs"
-                bg="teal.600"
-                color="white"
-                onClick={handleSubmit}
-                disabled={submitting}
-                _hover={{ bg: "teal.700" }}
-              >
-                {submitting ? "Submitting" : "Submit"}
-              </Button>
-            </HStack>
-          </VStack>
-        </Box>
+        <div className="wire-flag-popover">
+          <div style={{ marginBottom: "4px", fontWeight: "bold", color: "#333" }}>
+            why are you reporting this?
+          </div>
+          <select
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+          >
+            {FLAG_REASONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+          {reason === "other" && (
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="short explanation"
+            />
+          )}
+          {error && (
+            <div style={{ color: "#c33", fontSize: "11px", marginBottom: "4px" }}>
+              {error}
+            </div>
+          )}
+          <div className="wire-flag-actions">
+            <button
+              className="wire-btn wire-btn-sm"
+              onClick={() => setIsOpen(false)}
+            >
+              cancel
+            </button>
+            <button
+              className="wire-btn wire-btn-primary wire-btn-sm"
+              onClick={handleSubmit}
+              disabled={submitting}
+            >
+              {submitting ? "submitting..." : "submit"}
+            </button>
+          </div>
+        </div>
       )}
-    </Box>
+    </span>
   );
 };

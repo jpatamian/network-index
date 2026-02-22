@@ -1,41 +1,49 @@
-import {
-  Toaster as ChakraToaster,
-  Portal,
-  Spinner,
-  Stack,
-  Toast,
-  createToaster,
-} from "@chakra-ui/react"
+import { Toaster as HotToaster, toast } from "react-hot-toast";
 
-export const toaster = createToaster({
-  placement: "bottom-end",
-  pauseOnPageIdle: true,
-})
-
-export const Toaster = () => {
+// Re-export Toaster component for placement in Layout
+export function Toaster() {
   return (
-    <Portal>
-      <ChakraToaster toaster={toaster} insetInline={{ mdDown: "4" }}>
-        {(toast) => (
-          <Toast.Root width={{ md: "sm" }}>
-            {toast.type === "loading" ? (
-              <Spinner size="sm" color="blue.solid" />
-            ) : (
-              <Toast.Indicator />
-            )}
-            <Stack gap="1" flex="1" maxWidth="100%">
-              {toast.title && <Toast.Title>{toast.title}</Toast.Title>}
-              {toast.description && (
-                <Toast.Description>{toast.description}</Toast.Description>
-              )}
-            </Stack>
-            {toast.action && (
-              <Toast.ActionTrigger>{toast.action.label}</Toast.ActionTrigger>
-            )}
-            {toast.closable && <Toast.CloseTrigger />}
-          </Toast.Root>
-        )}
-      </ChakraToaster>
-    </Portal>
-  )
+    <HotToaster
+      position="bottom-right"
+      toastOptions={{
+        style: {
+          fontFamily: "system-ui, -apple-system, Arial, sans-serif",
+          fontSize: "13px",
+          border: "1px solid #d5d5d5",
+          borderRadius: "0",
+          padding: "8px 12px",
+          color: "#333",
+          background: "#fff",
+        },
+        success: {
+          style: { borderColor: "#9c9", background: "#f0fff0", color: "#060" },
+        },
+        error: {
+          style: { borderColor: "#e99", background: "#fff3f3", color: "#c00" },
+        },
+      }}
+    />
+  );
 }
+
+// Compat shim — matches existing toaster.success / toaster.error / toaster.create call sites
+export const toaster = {
+  success: ({ title, description }: { title: string; description?: string }) =>
+    toast.success(description ? `${title}: ${description}` : title),
+  error: ({ title, description }: { title: string; description?: string }) =>
+    toast.error(description ? `${title}: ${description}` : title),
+  create: ({
+    title,
+    description,
+    type,
+  }: {
+    title: string;
+    description?: string;
+    type?: string;
+  }) => {
+    const msg = description ? `${title}: ${description}` : title;
+    if (type === "error") return toast.error(msg);
+    if (type === "success") return toast.success(msg);
+    return toast(msg);
+  },
+};

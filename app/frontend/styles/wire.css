@@ -1,0 +1,412 @@
+/* ================================================================
+   Local Wire — Design System
+   Craigslist-inspired, clean, text-heavy, fast
+   ================================================================ */
+
+/* ---- Reset ---- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---- Base ---- */
+html {
+  font-size: 14px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: system-ui, -apple-system, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+  background: #fff;
+}
+
+/* ---- Typography ---- */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  line-height: 1.3;
+}
+
+a {
+  color: #4a4a8a;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+  color: #c33;
+}
+
+p { margin: 0; }
+
+/* ---- Layout ---- */
+.wire-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 12px;
+}
+
+.wire-page {
+  min-height: calc(100vh - 80px);
+  padding: 12px 0 32px;
+}
+
+/* ---- Header / Nav ---- */
+.wire-header {
+  background: #fff;
+  border-bottom: 1px solid #d5d5d5;
+  padding: 6px 0;
+}
+
+.wire-header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.wire-logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: #4a4a8a;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.wire-logo:hover { color: #c33; text-decoration: none; }
+
+.wire-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+
+.wire-nav a,
+.wire-nav button {
+  color: #4a4a8a;
+  text-decoration: none;
+  padding: 2px 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+}
+.wire-nav a:hover,
+.wire-nav button:hover { text-decoration: underline; color: #c33; }
+
+.wire-nav-sep { color: #ccc; user-select: none; }
+
+/* ---- Footer ---- */
+.wire-footer {
+  border-top: 1px solid #d5d5d5;
+  padding: 10px 12px;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+}
+.wire-footer a { color: #4a4a8a; margin: 0 4px; }
+
+/* ---- Home Page ---- */
+.wire-home {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 12px;
+}
+
+.wire-home-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.wire-home-location { font-size: 18px; font-weight: bold; color: #4a4a8a; }
+
+.wire-home-search { display: flex; gap: 4px; align-items: center; }
+.wire-home-search input {
+  border: 1px solid #999;
+  padding: 3px 6px;
+  font-size: 13px;
+  font-family: inherit;
+  width: 200px;
+}
+
+.wire-category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 24px;
+}
+@media (max-width: 700px) { .wire-category-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 440px) { .wire-category-grid { grid-template-columns: 1fr; } }
+
+.wire-category-section { min-width: 0; }
+
+.wire-category-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #4a4a8a;
+  border-bottom: 1px solid #d5d5d5;
+  padding-bottom: 3px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+}
+.wire-category-title:hover { text-decoration: underline; color: #c33; }
+
+.wire-category-links { list-style: none; padding: 0; margin: 0; }
+.wire-category-links li { line-height: 1.6; }
+.wire-category-links a { font-size: 13px; color: #00008b; }
+.wire-category-links a:hover { text-decoration: underline; color: #c33; }
+
+/* ---- Posts Feed ---- */
+.wire-posts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wire-posts-title { font-size: 16px; font-weight: bold; color: #4a4a8a; }
+
+.wire-posts-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.wire-filter-bar {
+  border: 1px solid #d5d5d5;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  background: #f7f7f7;
+}
+
+.wire-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.wire-filter-group label { font-size: 12px; color: #333; }
+.wire-filter-group select,
+.wire-filter-group input[type="text"] {
+  font-size: 12px;
+  font-family: inherit;
+  border: 1px solid #aaa;
+  padding: 1px 4px;
+}
+.wire-filter-group input[type="text"] { width: 100px; }
+
+.wire-post-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid #d5d5d5; }
+
+.wire-post-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+.wire-post-row:hover { background: #f7f7f7; }
+
+.wire-post-date { color: #666; white-space: nowrap; font-size: 12px; min-width: 50px; }
+.wire-post-title-link { color: #00008b; flex: 1; min-width: 200px; }
+.wire-post-title-link:hover { text-decoration: underline; color: #c33; }
+.wire-post-meta { color: #666; font-size: 12px; white-space: nowrap; }
+.wire-post-tag { color: #4a4a8a; font-size: 11px; background: #eeeef7; padding: 0 4px; border-radius: 2px; }
+
+.wire-pagination { font-size: 12px; color: #666; padding: 6px 0; display: flex; gap: 8px; align-items: center; }
+
+/* ---- Post Detail ---- */
+.wire-post-detail { max-width: 760px; margin: 0 auto; padding: 12px; }
+
+.wire-post-detail-header { margin-bottom: 10px; }
+
+.wire-post-detail-title { font-size: 20px; font-weight: bold; color: #333; margin-bottom: 4px; }
+
+.wire-post-detail-meta {
+  font-size: 12px;
+  color: #666;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.wire-post-detail-body {
+  border-top: 1px solid #d5d5d5;
+  border-bottom: 1px solid #d5d5d5;
+  padding: 12px 0;
+  margin: 10px 0;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.wire-post-detail-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 13px;
+  margin: 8px 0;
+}
+
+/* ---- Comments ---- */
+.wire-comments { margin-top: 16px; border-top: 1px solid #d5d5d5; padding-top: 10px; }
+
+.wire-comments-title { font-size: 13px; font-weight: bold; color: #4a4a8a; margin-bottom: 8px; cursor: pointer; }
+.wire-comments-title:hover { text-decoration: underline; }
+
+.wire-comment { border-bottom: 1px solid #eee; padding: 6px 0; font-size: 13px; }
+
+.wire-comment-meta {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 2px;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.wire-comment-author { font-weight: bold; color: #333; }
+.wire-comment-body { color: #333; word-break: break-word; }
+
+.wire-comment-form { margin-top: 10px; display: flex; gap: 6px; align-items: flex-start; flex-wrap: wrap; }
+.wire-comment-input { flex: 1; min-width: 200px; font-size: 13px; font-family: inherit; border: 1px solid #aaa; padding: 4px 6px; }
+
+/* ---- Auth Pages ---- */
+.wire-auth-page { max-width: 480px; margin: 40px auto; padding: 0 12px; }
+
+.wire-auth-title { font-size: 16px; font-weight: bold; color: #4a4a8a; margin-bottom: 14px; padding-bottom: 6px; border-bottom: 1px solid #d5d5d5; }
+
+.wire-form-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.wire-form-row label { width: 120px; font-size: 13px; color: #333; text-align: right; flex-shrink: 0; }
+.wire-form-row input,
+.wire-form-row select,
+.wire-form-row textarea { flex: 1; min-width: 0; font-size: 13px; font-family: inherit; border: 1px solid #aaa; padding: 3px 6px; color: #333; }
+.wire-form-row textarea { resize: vertical; min-height: 100px; }
+
+.wire-form-row input:focus,
+.wire-form-row select:focus,
+.wire-form-row textarea:focus,
+.wire-comment-input:focus,
+.wire-home-search input:focus,
+.wire-filter-group input:focus,
+.wire-filter-group select:focus { outline: 1px solid #4a4a8a; border-color: #4a4a8a; }
+
+.wire-form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+
+.wire-or-divider { display: flex; align-items: center; gap: 8px; margin: 12px 0; font-size: 12px; color: #999; }
+.wire-or-divider::before, .wire-or-divider::after { content: ""; flex: 1; border-top: 1px solid #d5d5d5; }
+
+.wire-auth-alt { font-size: 12px; margin-top: 12px; color: #666; }
+
+.wire-error { background: #fff3f3; border: 1px solid #e99; padding: 6px 10px; font-size: 13px; color: #c00; margin-bottom: 10px; }
+.wire-info { background: #f3f3ff; border: 1px solid #99c; padding: 6px 10px; font-size: 13px; color: #33c; margin-bottom: 10px; }
+.wire-success { background: #f0fff0; border: 1px solid #9c9; padding: 6px 10px; font-size: 13px; color: #060; margin-bottom: 10px; }
+
+/* ---- Buttons ---- */
+.wire-btn { font-size: 13px; font-family: inherit; border: 1px solid #aaa; background: #f0f0f0; padding: 3px 10px; cursor: pointer; color: #333; text-decoration: none; display: inline-block; }
+.wire-btn:hover { background: #e0e0e0; border-color: #888; text-decoration: none; color: #333; }
+.wire-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.wire-btn-primary { background: #4a4a8a; color: #fff; border-color: #3a3a7a; }
+.wire-btn-primary:hover { background: #3a3a7a; color: #fff; }
+
+.wire-btn-danger { background: #cc3333; color: #fff; border-color: #aa2222; }
+.wire-btn-danger:hover { background: #aa2222; color: #fff; }
+
+.wire-btn-link { border: none; background: none; padding: 0; color: #4a4a8a; text-decoration: none; cursor: pointer; font-size: 13px; font-family: inherit; }
+.wire-btn-link:hover { text-decoration: underline; color: #c33; }
+
+.wire-btn-sm { font-size: 12px; padding: 2px 7px; }
+
+/* ---- Create Post / Auth Gate ---- */
+.wire-create-gate { max-width: 600px; margin: 40px auto; padding: 0 12px; }
+.wire-create-gate h2 { font-size: 15px; margin-bottom: 14px; color: #333; }
+
+.wire-gate-options { border: 1px solid #d5d5d5; margin-bottom: 14px; }
+.wire-gate-option { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid #eee; cursor: pointer; }
+.wire-gate-option:last-child { border-bottom: none; }
+.wire-gate-option:hover { background: #f7f7f7; }
+.wire-gate-option input[type="radio"] { margin: 0; }
+.wire-gate-option-label { font-size: 14px; font-weight: bold; color: #333; }
+.wire-gate-option-desc { font-size: 12px; color: #666; }
+
+.wire-anon-note { font-size: 12px; color: #666; margin-bottom: 14px; padding: 6px 10px; background: #f7f7f7; border: 1px solid #d5d5d5; }
+
+.wire-terms-row { display: flex; align-items: flex-start; gap: 8px; margin: 10px 0; font-size: 12px; color: #333; }
+.wire-terms-row input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; }
+
+/* ---- Profile / Account ---- */
+.wire-profile { max-width: 900px; margin: 0 auto; padding: 12px; }
+
+.wire-profile-section { margin-bottom: 20px; border: 1px solid #d5d5d5; }
+
+.wire-profile-section-title { font-size: 13px; font-weight: bold; background: #f7f7f7; padding: 5px 10px; border-bottom: 1px solid #d5d5d5; color: #4a4a8a; }
+
+.wire-profile-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.wire-profile-table td { padding: 5px 10px; vertical-align: middle; border-bottom: 1px solid #eee; }
+.wire-profile-table td:first-child { color: #666; width: 130px; white-space: nowrap; }
+.wire-profile-table tr:last-child td { border-bottom: none; }
+
+/* ---- Moderation Table ---- */
+.wire-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.wire-table th { text-align: left; padding: 4px 8px; border-bottom: 2px solid #d5d5d5; background: #f0f0f0; font-weight: bold; color: #333; }
+.wire-table td { padding: 4px 8px; border-bottom: 1px solid #eee; vertical-align: top; }
+.wire-table tr:hover td { background: #f7f7f7; }
+
+/* ---- Notifications ---- */
+.wire-notification { border-bottom: 1px solid #eee; padding: 5px 0; font-size: 13px; }
+.wire-notification.unread { font-weight: bold; }
+.wire-notification-meta { font-size: 11px; color: #666; }
+
+/* ---- Flag popover ---- */
+.wire-flag-popover { position: absolute; right: 0; top: 100%; margin-top: 4px; background: #fff; border: 1px solid #d5d5d5; padding: 8px; min-width: 200px; z-index: 100; font-size: 12px; box-shadow: 1px 2px 4px rgba(0,0,0,0.1); }
+.wire-flag-popover select,
+.wire-flag-popover input { width: 100%; font-size: 12px; font-family: inherit; border: 1px solid #aaa; padding: 2px 4px; margin-bottom: 4px; }
+.wire-flag-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 6px; }
+
+/* ---- Breadcrumb ---- */
+.wire-breadcrumb { font-size: 12px; color: #666; margin-bottom: 8px; }
+.wire-breadcrumb a { color: #4a4a8a; }
+
+/* ---- Google OAuth ---- */
+.wire-google-btn { margin: 8px 0; }
+
+/* ---- Empty / Loading ---- */
+.wire-empty { font-size: 13px; color: #666; font-style: italic; padding: 12px 0; }
+.wire-loading { font-size: 13px; color: #666; padding: 12px 0; }
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .wire-form-row label { width: 100%; text-align: left; }
+  .wire-post-detail { padding: 8px; }
+  .wire-auth-page { margin: 20px auto; }
+  .wire-create-gate { margin: 20px auto; }
+  .wire-home-top { flex-direction: column; }
+  .wire-home-search input { width: 150px; }
+  .wire-posts-header { flex-direction: column; align-items: flex-start; }
+}
